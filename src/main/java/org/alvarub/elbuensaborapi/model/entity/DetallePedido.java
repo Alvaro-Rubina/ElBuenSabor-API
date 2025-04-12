@@ -1,0 +1,29 @@
+package org.alvarub.elbuensaborapi.model.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@Entity
+public class DetallePedido {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Integer cantidad;
+    private Double subTotal;
+
+    @ManyToOne
+    @JoinColumn(name = "id_pedido")
+    private Pedido pedido;
+
+    //@ManyToOne
+    //@JoinColumn(name = "id_producto")
+    //private Producto producto;
+
+
+}
