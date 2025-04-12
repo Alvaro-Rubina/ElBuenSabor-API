@@ -2,11 +2,7 @@ package org.alvarub.elbuensaborapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-<<<<<<< HEAD
-=======
 import org.alvarub.elbuensaborapi.model.enums.FormaPago;
->>>>>>> master
-
 import java.time.LocalDate;
 import java.util.List;
 
