@@ -1,8 +1,8 @@
 package org.spdgrupo.elbuensaborapi.model.dto;
 
-import org.alvarub.elbuensaborapi.model.Enums.Estado;
-import org.alvarub.elbuensaborapi.model.Enums.FormaPago;
-import org.alvarub.elbuensaborapi.model.Enums.TipoEnvio;
+import org.spdgrupo.elbuensaborapi.model.enums.Estado;
+import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
+import org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

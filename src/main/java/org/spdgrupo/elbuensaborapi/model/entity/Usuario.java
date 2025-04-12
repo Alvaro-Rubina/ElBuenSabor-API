@@ -5,7 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
-import org.alvarub.elbuensaborapi.model.Enums.Rol;
+import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 
 
 @NoArgsConstructor

@@ -1,7 +1,7 @@
 package org.spdgrupo.elbuensaborapi.model.dto;
 
 import lombok.*;
-import org.alvarub.elbuensaborapi.model.Enums.Rol;
+import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 
 @NoArgsConstructor
 @AllArgsConstructor
