@@ -3,8 +3,8 @@ package org.alvarub.elbuensaborapi.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.alvarub.elbuensaborapi.model.enums.Estado;
+import org.alvarub.elbuensaborapi.model.enums.FormaPago;
 import org.alvarub.elbuensaborapi.model.enums.TipoEnvio;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
