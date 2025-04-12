@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="12f2dcde-2d73-45a4-a562-9f4b2c471bfa" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/controller/A.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/enums/Estado.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/enums/Rol.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/enums/TipoEnvio.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/enums/UnidadMedida.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/service/A.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/ElBuenSaborApiApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/ElBuenSaborApiApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/ClienteDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/ClienteDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/DetalleDomicilioDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/DetalleDomicilioDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/DetallePedidoDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/DetallePedidoDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/DomicilioDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/DomicilioDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/MercadoPagoDatosDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/MercadoPagoDatosDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/PedidoDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/PedidoDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/UsuarioDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/dto/UsuarioDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Cliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Cliente.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/DetalleDomicilio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/DetalleDomicilio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/DetalleFactura.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/DetalleFactura.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/DetallePedido.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/DetallePedido.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/DetalleProducto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/DetalleProducto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/DetallePromocion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/DetallePromocion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Domicilio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Domicilio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Factura.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Factura.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Insumo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Insumo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/MercadoPagoDatos.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/MercadoPagoDatos.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Pedido.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Pedido.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Producto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Producto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Promocion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Promocion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/RubroInsumo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/RubroInsumo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/RubroProducto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/RubroProducto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/entity/Usuario.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/enums/FormaPago.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/model/enums/FormaPago.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/ClienteRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/ClienteRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/DetalleDomicilioRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/DetalleDomicilioRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/DetallePedidoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/DetallePedidoRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/DomicilioRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/DomicilioRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/MercadoPagoDatosRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/MercadoPagoDatosRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/PedidoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/PedidoRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/UsuarioRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/spdgrupo/elbuensaborapi/repository/UsuarioRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/spdgrupo/elbuensaborapi/ElBuenSaborApiApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/spdgrupo/elbuensaborapi/ElBuenSaborApiApplicationTests.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Class" />
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2vbPkCQ4zOJe7USjE24uN0Nd5gQ" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Downloaded.Files.Path.Enabled": "false",
+    "Gradle.Build ElBuenSabor-API.executor": "Run",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.ElBuenSaborApiApplication.executor": "Run",
+    "git-widget-placeholder": "Merging bucha",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Usuario/Desktop/BENJA/GIT/ElBuenSabor-API",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "editor.preferences.tabs",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="ElBuenSaborApiApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="ElBuenSabor-API.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.alvarub.elbuensaborapi.ElBuenSaborApiApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-18abd8497189-intellij.indexing.shared.core-IU-241.14494.240" />
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-IU-241.14494.240" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="12f2dcde-2d73-45a4-a562-9f4b2c471bfa" name="Changes" comment="" />
+      <created>1744410941744</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1744410941744</updated>
+      <workItem from="1744410942470" duration="804000" />
+      <workItem from="1744477771569" duration="144000" />
+      <workItem from="1744477932295" duration="905000" />
+      <workItem from="1744492152424" duration="7660000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
