@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class FacturaService {
@@ -23,7 +25,58 @@ public class FacturaService {
     private PedidoService pedidoService;
 
     public void saveFactura(FacturaDTO facturaDTO) {
+        Factura factura = toEntity(facturaDTO);
+        facturaRepository.save(factura);
+    }
 
+    public FacturaDTO getFactura(Long id) {
+        Factura factura = facturaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Factura con el id " + id + " no encontrada"));
+        return toDTO(factura);
+    }
+
+    public List<FacturaDTO> getAllFacturas() {
+        List<Factura> facturas = facturaRepository.findAll();
+        List<FacturaDTO> facturasDTO = new ArrayList<FacturaDTO>();
+        for (Factura factura : facturas) {
+            facturasDTO.add(toDTO(factura));
+        }
+        return facturasDTO;
+    }
+
+    public void editFactura(Long id, FacturaDTO facturaDTO) {
+        Factura factura = facturaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Factura con id " + id + " no encontrada"));
+
+        if (!factura.getFecha().equals(facturaDTO.getFecha())) {
+            factura.setFecha(facturaDTO.getFecha());
+        }
+
+        if (!factura.getNumeroComprobante().equals(facturaDTO.getNumeroComprobante())) {
+            factura.setNumeroComprobante(facturaDTO.getNumeroComprobante());
+        }
+
+        if (!factura.getMontoDescuento().equals(facturaDTO.getMontoDescuento())) {
+            factura.setMontoDescuento(factura.getMontoDescuento());
+        }
+
+        if (!factura.getFormaPago().equals(facturaDTO.getFormaPago())) {
+            factura.setFormaPago(facturaDTO.getFormaPago());
+        }
+
+        if (!factura.getNumeroTarjeta().equals(facturaDTO.getNumeroTarjeta())) {
+            factura.setNumeroTarjeta(factura.getNumeroTarjeta());
+        }
+
+        if (!factura.getTotalVenta().equals(facturaDTO.getTotalVenta())) {
+            factura.setTotalVenta(factura.getTotalVenta());
+        }
+
+        if (!factura.getCostoEnvio().equals(facturaDTO.getCostoEnvio())) {
+            factura.setCostoEnvio(factura.getCostoEnvio());
+        }
+
+        facturaRepository.save(factura);
     }
 
     private Factura toEntity(FacturaDTO facturaDTO) {
