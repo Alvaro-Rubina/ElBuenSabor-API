@@ -21,7 +21,4 @@ public class Promocion {
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
     private Double descuento;
-
-    @OneToMany(mappedBy = "promocion")
-    private List<DetallePromocion> detallesPromocion;
 }
