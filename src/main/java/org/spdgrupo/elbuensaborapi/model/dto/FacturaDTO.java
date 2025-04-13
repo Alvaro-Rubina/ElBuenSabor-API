@@ -20,4 +20,5 @@ public class FacturaDTO {
     private String numeroTarjeta;
     private String totalVenta;
     private Double costoEnvio;
+    private PedidoDTO pedidoDTO;
 }
