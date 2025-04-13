@@ -24,13 +24,4 @@ public class Producto {
 
     @ManyToOne
     private RubroProducto rubro;
-
-    @OneToMany(mappedBy = "producto")
-    private List<DetalleProducto> detallesProducto;
-
-    @OneToMany(mappedBy = "producto")
-    private List<DetalleFactura> detallesFactura;
-
-    @OneToMany(mappedBy = "producto")
-    private List<DetallePromocion> detallesPromocion;
 }
