@@ -6,9 +6,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+    Usuario getElementById(Long id);
 
-    // Aquí puedes agregar métodos personalizados si es necesario
-    // Por ejemplo, buscar por nombre de usuario o correo electrónico
-    // List<Usuario> findByUsername(String username);
-    // List<Usuario> findByEmail(String email);
+
+
 }
