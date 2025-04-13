@@ -7,10 +7,6 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class DetalleDomicilioDto {
-
+public class MercadoPagoDatosDTO {
     private Long id;
-    private Long idCliente;
-    private Long idDomicilio;
-
 }

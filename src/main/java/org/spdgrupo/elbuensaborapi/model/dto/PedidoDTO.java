@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-public class PedidoDto {
+public class PedidoDTO {
 
     private Long id;
     private LocalDate fecha;
@@ -21,5 +21,5 @@ public class PedidoDto {
     private FormaPago formaDePago;
     private Long idCliente;
     private Long idDomicilio;
-    private List<DetallePedidoDto> detallesPedido;
+    private List<DetallePedidoDTO> detallesPedido;
 }

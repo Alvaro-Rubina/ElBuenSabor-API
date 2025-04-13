@@ -9,13 +9,13 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class DomicilioDto {
+public class DomicilioDTO {
 
     private Long id;
     private String calle;
     private String localidad;
     private Integer numero;
     private Integer codigoPostal;
-    private List<DetalleDomicilioDto> detalleDomicilios;
+    private List<DetalleDomicilioDTO> detalleDomicilios;
 
 }

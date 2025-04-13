@@ -8,7 +8,7 @@ import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 @Getter
 @Setter
 @Builder
-public class UsuarioDto {
+public class UsuarioDTO {
     private Long id;
     private String nombreUsuario;
     private String contraseña;
