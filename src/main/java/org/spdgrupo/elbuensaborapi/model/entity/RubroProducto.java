@@ -15,6 +15,5 @@ public class RubroProducto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String denominacion;
-    private String unidadMedida;
     private boolean activo;
 }

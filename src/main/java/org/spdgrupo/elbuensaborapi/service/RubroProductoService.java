@@ -45,10 +45,6 @@ public class RubroProductoService {
             rubroProducto.setId(rubroProductoDTO.getId());
         }
 
-        if(!rubroProducto.getUnidadMedida().equals(rubroProductoDTO.getUnidadMedida())) {
-            rubroProducto.setUnidadMedida(rubroProductoDTO.getUnidadMedida());
-        }
-
         if(!rubroProducto.isActivo() == rubroProductoDTO.isActivo()) {
             rubroProducto.setActivo(rubroProductoDTO.isActivo());
         }
@@ -60,7 +56,6 @@ public class RubroProductoService {
     private RubroProducto toEntity(RubroProductoDTO rubroProductoDTO) {
         return RubroProducto.builder()
                 .denominacion(rubroProductoDTO.getDenominacion())
-                .unidadMedida(rubroProductoDTO.getUnidadMedida())
                 .activo(rubroProductoDTO.isActivo())
                 .build();
     };
@@ -69,7 +64,6 @@ public class RubroProductoService {
         return RubroProductoDTO.builder()
                 .id(rubroProducto.getId())
                 .denominacion(rubroProducto.getDenominacion())
-                .unidadMedida(rubroProducto.getUnidadMedida())
                 .activo(rubroProducto.isActivo())
                 .build();
     }
