@@ -34,8 +34,10 @@ public class Pedido {
     @ManyToOne
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
+
     @OneToOne
     private Domicilio domicilio;
+
     @OneToMany(mappedBy = "pedido")
     private List<DetallePedido> detallesPedido;
 
