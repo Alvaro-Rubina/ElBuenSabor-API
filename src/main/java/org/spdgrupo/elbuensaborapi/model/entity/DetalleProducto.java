@@ -26,5 +26,4 @@ public class DetalleProducto {
     @JoinColumn(name = "insumo_id")
     private Insumo insumo;
 
-
 }

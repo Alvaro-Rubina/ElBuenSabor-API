@@ -27,18 +27,7 @@ public class Insumo {
     private Boolean activo;
     private UnidadMedida unidadMedida;
 
-
     @ManyToOne
     @JoinColumn(name = "rubroInsumo_id")
     private RubroInsumo rubro;
-
-    @OneToMany(mappedBy = "insumo")
-    private List<DetalleFactura> detallesFactura;
-
-    @OneToMany(mappedBy = "insumo")
-    private List<DetalleProducto> detallesProducto;
-
-    @OneToMany(mappedBy = "insumo")
-    private List<DetallePromocion> detallesPromocion;
-
 }
