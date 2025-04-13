@@ -24,4 +24,7 @@ public class Factura {
     private String totalVenta;
     private Double costoEnvio;
 
+    @OneToOne
+    private Pedido pedido;
+
 }
