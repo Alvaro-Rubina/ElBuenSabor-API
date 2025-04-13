@@ -76,6 +76,11 @@ public class FacturaService {
             factura.setCostoEnvio(factura.getCostoEnvio());
         }
 
+        if (!factura.getPedido().getId().equals(facturaDTO.getPedidoDTO().getId())) {
+            factura.setPedido(pedidoRepository.findById(facturaDTO.getPedidoDTO().getId())
+                    .orElseThrow(() -> new NotFoundException("Pedido con el id " + id + " no encontrado")));
+        }
+
         facturaRepository.save(factura);
     }
 
