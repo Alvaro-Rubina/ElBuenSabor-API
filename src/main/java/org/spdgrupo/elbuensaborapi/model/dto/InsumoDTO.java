@@ -3,8 +3,6 @@ package org.spdgrupo.elbuensaborapi.model.dto;
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -21,8 +19,5 @@ public class InsumoDTO {
     private Boolean esParaElaborar;
     private Boolean activo;
     private UnidadMedida unidadMedida;
-    private Long rubroId;
-    private List<DetalleFacturaDTO> detallesFactura;
-    private List<DetalleProductoDTO> detallesProducto;
-    private List<DetallePromocionDTO> detallesPromocion;
+    private RubroInsumoDTO rubro;
 }

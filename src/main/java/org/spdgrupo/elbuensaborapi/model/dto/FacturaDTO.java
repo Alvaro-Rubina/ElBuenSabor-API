@@ -4,7 +4,6 @@ import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,5 +20,4 @@ public class FacturaDTO {
     private String numeroTarjeta;
     private String totalVenta;
     private Double costoEnvio;
-    private List<DetalleFacturaDTO> detallesFactura;
 }

@@ -10,7 +10,7 @@ import lombok.*;
 public class DetalleDomicilioDTO {
 
     private Long id;
-    private Long idCliente;
-    private Long idDomicilio;
+    private ClienteDTO cliente;
+    private DomicilioDTO domicilio;
 
 }

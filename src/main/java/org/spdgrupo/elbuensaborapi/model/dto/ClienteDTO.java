@@ -16,9 +16,5 @@ public class ClienteDTO {
     private String nombre;
     private String apellido;
     private String telefono;
-    private Long idUsuario;
-    private List<PedidoDTO> pedidos;
-    private List<DetalleDomicilioDTO> detallesDomicilio;
-
-
+    private UsuarioDTO usuario;
 }

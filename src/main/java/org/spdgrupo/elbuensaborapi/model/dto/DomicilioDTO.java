@@ -2,8 +2,6 @@ package org.spdgrupo.elbuensaborapi.model.dto;
 
 import lombok.*;
 
-import java.util.List;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -16,6 +14,5 @@ public class DomicilioDTO {
     private String localidad;
     private Integer numero;
     private Integer codigoPostal;
-    private List<DetalleDomicilioDTO> detalleDomicilios;
 
 }

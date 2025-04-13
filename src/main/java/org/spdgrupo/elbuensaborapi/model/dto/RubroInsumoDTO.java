@@ -13,6 +13,5 @@ public class RubroInsumoDTO {
 
     private Long id;
     private String denominacion;
-    private Long rubroPadre;
-    private List<InsumoDTO> insumos;
+    private RubroInsumoDTO rubroPadre;
 }

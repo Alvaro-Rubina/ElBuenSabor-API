@@ -12,7 +12,7 @@ public class DetalleFacturaDTO {
     private Long id;
     private int cantidad;
     private Double subTotal;
-    private Long facturaId;
-    private Long productoId;
-    private Long insumoId;
+    private FacturaDTO factura;
+    private ProductoDTO producto;
+    private InsumoDTO insumo;
 }

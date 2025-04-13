@@ -23,8 +23,5 @@ public class ProductoDTO {
     private Double precioVenta;
     private String urlImagen;
     private Boolean activo;
-    private Long rubroId;
-    private List<DetalleProductoDTO> detallesProducto;
-    private List<DetalleFacturaDTO> detallesFactura;
-    private List<DetallePromocionDTO> detallesPromocion;
+    private RubroProductoDTO rubro;
 }

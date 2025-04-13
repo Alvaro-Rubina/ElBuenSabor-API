@@ -11,7 +11,7 @@ public class DetallePromocionDTO {
 
     private Long id;
     private int cantidad;
-    private Long promocionId;
-    private Long productoId;
-    private Long insumoId;
+    private PromocionDTO promocion;
+    private ProductoDTO producto;
+    private InsumoDTO insumo;
 }

@@ -29,7 +29,7 @@ public class Pedido {
     private TipoEnvio tipoEnvio;
     private Double totalVenta;
     private Double totalCosto;
-    private FormaPago formaDePago;
+    private FormaPago formaPago;
 
     // TODO: Después ver el temita de MercadoPagoDatos
 

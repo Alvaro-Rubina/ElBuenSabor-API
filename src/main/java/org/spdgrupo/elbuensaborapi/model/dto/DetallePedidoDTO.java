@@ -12,6 +12,7 @@ public class DetallePedidoDTO {
     private Long id;
     private Integer cantidad;
     private Double subTotal;
-    private Long idPedido;
-    //private Long idProducto;
+    private PedidoDTO pedido;
+    private ProductoDTO producto;
+    private InsumoDTO insumo;
 }
