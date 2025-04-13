@@ -5,12 +5,12 @@ import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
 import java.time.LocalDate;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
+@Entity
 public class Factura {
 
     @Id

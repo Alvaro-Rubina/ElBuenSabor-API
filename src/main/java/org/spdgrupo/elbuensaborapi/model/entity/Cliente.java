@@ -2,7 +2,6 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor

@@ -1,9 +1,6 @@
 package org.spdgrupo.elbuensaborapi.model.dto;
 
-
 import lombok.*;
-
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor

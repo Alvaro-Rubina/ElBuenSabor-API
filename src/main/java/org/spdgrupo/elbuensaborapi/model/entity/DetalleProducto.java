@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
+@Entity
 public class DetalleProducto {
 
     @Id

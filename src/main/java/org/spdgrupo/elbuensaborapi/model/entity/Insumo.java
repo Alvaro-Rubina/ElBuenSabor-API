@@ -4,14 +4,12 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 
-import java.util.List;
-
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
+@Entity
 public class Insumo {
 
     @Id

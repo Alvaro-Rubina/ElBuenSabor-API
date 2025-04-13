@@ -3,12 +3,12 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
+@Entity
 public class DetalleFactura {
 
     @Id

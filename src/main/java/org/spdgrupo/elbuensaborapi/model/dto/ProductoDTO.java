@@ -1,14 +1,6 @@
 package org.spdgrupo.elbuensaborapi.model.dto;
 
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.*;
-import org.spdgrupo.elbuensaborapi.model.entity.DetalleFactura;
-import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
-import org.spdgrupo.elbuensaborapi.model.entity.DetallePromocion;
-import org.spdgrupo.elbuensaborapi.model.entity.RubroProducto;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor

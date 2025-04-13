@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

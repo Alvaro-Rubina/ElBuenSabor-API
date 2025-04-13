@@ -8,7 +8,6 @@ import org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor

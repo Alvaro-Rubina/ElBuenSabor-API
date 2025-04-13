@@ -3,7 +3,6 @@ package org.spdgrupo.elbuensaborapi.model.dto;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
