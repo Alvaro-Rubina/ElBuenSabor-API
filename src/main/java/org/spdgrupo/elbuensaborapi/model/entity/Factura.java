@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -24,9 +23,5 @@ public class Factura {
     private String numeroTarjeta;
     private String totalVenta;
     private Double costoEnvio;
-
-    @OneToMany(mappedBy = "factura")
-    private List<DetalleFactura> detallesFactura;
-
 
 }
