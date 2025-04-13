@@ -12,4 +12,5 @@ public class RubroProductoDTO {
     private Long id;
     private String denominacion;
     private String unidadMedida;
+    private boolean activo;
 }
