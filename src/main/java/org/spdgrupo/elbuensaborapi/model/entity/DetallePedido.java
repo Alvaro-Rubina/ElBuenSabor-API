@@ -21,9 +21,12 @@ public class DetallePedido {
     @JoinColumn(name = "id_pedido")
     private Pedido pedido;
 
-    //@ManyToOne
-    //@JoinColumn(name = "id_producto")
-    //private Producto producto;
+    @ManyToOne
+    @JoinColumn(name = "id_producto")
+    private Producto producto;
 
+    @ManyToOne
+    @JoinColumn(name = "insumo_id")
+    private Insumo insumo;
 
 }

@@ -31,14 +31,13 @@ public class Pedido {
     private Double totalCosto;
     private FormaPago formaDePago;
 
+    // TODO: Después ver el temita de MercadoPagoDatos
+
     @ManyToOne
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
     @OneToOne
     private Domicilio domicilio;
-
-    @OneToMany(mappedBy = "pedido")
-    private List<DetallePedido> detallesPedido;
 
 }
