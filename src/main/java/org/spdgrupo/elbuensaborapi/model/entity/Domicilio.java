@@ -2,8 +2,6 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.List;
-
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,9 +19,5 @@ public class Domicilio {
     private String localidad;
     private Integer numero;
     private Integer codigoPostal;
-
-    @OneToMany(mappedBy = "domicilio")
-    private List<DetalleDomicilio> detalleDomicilios;
-
 
 }

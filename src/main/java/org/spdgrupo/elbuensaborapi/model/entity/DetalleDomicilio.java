@@ -18,6 +18,7 @@ public class DetalleDomicilio {
     @ManyToOne
     @JoinColumn(name="id_cliente")
     private Cliente cliente;
+
     @ManyToOne
     @JoinColumn(name="id_domicilio")
     private Domicilio domicilio;
