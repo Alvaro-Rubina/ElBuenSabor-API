@@ -14,5 +14,6 @@ public class DomicilioDTO {
     private String localidad;
     private Integer numero;
     private Integer codigoPostal;
+    private Boolean activo;
 
 }

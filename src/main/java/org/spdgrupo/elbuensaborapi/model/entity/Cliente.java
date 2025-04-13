@@ -17,6 +17,7 @@ public class Cliente {
     private String nombre;
     private String apellido;
     private String telefono;
+    private Boolean activo;
 
     @OneToOne
     private Usuario usuario;

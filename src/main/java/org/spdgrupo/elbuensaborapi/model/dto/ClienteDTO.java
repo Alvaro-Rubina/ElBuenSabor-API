@@ -14,4 +14,5 @@ public class ClienteDTO {
     private String apellido;
     private String telefono;
     private UsuarioDTO usuario;
+    private Boolean activo;
 }
