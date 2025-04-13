@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DomicilioRepository extends JpaRepository<Domicilio, Long> {
-    // Aquí puedes agregar métodos personalizados si es necesario
+    Domicilio getElementById(Long id) throws Exception;
 }
