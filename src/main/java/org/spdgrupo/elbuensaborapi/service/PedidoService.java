@@ -31,7 +31,7 @@ public class PedidoService {
         List<Pedido> pedidos = pedidoRepository.findAll();
         List<PedidoDTO> pedidosDTO = new ArrayList<>();
         for (Pedido pedido : pedidos) {
-            PedidoDTO pedidoDTO = toDto(pedido);
+            PedidoDTO pedidoDTO = toDTO(pedido);
             pedidosDTO.add(pedidoDTO);
         }
         return pedidosDTO;
@@ -39,7 +39,7 @@ public class PedidoService {
     public PedidoDTO getPedidoById(Long id) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + id + " no encontrado"));
-        return toDto(pedido);
+        return toDTO(pedido);
     }
 
     public Pedido toEntity(PedidoDTO pedidoDTO) {
@@ -58,7 +58,7 @@ public class PedidoService {
                         .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilio().getId() + " no encontrado")))
                 .build();
     }
-    public  PedidoDTO toDto(Pedido pedido) {
+    public PedidoDTO toDTO(Pedido pedido) {
         return PedidoDTO.builder()
                 .id(pedido.getId())
                 .fecha(pedido.getFecha())

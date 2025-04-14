@@ -29,12 +29,12 @@ public class RubroProductoService {
 
     public List<RubroProductoDTO> getAllRubroProductos() {
         List<RubroProducto> rubroProductos = rubroProductoRepository.findAll();
-        List<RubroProductoDTO> rubroProductoDTO = new ArrayList<>();
+        List<RubroProductoDTO> rubroProductosDTO = new ArrayList<>();
 
         for (RubroProducto rubroProducto : rubroProductos) {
-            rubroProductoDTO.add(toDTO(rubroProducto));
+            rubroProductosDTO.add(toDTO(rubroProducto));
         }
-        return rubroProductoDTO;
+        return rubroProductosDTO;
     }
 
     public void editRubroProducto(Long id, RubroProductoDTO rubroProductoDTO) {
