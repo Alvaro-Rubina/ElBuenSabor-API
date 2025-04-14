@@ -12,7 +12,7 @@ import java.util.List;
 public class DomicilioService {
 
     @Autowired
-    DomicilioRepository domicilioRepository;
+    private DomicilioRepository domicilioRepository;
 
     public void saveDomicilio(DomicilioDTO domicilioDTO){
         Domicilio domicilio = toEntity(domicilioDTO);
