@@ -16,8 +16,8 @@ public class InsumoDTO {
     private Double precioVenta;
     private Double stockActual;
     private Double stockMinimo;
-    private Boolean esParaElaborar;
-    private Boolean activo;
+    private boolean esParaElaborar;
+    private boolean activo;
     private UnidadMedida unidadMedida;
     private RubroInsumoDTO rubro;
 }

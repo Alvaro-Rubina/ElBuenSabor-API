@@ -21,8 +21,8 @@ public class Insumo {
     private Double precioVenta;
     private Double stockActual;
     private Double stockMinimo;
-    private Boolean esParaElaborar;
-    private Boolean activo;
+    private boolean esParaElaborar;
+    private boolean activo;
     private UnidadMedida unidadMedida;
 
     @ManyToOne
