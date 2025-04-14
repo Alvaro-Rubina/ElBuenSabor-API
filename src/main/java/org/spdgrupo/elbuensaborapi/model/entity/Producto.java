@@ -18,7 +18,7 @@ public class Producto {
     private String descripcion;
     private Double precioVenta;
     private String urlImagen;
-    private Boolean activo;
+    private boolean activo;
 
     @ManyToOne
     private RubroProducto rubro;

@@ -14,6 +14,6 @@ public class ProductoDTO {
     private String descripcion;
     private Double precioVenta;
     private String urlImagen;
-    private Boolean activo;
+    private boolean activo;
     private RubroProductoDTO rubro;
 }
