@@ -14,7 +14,7 @@ public class DetalleFactura {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int cantidad;
+    private Integer cantidad;
     private Double subTotal;
 
     @ManyToOne

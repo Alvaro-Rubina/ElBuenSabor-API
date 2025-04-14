@@ -99,7 +99,7 @@ public class FacturaService {
                 .build();
     }
 
-    private FacturaDTO toDTO(Factura factura) {
+    public FacturaDTO toDTO(Factura factura) {
         return FacturaDTO.builder()
                 .id(factura.getId())
                 .fecha(factura.getFecha())

@@ -10,6 +10,7 @@ import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 @Builder
 public class InsumoDTO {
 
+    private Long id;
     private String denominacion;
     private String urlImagen;
     private Double precioCompra;
