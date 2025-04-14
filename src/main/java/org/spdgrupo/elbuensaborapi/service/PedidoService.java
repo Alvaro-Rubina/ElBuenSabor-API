@@ -10,18 +10,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PedidoService {
 
     @Autowired
     private PedidoRepository pedidoRepository;
-
     @Autowired
     private ClienteRepository clienteRepository;
-
     @Autowired
     private DomicilioRepository domicilioRepository;
+    @Autowired
+    private DomicilioService domicilioService;
+    @Autowired
+    private ClienteService clienteService;
+
+    public List<PedidoDTO> getAllPedidos() {
+        List<Pedido> pedidos = pedidoRepository.findAll();
+        List<PedidoDTO> pedidosDTO = new ArrayList<>();
+        for (Pedido pedido : pedidos) {
+            PedidoDTO pedidoDTO = toDto(pedido);
+            pedidosDTO.add(pedidoDTO);
+        }
+        return pedidosDTO;
+    }
+    public PedidoDTO getPedidoById(Long id) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Pedido con el id " + id + " no encontrado"));
+        return toDto(pedido);
+    }
 
     public Pedido toEntity(PedidoDTO pedidoDTO) {
         return Pedido.builder()
@@ -39,10 +58,19 @@ public class PedidoService {
                         .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilio().getId() + " no encontrado")))
                 .build();
     }
-
-    public PedidoDTO toDTO(Pedido pedido) {
-
-        // TODO: ACA LA LOGICA DEL TODTO
-        return null;
+    public  PedidoDTO toDto(Pedido pedido) {
+        return PedidoDTO.builder()
+                .id(pedido.getId())
+                .fecha(pedido.getFecha())
+                .numero(pedido.getNumero())
+                .estado(pedido.getEstado())
+                .horaEstimadaFin(pedido.getHoraEstimadaFin())
+                .tipoEnvio(pedido.getTipoEnvio())
+                .totalVenta(pedido.getTotalVenta())
+                .totalCosto(pedido.getTotalCosto())
+                .formaPago(pedido.getFormaPago())
+                .cliente(clienteService.toDto(pedido.getCliente()))
+                .domicilio(domicilioService.toDto(pedido.getDomicilio()))
+                .build();
     }
 }

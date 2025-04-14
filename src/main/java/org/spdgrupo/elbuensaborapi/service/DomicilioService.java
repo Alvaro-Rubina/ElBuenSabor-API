@@ -14,74 +14,62 @@ public class DomicilioService {
     @Autowired
     DomicilioRepository domicilioRepository;
 
-    public void saveDomicilio(DomicilioDTO domicilioDTO) throws Exception {
+    public void saveDomicilio(DomicilioDTO domicilioDTO){
+        Domicilio domicilio = toEntity(domicilioDTO);
+        domicilioRepository.save(domicilio);
 
-        try {
-            Domicilio domicilio = toEntity(domicilioDTO);
-            domicilioRepository.save(domicilio);
-        }catch (Exception e) {
-            throw new Exception("Error al guardar el domicilio");
-        }
     }
 
-    public void updateDomicilio(DomicilioDTO domicilioDTO) throws Exception {
+    public void updateDomicilio(DomicilioDTO domicilioDTO) {
+        Domicilio domicilio = domicilioRepository.findById(domicilioDTO.getId())
+                    .orElseThrow(() -> new RuntimeException("Domicilio no encontrado"));
 
-        try {
-            Domicilio domicilio = domicilioRepository.getElementById(domicilioDTO.getId());
-
-            if (domicilio != null) {
-
-                if (!domicilioDTO.getCalle().equals(domicilio.getCalle())) {
-                    domicilio.setCalle(domicilioDTO.getCalle());
-                }
-                if (!domicilioDTO.getLocalidad().equals(domicilio.getLocalidad())) {
-                    domicilio.setLocalidad(domicilioDTO.getLocalidad());
-                }
-                if (!domicilioDTO.getNumero().equals(domicilio.getNumero())) {
-                    domicilio.setNumero(domicilioDTO.getNumero());
-                }
-                if (!domicilioDTO.getCodigoPostal().equals(domicilio.getCodigoPostal())) {
-                    domicilio.setCodigoPostal(domicilioDTO.getCodigoPostal());
-                }
-                if (!domicilioDTO.getActivo().equals(domicilio.getActivo())) {
-                    domicilio.setActivo(domicilioDTO.getActivo());
-                }
-            }
-            domicilioRepository.save(domicilio);
-
-        }catch (Exception e) {
-            throw new Exception("Error al actualizar el domicilio");
+        if (!domicilioDTO.getCalle().equals(domicilio.getCalle())) {
+            domicilio.setCalle(domicilioDTO.getCalle());
         }
+        if (!domicilioDTO.getLocalidad().equals(domicilio.getLocalidad())) {
+            domicilio.setLocalidad(domicilioDTO.getLocalidad());
+        }
+        if (!domicilioDTO.getNumero().equals(domicilio.getNumero())) {
+            domicilio.setNumero(domicilioDTO.getNumero());
+        }
+        if (!domicilioDTO.getCodigoPostal().equals(domicilio.getCodigoPostal())) {
+            domicilio.setCodigoPostal(domicilioDTO.getCodigoPostal());
+        }
+        if (!domicilioDTO.getActivo().equals(domicilio.getActivo())) {
+            domicilio.setActivo(domicilioDTO.getActivo());
+        }
+
+        domicilioRepository.save(domicilio);
     }
 
-    public List<Domicilio> getAllDomicilios() throws Exception {
-        try {
-            return domicilioRepository.findAll();
-        } catch (Exception e) {
-            throw new Exception("Error al obtener los domicilios");
+    public List<DomicilioDTO> getAllDomicilios(){
+        List<Domicilio> domicilios = domicilioRepository.findAll();
+        List<DomicilioDTO> domiciliosDTO = new java.util.ArrayList<>();
+
+        for (Domicilio domicilio : domicilios) {
+            domiciliosDTO.add(toDto(domicilio));
         }
+
+        return domiciliosDTO;
     }
 
-    public Domicilio getDomicilioById(Long id) throws Exception {
-        try {
-            return domicilioRepository.getElementById(id);
-        } catch (Exception e) {
-            throw new Exception("Error al obtener el domicilio");
-        }
+    public DomicilioDTO getDomicilioById(Long id){
+        Domicilio domicilio = domicilioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Domicilio no encontrado"));
+        return toDto(domicilio);
     }
 
-    public void deleteDomicilio(Long id) throws Exception {
-        try {
-            Domicilio domicilio = domicilioRepository.getElementById(id);
-            domicilio.setActivo(false);
-            domicilioRepository.save(domicilio);
-        } catch (Exception e) {
-            throw new Exception("Error al eliminar el domicilio");
-        }
+    public void deleteDomicilio(Long id){
+
+        Domicilio domicilio = domicilioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Domicilio no encontrado"));
+        domicilio.setActivo(false);
+        domicilioRepository.save(domicilio);
     }
 
 
-    public Domicilio toEntity(DomicilioDTO domicilioDTO) {
+    private Domicilio toEntity(DomicilioDTO domicilioDTO) {
         return Domicilio.builder()
                 .calle(domicilioDTO.getCalle())
                 .localidad(domicilioDTO.getLocalidad())
