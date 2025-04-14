@@ -29,7 +29,7 @@ public class FacturaService {
         facturaRepository.save(factura);
     }
 
-    public FacturaDTO getFactura(Long id) {
+    public FacturaDTO getFacturaById(Long id) {
         Factura factura = facturaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Factura con el id " + id + " no encontrada"));
         return toDTO(factura);
@@ -44,7 +44,7 @@ public class FacturaService {
         return facturasDTO;
     }
 
-    public void editFactura(Long id, FacturaDTO facturaDTO) {
+    public void updateFactura(Long id, FacturaDTO facturaDTO) {
         Factura factura = facturaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Factura con id " + id + " no encontrada"));
 

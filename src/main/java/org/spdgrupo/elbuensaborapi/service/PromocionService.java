@@ -20,7 +20,7 @@ public class PromocionService {
         promocionRepository.save(promocion);
     }
 
-    public PromocionDTO getPromocion(Long id) {
+    public PromocionDTO getPromocionById(Long id) {
         Promocion promocion = promocionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Promocion con el id " + id + " no encontrado"));
         return toDTO(promocion);
@@ -36,7 +36,7 @@ public class PromocionService {
         return promocionesDTO;
     }
 
-    public void editPromocion(Long id, PromocionDTO promocionDTO) {
+    public void updatePromocion(Long id, PromocionDTO promocionDTO) {
         Promocion promocion = promocionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Promocion con el id " + id + " no encontrado"));
 

@@ -30,9 +30,24 @@ public class DetalleDomicilioService {
         detalleDomicilioRepository.save(detalleDomicilio);
     }
 
+    public DetalleDomicilioDTO getDetalleDomicilioById(Long id) {
+        DetalleDomicilio detalleDomicilio = detalleDomicilioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("DetalleDomicilio no encontrado"));
+        return toDto(detalleDomicilio);
+    }
+
+    public List<DetalleDomicilioDTO> getAllDetallesDomicilio() {
+        List<DetalleDomicilio> detallesDomicilio = detalleDomicilioRepository.findAll();
+        List<DetalleDomicilioDTO> detallesDomicilioDTO = new ArrayList<>();
+        for (DetalleDomicilio detalle : detallesDomicilio) {
+            detallesDomicilioDTO.add(toDto(detalle));
+        }
+        return detallesDomicilioDTO;
+    }
+
     public void updateDetalleDomicilio(DetalleDomicilioDTO detalleDomicilioDTO, Long id) {
         DetalleDomicilio detalleDomicilio = detalleDomicilioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Detalle Domicilio no encontrado"));
+                .orElseThrow(() -> new RuntimeException("DetalleDomicilio no encontrado"));
 
         if (!detalleDomicilioDTO.getCliente().getId().equals(detalleDomicilio.getCliente().getId())) {
             detalleDomicilio.setCliente(clienteRepository.findById(detalleDomicilioDTO.getCliente().getId())
@@ -46,22 +61,7 @@ public class DetalleDomicilioService {
         detalleDomicilioRepository.save(detalleDomicilio);
     }
 
-    public DetalleDomicilioDTO getDetalleDomicilioById(Long id) {
-        DetalleDomicilio detalleDomicilio = detalleDomicilioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Detalle Domicilio no encontrado"));
-        return toDto(detalleDomicilio);
-    }
-
-    public List<DetalleDomicilioDTO> getAllDetallesDomicilio() {
-        List<DetalleDomicilio> detallesDomicilio = detalleDomicilioRepository.findAll();
-        List<DetalleDomicilioDTO> detallesDomicilioDTO = new ArrayList<>();
-        for (DetalleDomicilio detalle : detallesDomicilio) {
-            detallesDomicilioDTO.add(toDto(detalle));
-        }
-        return detallesDomicilioDTO;
-    }
-
-
+    // MAPPERS
     private DetalleDomicilio toEntity(DetalleDomicilioDTO detalleDomicilioDTO) {
         return DetalleDomicilio.builder()
                 .cliente(clienteRepository.findById(detalleDomicilioDTO.getCliente().getId())

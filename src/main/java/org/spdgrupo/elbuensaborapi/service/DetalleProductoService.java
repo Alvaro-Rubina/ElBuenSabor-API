@@ -34,7 +34,7 @@ public class DetalleProductoService {
         detalleProductoRepository.save(detalleProducto);
     }
 
-    public DetalleProductoDTO getDetalleProducto(Long id) {
+    public DetalleProductoDTO getDetalleProductoById(Long id) {
         DetalleProducto detalleProducto = detalleProductoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Detalle de producto con el id " + id + " no encontrado"));
         return toDTO(detalleProducto);
@@ -50,7 +50,7 @@ public class DetalleProductoService {
         return detallesProductoDTO;
     }
 
-    public void editDetalleProducto(Long id, DetalleProductoDTO detalleProductoDTO) {
+    public void updateDetalleProducto(Long id, DetalleProductoDTO detalleProductoDTO) {
         DetalleProducto detalleProducto = detalleProductoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Detalle de producto con el id " + id + " no encontrado"));
 

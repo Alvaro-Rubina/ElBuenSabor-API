@@ -21,7 +21,7 @@ public class RubroInsumoService {
         rubroInsumoRepository.save(rubroInsumo);
     }
 
-    public RubroInsumoDTO getRubroInsumo(Long id) {
+    public RubroInsumoDTO getRubroInsumoById(Long id) {
         RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
         return toDTO(rubroInsumo);
@@ -37,7 +37,7 @@ public class RubroInsumoService {
         return rubroInsumosDTO;
     }
 
-    public void editRubroInsumo(Long id, RubroInsumoDTO rubroInsumoDTO) {
+    public void updateRubroInsumo(Long id, RubroInsumoDTO rubroInsumoDTO) {
         RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
 

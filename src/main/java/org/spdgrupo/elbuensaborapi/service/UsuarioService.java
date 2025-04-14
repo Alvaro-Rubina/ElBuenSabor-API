@@ -22,6 +22,22 @@ public class UsuarioService {
 
     }
 
+    public UsuarioDTO getUsuarioById(Long id) {
+        Usuario usuario = usuarioRepository.getElementById(id);
+        return toDto(usuario);
+    }
+
+    public List<UsuarioDTO> getAllUsuarios() {
+         List<Usuario> usuarios = usuarioRepository.findAll();
+         List<UsuarioDTO> usuariosDTO = new ArrayList<UsuarioDTO>();
+
+         for (Usuario usuario : usuarios) {
+                usuariosDTO.add(toDto(usuario));
+         }
+
+         return usuariosDTO;
+    }
+
     public void updateUsuario(UsuarioDTO usuarioDTO, Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -43,23 +59,7 @@ public class UsuarioService {
 
     }
 
-    public List<UsuarioDTO> getAllUsuarios() {
-         List<Usuario> usuarios = usuarioRepository.findAll();
-         List<UsuarioDTO> usuariosDTO = new ArrayList<UsuarioDTO>();
-
-         for (Usuario usuario : usuarios) {
-                usuariosDTO.add(toDto(usuario));
-         }
-
-         return usuariosDTO;
-    }
-
-    public UsuarioDTO getUsuarioById(Long id) {
-        Usuario usuario = usuarioRepository.getElementById(id);
-        return toDto(usuario);
-    }
-
-
+    // MAPPERS
     private Usuario toEntity(UsuarioDTO usuarioDTO) {
         return Usuario.builder()
                 .nombreUsuario(usuarioDTO.getNombreUsuario())

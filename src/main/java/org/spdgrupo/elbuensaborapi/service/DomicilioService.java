@@ -20,29 +20,6 @@ public class DomicilioService {
 
     }
 
-    public void updateDomicilio(DomicilioDTO domicilioDTO) {
-        Domicilio domicilio = domicilioRepository.findById(domicilioDTO.getId())
-                    .orElseThrow(() -> new RuntimeException("Domicilio no encontrado"));
-
-        if (!domicilioDTO.getCalle().equals(domicilio.getCalle())) {
-            domicilio.setCalle(domicilioDTO.getCalle());
-        }
-        if (!domicilioDTO.getLocalidad().equals(domicilio.getLocalidad())) {
-            domicilio.setLocalidad(domicilioDTO.getLocalidad());
-        }
-        if (!domicilioDTO.getNumero().equals(domicilio.getNumero())) {
-            domicilio.setNumero(domicilioDTO.getNumero());
-        }
-        if (!domicilioDTO.getCodigoPostal().equals(domicilio.getCodigoPostal())) {
-            domicilio.setCodigoPostal(domicilioDTO.getCodigoPostal());
-        }
-        if (!domicilioDTO.getActivo().equals(domicilio.getActivo())) {
-            domicilio.setActivo(domicilioDTO.getActivo());
-        }
-
-        domicilioRepository.save(domicilio);
-    }
-
     public List<DomicilioDTO> getAllDomicilios(){
         List<Domicilio> domicilios = domicilioRepository.findAll();
         List<DomicilioDTO> domiciliosDTO = new java.util.ArrayList<>();
@@ -68,7 +45,30 @@ public class DomicilioService {
         domicilioRepository.save(domicilio);
     }
 
+    public void updateDomicilio(DomicilioDTO domicilioDTO) {
+        Domicilio domicilio = domicilioRepository.findById(domicilioDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Domicilio no encontrado"));
 
+        if (!domicilioDTO.getCalle().equals(domicilio.getCalle())) {
+            domicilio.setCalle(domicilioDTO.getCalle());
+        }
+        if (!domicilioDTO.getLocalidad().equals(domicilio.getLocalidad())) {
+            domicilio.setLocalidad(domicilioDTO.getLocalidad());
+        }
+        if (!domicilioDTO.getNumero().equals(domicilio.getNumero())) {
+            domicilio.setNumero(domicilioDTO.getNumero());
+        }
+        if (!domicilioDTO.getCodigoPostal().equals(domicilio.getCodigoPostal())) {
+            domicilio.setCodigoPostal(domicilioDTO.getCodigoPostal());
+        }
+        if (!domicilioDTO.getActivo().equals(domicilio.getActivo())) {
+            domicilio.setActivo(domicilioDTO.getActivo());
+        }
+
+        domicilioRepository.save(domicilio);
+    }
+
+    // MAPPERS
     private Domicilio toEntity(DomicilioDTO domicilioDTO) {
         return Domicilio.builder()
                 .calle(domicilioDTO.getCalle())

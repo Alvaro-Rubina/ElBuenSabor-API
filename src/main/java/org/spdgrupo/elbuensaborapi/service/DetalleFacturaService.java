@@ -41,9 +41,9 @@ public class DetalleFacturaService {
         detalleFacturaRepository.save(detalleFactura);
     }
 
-    public DetalleFacturaDTO getDetalleFactura(Long id) {
+    public DetalleFacturaDTO getDetalleFacturaById(Long id) {
         DetalleFactura detalleFactura = detalleFacturaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Detalle de factura con el id " + id + " no encontrado"));
+                .orElseThrow(() -> new RuntimeException("DetalleFactura con el id " + id + " no encontrado"));
         return toDTO(detalleFactura);
     }
 
@@ -57,9 +57,9 @@ public class DetalleFacturaService {
         return detallesFacturaDTO;
     }
 
-    public void editDetalleFactura(Long id, DetalleFacturaDTO detalleFacturaDTO) {
+    public void updateDetalleFactura(Long id, DetalleFacturaDTO detalleFacturaDTO) {
         DetalleFactura detalleFactura = detalleFacturaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Detalle de factura con el id " + id + " no encontrado"));
+                .orElseThrow(() -> new RuntimeException("DetalleFactura con el id " + id + " no encontrado"));
 
         if (!detalleFactura.getCantidad().equals(detalleFacturaDTO.getCantidad())) {
             detalleFactura.setCantidad(detalleFacturaDTO.getCantidad());
@@ -94,9 +94,8 @@ public class DetalleFacturaService {
                 .subTotal(detalleFacturaDTO.getSubTotal())
                 .factura(facturaRepository.findById(detalleFacturaDTO.getFactura().getId())
                         .orElseThrow(() -> new IllegalArgumentException("Factura con el id " + detalleFacturaDTO.getFactura().getId() + " no encontrada")))
-                //TODO: Acá no puse el orElseThrow pq el insumo o el producto pueden no estar. Hay que ver como manejar este tema
-                .producto(productoRepository.findById(detalleFacturaDTO.getProducto().getId()).get())
-                .insumo(insumoRepository.findById(detalleFacturaDTO.getInsumo().getId()).get())
+                .producto(productoRepository.findById(detalleFacturaDTO.getProducto().getId()).orElse(null))
+                .insumo(insumoRepository.findById(detalleFacturaDTO.getInsumo().getId()).orElse(null))
                 .build();
     }
 

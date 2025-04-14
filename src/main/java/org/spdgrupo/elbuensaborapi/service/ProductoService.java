@@ -27,7 +27,7 @@ public class ProductoService {
         productoRepository.save(producto);
     }
 
-    public ProductoDTO getProducto(Long id) {
+    public ProductoDTO getProductoById(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto con el id " + id + " no encontrado"));
         return toDTO(producto);
@@ -43,7 +43,7 @@ public class ProductoService {
         return productosDTO;
     }
 
-    public void editProducto(Long id, ProductoDTO productoDTO) {
+    public void updateProducto(Long id, ProductoDTO productoDTO) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto con el id " + id + " no encontrado"));
 

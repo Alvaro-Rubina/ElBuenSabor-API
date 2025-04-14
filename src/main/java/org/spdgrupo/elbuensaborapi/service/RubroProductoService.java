@@ -21,7 +21,7 @@ public class RubroProductoService {
         rubroProductoRepository.save(rubroProducto);
     }
 
-    public RubroProductoDTO getRubroProducto(Long id) {
+    public RubroProductoDTO getRubroProductoById(Long id) {
         RubroProducto rubroProducto = rubroProductoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
         return toDTO(rubroProducto);
@@ -37,7 +37,7 @@ public class RubroProductoService {
         return rubroProductosDTO;
     }
 
-    public void editRubroProducto(Long id, RubroProductoDTO rubroProductoDTO) {
+    public void updateRubroProducto(Long id, RubroProductoDTO rubroProductoDTO) {
         RubroProducto rubroProducto = rubroProductoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
 

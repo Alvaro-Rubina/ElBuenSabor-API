@@ -28,7 +28,7 @@ public class InsumoService {
         insumoRepository.save(insumo);
     }
 
-    public InsumoDTO getInsumo(Long id) {
+    public InsumoDTO getInsumoById(Long id) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
         return toDTO(insumo);
@@ -45,7 +45,7 @@ public class InsumoService {
         return insumosDTO;
     }
 
-    public void editInsumo(Long id, InsumoDTO insumoDTO) {
+    public void updateInsumo(Long id, InsumoDTO insumoDTO) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
 

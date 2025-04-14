@@ -27,6 +27,28 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
+    public ClienteDTO getClienteById(Long id) {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        return toDto(cliente);
+    }
+
+    public List<ClienteDTO> getAllClientes() {
+        List<Cliente> clientes = clienteRepository.findAll();
+        List<ClienteDTO> clientesDTO = new ArrayList<>();
+        for (Cliente cliente : clientes) {
+            clientesDTO.add(toDto(cliente));
+        }
+        return clientesDTO;
+    }
+
+    public void deleteCliente(Long id) {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        cliente.setActivo(false);
+        clienteRepository.save(cliente);
+    }
+
     public void updateCliente(ClienteDTO clienteDTO, Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
@@ -51,29 +73,7 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
-    public ClienteDTO getClienteById(Long id) {
-        Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
-        return toDto(cliente);
-    }
-
-    public List<ClienteDTO> getAllClientes() {
-        List<Cliente> clientes = clienteRepository.findAll();
-        List<ClienteDTO> clientesDTO = new ArrayList<>();
-        for (Cliente cliente : clientes) {
-            clientesDTO.add(toDto(cliente));
-        }
-        return clientesDTO;
-    }
-
-    public void deleteCliente(Long id) {
-        Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
-        cliente.setActivo(false);
-        clienteRepository.save(cliente);
-    }
-
-
+    // MAPPERS
     private Cliente toEntity(ClienteDTO clienteDTO) {
         return Cliente.builder()
                 .nombre(clienteDTO.getNombre())
