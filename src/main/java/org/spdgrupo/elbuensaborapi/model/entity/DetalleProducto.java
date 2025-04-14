@@ -16,7 +16,6 @@ public class DetalleProducto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Double cantidad;
-    private UnidadMedida unidadMedida;
 
     @ManyToOne
     @JoinColumn(name = "producto_id")

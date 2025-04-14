@@ -12,7 +12,6 @@ public class DetalleProductoDTO {
 
     private Long id;
     private Double cantidad;
-    private UnidadMedida unidadMedida;
     private ProductoDTO producto;
     private InsumoDTO insumo;
 }
