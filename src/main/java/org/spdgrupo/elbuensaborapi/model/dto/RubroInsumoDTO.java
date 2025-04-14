@@ -11,5 +11,7 @@ public class RubroInsumoDTO {
 
     private Long id;
     private String denominacion;
+    private String unidadMedida;
+    private boolean activo;
     private RubroInsumoDTO rubroPadre;
 }

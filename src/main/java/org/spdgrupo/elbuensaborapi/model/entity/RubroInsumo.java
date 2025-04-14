@@ -15,7 +15,10 @@ public class RubroInsumo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String denominacion;
+    private String unidadMedida;
+    private boolean activo;
 
     @ManyToOne
+    @JoinColumn(name = "rubro_padre_id")
     private RubroInsumo rubroPadre;
 }
