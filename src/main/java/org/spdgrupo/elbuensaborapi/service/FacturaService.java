@@ -37,7 +37,7 @@ public class FacturaService {
 
     public List<FacturaDTO> getAllFacturas() {
         List<Factura> facturas = facturaRepository.findAll();
-        List<FacturaDTO> facturasDTO = new ArrayList<FacturaDTO>();
+        List<FacturaDTO> facturasDTO = new ArrayList<>();
         for (Factura factura : facturas) {
             facturasDTO.add(toDTO(factura));
         }

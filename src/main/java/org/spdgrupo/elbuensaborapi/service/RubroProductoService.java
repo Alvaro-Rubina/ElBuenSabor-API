@@ -29,7 +29,7 @@ public class RubroProductoService {
 
     public List<RubroProductoDTO> getAllRubroProductos() {
         List<RubroProducto> rubroProductos = rubroProductoRepository.findAll();
-        List<RubroProductoDTO> rubroProductoDTO = new ArrayList<RubroProductoDTO>();
+        List<RubroProductoDTO> rubroProductoDTO = new ArrayList<>();
 
         for (RubroProducto rubroProducto : rubroProductos) {
             rubroProductoDTO.add(toDTO(rubroProducto));
@@ -41,8 +41,8 @@ public class RubroProductoService {
         RubroProducto rubroProducto = rubroProductoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
 
-        if(!rubroProducto.getId().equals(rubroProductoDTO.getId())) {
-            rubroProducto.setId(rubroProductoDTO.getId());
+        if(!rubroProducto.getDenominacion().equals(rubroProductoDTO.getDenominacion())) {
+            rubroProducto.setDenominacion(rubroProductoDTO.getDenominacion());
         }
 
         if(!rubroProducto.isActivo() == rubroProductoDTO.isActivo()) {

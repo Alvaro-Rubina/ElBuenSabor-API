@@ -1,0 +1,79 @@
+package org.spdgrupo.elbuensaborapi.service;
+
+import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.model.dto.RubroInsumoDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.RubroInsumo;
+import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class RubroInsumoService {
+
+    @Autowired
+    private RubroInsumoRepository rubroInsumoRepository;
+
+    public void saveRubroInsumo(RubroInsumoDTO rubroInsumoDTO) {
+        RubroInsumo rubroInsumo = toEntity(rubroInsumoDTO);
+        rubroInsumoRepository.save(rubroInsumo);
+    }
+
+    public RubroInsumoDTO getRubroInsumo(Long id) {
+        RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
+        return toDTO(rubroInsumo);
+    }
+
+    public List<RubroInsumoDTO> getAllRubroInsumos() {
+        List<RubroInsumo> rubroInsumos = rubroInsumoRepository.findAll();
+        List<RubroInsumoDTO> rubroInsumoDTO = new ArrayList<>();
+
+        for (RubroInsumo rubroInsumo : rubroInsumos) {
+            rubroInsumoDTO.add(toDTO(rubroInsumo));
+        }
+        return rubroInsumoDTO;
+    }
+
+    public void editRubroInsumo(Long id, RubroInsumoDTO rubroInsumoDTO) {
+        RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
+
+        if(!rubroInsumo.getDenominacion().equals(rubroInsumoDTO.getDenominacion())) {
+            rubroInsumo.setDenominacion(rubroInsumoDTO.getDenominacion());
+        }
+
+        if (!rubroInsumo.getUnidadMedida().equals(rubroInsumoDTO.getUnidadMedida())) {
+            rubroInsumo.setUnidadMedida(rubroInsumoDTO.getUnidadMedida());
+        }
+
+        if (rubroInsumo.isActivo() != rubroInsumoDTO.isActivo()) {
+            rubroInsumo.setActivo(rubroInsumoDTO.isActivo());
+        }
+
+        rubroInsumoRepository.save(rubroInsumo);
+    }
+
+    // MAPPERS
+    public RubroInsumo toEntity(RubroInsumoDTO rubroInsumoDTO) {
+        return RubroInsumo.builder()
+                .denominacion(rubroInsumoDTO.getDenominacion())
+                .unidadMedida(rubroInsumoDTO.getUnidadMedida())
+                .activo(rubroInsumoDTO.isActivo())
+                .rubroPadre(rubroInsumoRepository.findById(rubroInsumoDTO.getRubroPadre().getId())
+                        .orElseThrow(() -> new NotFoundException("RubroInsumo (padre) con el id" + rubroInsumoDTO.getRubroPadre().getId() + "no encontrado")))
+                .build();
+    }
+
+    public RubroInsumoDTO toDTO(RubroInsumo rubroInsumo) {
+        return RubroInsumoDTO.builder()
+                .id(rubroInsumo.getId())
+                .denominacion(rubroInsumo.getDenominacion())
+                .unidadMedida(rubroInsumo.getUnidadMedida())
+                .activo(rubroInsumo.isActivo())
+                .rubroPadre(rubroInsumo.getRubroPadre() != null ? toDTO(rubroInsumo.getRubroPadre()) : null)
+                .build();
+    }
+}
