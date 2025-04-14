@@ -53,14 +53,14 @@ public class RubroProductoService {
     }
 
     // MAPPERS
-    private RubroProducto toEntity(RubroProductoDTO rubroProductoDTO) {
+    public RubroProducto toEntity(RubroProductoDTO rubroProductoDTO) {
         return RubroProducto.builder()
                 .denominacion(rubroProductoDTO.getDenominacion())
                 .activo(rubroProductoDTO.isActivo())
                 .build();
     };
 
-    private RubroProductoDTO toDTO(RubroProducto rubroProducto) {
+    public RubroProductoDTO toDTO(RubroProducto rubroProducto) {
         return RubroProductoDTO.builder()
                 .id(rubroProducto.getId())
                 .denominacion(rubroProducto.getDenominacion())
