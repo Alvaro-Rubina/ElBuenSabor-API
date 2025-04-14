@@ -15,15 +15,15 @@ import java.util.List;
 public class DetalleDomicilioService {
 
     @Autowired
-    DetalleDomicilioRepository detalleDomicilioRepository;
+    private DetalleDomicilioRepository detalleDomicilioRepository;
     @Autowired
-    ClienteService clienteService;
+    private ClienteService clienteService;
     @Autowired
-    DomicilioService domicilioService;
+    private DomicilioService domicilioService;
     @Autowired
-    DomicilioRepository domicilioRepository;
+    private DomicilioRepository domicilioRepository;
     @Autowired
-    ClienteRepository clienteRepository;
+    private ClienteRepository clienteRepository;
 
     public void saveDetalleDomicilio(DetalleDomicilioDTO detalleDomicilioDTO) {
         DetalleDomicilio detalleDomicilio = toEntity(detalleDomicilioDTO);
@@ -38,6 +38,15 @@ public class DetalleDomicilioService {
 
     public List<DetalleDomicilioDTO> getAllDetallesDomicilio() {
         List<DetalleDomicilio> detallesDomicilio = detalleDomicilioRepository.findAll();
+        List<DetalleDomicilioDTO> detallesDomicilioDTO = new ArrayList<>();
+        for (DetalleDomicilio detalle : detallesDomicilio) {
+            detallesDomicilioDTO.add(toDto(detalle));
+        }
+        return detallesDomicilioDTO;
+    }
+
+    public List<DetalleDomicilioDTO> getDetallesDomicilioByClienteId(Long clienteId) {
+        List<DetalleDomicilio> detallesDomicilio = detalleDomicilioRepository.findByClienteId(clienteId);
         List<DetalleDomicilioDTO> detallesDomicilioDTO = new ArrayList<>();
         for (DetalleDomicilio detalle : detallesDomicilio) {
             detallesDomicilioDTO.add(toDto(detalle));
