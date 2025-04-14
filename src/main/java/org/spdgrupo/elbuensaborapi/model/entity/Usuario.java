@@ -1,9 +1,6 @@
 package org.spdgrupo.elbuensaborapi.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 
@@ -21,5 +18,6 @@ public class Usuario {
     private String nombreUsuario;
     private String contraseña;
     private String auth0Id;
+    @Enumerated(EnumType.STRING)
     private Rol rol;
 }

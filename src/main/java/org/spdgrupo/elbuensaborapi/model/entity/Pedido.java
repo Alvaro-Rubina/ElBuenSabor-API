@@ -23,11 +23,14 @@ public class Pedido {
 
     private LocalDate fecha;
     private Integer numero;
+    @Enumerated(EnumType.STRING)
     private Estado estado;
     private LocalTime horaEstimadaFin;
+    @Enumerated(EnumType.STRING)
     private TipoEnvio tipoEnvio;
     private Double totalVenta;
     private Double totalCosto;
+    @Enumerated(EnumType.STRING)
     private FormaPago formaPago;
 
     // TODO: Después ver el temita de MercadoPagoDatos

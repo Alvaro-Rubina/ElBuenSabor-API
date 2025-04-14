@@ -23,6 +23,7 @@ public class Insumo {
     private Double stockMinimo;
     private boolean esParaElaborar;
     private boolean activo;
+    @Enumerated(EnumType.STRING)
     private UnidadMedida unidadMedida;
 
     @ManyToOne

@@ -19,6 +19,7 @@ public class Factura {
     private LocalDate fecha;
     private Long numeroComprobante;
     private Double montoDescuento;
+    @Enumerated(EnumType.STRING)
     private FormaPago formaPago;
     private String numeroTarjeta;
     private String totalVenta;
