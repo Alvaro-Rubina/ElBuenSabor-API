@@ -18,14 +18,26 @@ public class PedidoService {
 
     @Autowired
     private PedidoRepository pedidoRepository;
+
     @Autowired
     private ClienteRepository clienteRepository;
+
     @Autowired
     private DomicilioRepository domicilioRepository;
+
     @Autowired
     private DomicilioService domicilioService;
+
     @Autowired
     private ClienteService clienteService;
+
+    // TODO: TERMINAR ESTE SERVICE
+
+    public PedidoDTO getPedidoById(Long id) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Pedido con el id " + id + " no encontrado"));
+        return toDTO(pedido);
+    }
 
     public List<PedidoDTO> getAllPedidos() {
         List<Pedido> pedidos = pedidoRepository.findAll();
@@ -36,12 +48,8 @@ public class PedidoService {
         }
         return pedidosDTO;
     }
-    public PedidoDTO getPedidoById(Long id) {
-        Pedido pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Pedido con el id " + id + " no encontrado"));
-        return toDTO(pedido);
-    }
 
+    // MAPPERS
     public Pedido toEntity(PedidoDTO pedidoDTO) {
         return Pedido.builder()
                 .fecha(LocalDate.now())
@@ -58,6 +66,7 @@ public class PedidoService {
                         .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilio().getId() + " no encontrado")))
                 .build();
     }
+
     public PedidoDTO toDTO(Pedido pedido) {
         return PedidoDTO.builder()
                 .id(pedido.getId())
