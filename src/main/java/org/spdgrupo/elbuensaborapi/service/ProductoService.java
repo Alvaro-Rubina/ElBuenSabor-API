@@ -13,6 +13,8 @@ import java.util.List;
 @Service
 public class ProductoService {
 
+    //TODO :marcar productos que no tienen stock de insumos como “no disponibles”.
+
     @Autowired
     private ProductoRepository productoRepository;
 
