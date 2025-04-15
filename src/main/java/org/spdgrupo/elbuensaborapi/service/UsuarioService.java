@@ -38,7 +38,7 @@ public class UsuarioService {
          return usuariosDTO;
     }
 
-    public void updateUsuario(UsuarioDTO usuarioDTO, Long id) {
+    public void updateUsuario(Long id, UsuarioDTO usuarioDTO) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
