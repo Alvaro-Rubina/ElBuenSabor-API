@@ -1,7 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
 import org.spdgrupo.elbuensaborapi.model.dto.UsuarioDTO;
-import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
