@@ -1,0 +1,43 @@
+package org.spdgrupo.elbuensaborapi.controller;
+
+import org.spdgrupo.elbuensaborapi.model.dto.DetallePromocionDTO;
+import org.spdgrupo.elbuensaborapi.service.DetallePromocionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/detallePromocion")
+public class DetallePromocionController {
+
+    @Autowired
+    private DetallePromocionService detallePromocionService;
+
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<List<DetallePromocionDTO>> getDetallesPromocion() {
+        return ResponseEntity.ok(detallePromocionService.getAllDetallesPromocion());
+    }
+
+    @GetMapping("/{id}")
+    @ResponseBody
+    public ResponseEntity<DetallePromocionDTO> getDetallePromocionById(@PathVariable Long id) {
+        return ResponseEntity.ok(detallePromocionService.getDetallePromocionById(id));
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<String> saveDetallePromocion(@RequestBody DetallePromocionDTO detallePromocionDTO) {
+        detallePromocionService.saveDetallePromocion(detallePromocionDTO);
+        return ResponseEntity.ok("Detalle de promoción guardado exitosamente");
+    }
+
+    @PostMapping("/update/{id}")
+    public ResponseEntity<String> updateDetallePromocion(@RequestBody DetallePromocionDTO detallePromocionDTO, @PathVariable Long id) {
+        detallePromocionService.updateDetallePromocion(id, detallePromocionDTO);
+        return ResponseEntity.ok("Detalle de promoción actualizado exitosamente");
+    }
+
+
+}

@@ -40,7 +40,7 @@ public class DetalleProductoController {
         detalleProductoService.updateDetalleProducto(id, detalleProductoDTO);
         return ResponseEntity.ok("Detalle de producto actualizado exitosamente");
     }
-    
+
 
 
 }
