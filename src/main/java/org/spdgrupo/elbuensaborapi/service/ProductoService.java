@@ -33,6 +33,39 @@ public class ProductoService {
         return toDTO(producto);
     }
 
+    // Acá busca por denominacion parcial. Ej para "Pizza Margarita" busca Pizza o margarita, etc
+    public List<ProductoDTO> getProductoByDenominacion(String denominacion) {
+        List<Producto> productos = productoRepository.findByDenominacionContainingIgnoreCase(denominacion);
+        List<ProductoDTO> productosDTO = new ArrayList<>();
+
+        for (Producto producto : productos) {
+            productosDTO.add(toDTO(producto));
+        }
+        return productosDTO;
+    }
+
+    // Acá busca por rubro parcial. Ej para "Pizza" busca Pizza o izza, etc
+    public List<ProductoDTO> getProductosByDenominacionCategoria(String categoria) {
+        List<Producto> productos = productoRepository.findByRubroDenominacionContainingIgnoreCase(categoria);
+        List<ProductoDTO> productosDTO = new ArrayList<>();
+
+        for (Producto producto : productos) {
+            productosDTO.add(toDTO(producto));
+        }
+        return productosDTO;
+    }
+
+    // Acá busca por id del rubro
+    public List<ProductoDTO> getProductosByCategoriaId(Long categoriaId) {
+        List<Producto> productos = productoRepository.findByRubroId(categoriaId);
+        List<ProductoDTO> productosDTO = new ArrayList<>();
+
+        for (Producto producto : productos) {
+            productosDTO.add(toDTO(producto));
+        }
+        return productosDTO;
+    }
+
     public List<ProductoDTO> getAllProductos() {
         List<Producto> productos = productoRepository.findAll();
         List<ProductoDTO> productosDTO = new ArrayList<>();
@@ -72,6 +105,13 @@ public class ProductoService {
                     .orElseThrow(() -> new RuntimeException("RubroProducto con el id" + productoDTO.getRubro().getId() + " no encontrado")));
         }
 
+        productoRepository.save(producto);
+    }
+
+    public void deleteProducto(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto con el id " + id + " no encontrado"));
+        producto.setActivo(false);
         productoRepository.save(producto);
     }
 
