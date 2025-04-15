@@ -52,6 +52,13 @@ public class RubroProductoService {
         rubroProductoRepository.save(rubroProducto);
     }
 
+    public void deleteRubroProducto(Long id) {
+        RubroProducto rubroProducto = rubroProductoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
+        rubroProducto.setActivo(false);
+        rubroProductoRepository.save(rubroProducto);
+    }
+
     // MAPPERS
     public RubroProducto toEntity(RubroProductoDTO rubroProductoDTO) {
         return RubroProducto.builder()

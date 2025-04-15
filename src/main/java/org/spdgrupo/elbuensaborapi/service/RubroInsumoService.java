@@ -56,6 +56,13 @@ public class RubroInsumoService {
         rubroInsumoRepository.save(rubroInsumo);
     }
 
+    public void deleteRubroInsumo(Long id) {
+        RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
+        rubroInsumo.setActivo(false);
+        rubroInsumoRepository.save(rubroInsumo);
+    }
+
     // MAPPERS
     public RubroInsumo toEntity(RubroInsumoDTO rubroInsumoDTO) {
         return RubroInsumo.builder()

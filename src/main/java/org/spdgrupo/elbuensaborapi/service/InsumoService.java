@@ -93,6 +93,13 @@ public class InsumoService {
         insumoRepository.save(insumo);
     }
 
+    public void deleteInsumo(Long id) {
+        Insumo insumo = insumoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
+        insumo.setActivo(false);
+        insumoRepository.save(insumo);
+    }
+
     // MAPPERS
     public Insumo toEntity(InsumoDTO insumoDTO) {
         return Insumo.builder()
