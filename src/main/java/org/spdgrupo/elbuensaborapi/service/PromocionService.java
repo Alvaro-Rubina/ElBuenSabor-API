@@ -43,6 +43,9 @@ public class PromocionService {
         if (!promocion.getDenominacion().equals(promocionDTO.getDenominacion())) {
             promocion.setDenominacion(promocionDTO.getDenominacion());
         }
+        if (!promocion.getUrlImagen().equals(promocionDTO.getUrlImagen())) {
+            promocion.setUrlImagen(promocionDTO.getUrlImagen());
+        }
         if (!promocion.getFechaDesde().equals(promocionDTO.getFechaDesde())) {
             promocion.setFechaDesde(promocionDTO.getFechaDesde());
         }
@@ -56,10 +59,17 @@ public class PromocionService {
         promocionRepository.save(promocion);
     }
 
+    public void deletePromocion(Long id) {
+        Promocion promocion = promocionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Promocion con el id " + id + " no encontrado"));
+        promocionRepository.delete(promocion);
+    }
+
     // MAPPERS
     private Promocion toEntity(PromocionDTO promocionDTO) {
         return Promocion.builder()
                 .denominacion(promocionDTO.getDenominacion())
+                .urlImagen(promocionDTO.getUrlImagen())
                 .fechaDesde(promocionDTO.getFechaDesde())
                 .fechaHasta(promocionDTO.getFechaHasta())
                 .descuento(promocionDTO.getDescuento())
@@ -70,6 +80,7 @@ public class PromocionService {
         return PromocionDTO.builder()
                 .id(promocion.getId())
                 .denominacion(promocion.getDenominacion())
+                .urlImagen(promocion.getUrlImagen())
                 .fechaDesde(promocion.getFechaDesde())
                 .fechaHasta(promocion.getFechaHasta())
                 .descuento(promocion.getDescuento())

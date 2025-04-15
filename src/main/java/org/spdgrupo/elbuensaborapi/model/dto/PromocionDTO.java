@@ -13,6 +13,7 @@ public class PromocionDTO {
 
     private Long id;
     private String denominacion;
+    private String urlImagen;
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
     private Double descuento;

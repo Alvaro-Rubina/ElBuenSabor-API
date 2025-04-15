@@ -17,6 +17,7 @@ public class Promocion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String denominacion;
+    private String urlImagen;
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
     private Double descuento;
