@@ -45,8 +45,8 @@ public class DomicilioService {
         domicilioRepository.save(domicilio);
     }
 
-    public void updateDomicilio(DomicilioDTO domicilioDTO) {
-        Domicilio domicilio = domicilioRepository.findById(domicilioDTO.getId())
+    public void updateDomicilio(Long id, DomicilioDTO domicilioDTO) {
+        Domicilio domicilio = domicilioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Domicilio no encontrado"));
 
         if (!domicilioDTO.getCalle().equals(domicilio.getCalle())) {
