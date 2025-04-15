@@ -23,7 +23,7 @@ public class ClienteController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<ClienteDTO> getClienteById(Long id) {
+    public ResponseEntity<ClienteDTO> getClienteById(@PathVariable Long id) {
         return ResponseEntity.ok(clienteService.getClienteById(id));
     }
 
@@ -34,13 +34,13 @@ public class ClienteController {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<String> updateCliente(ClienteDTO clienteDTO, @PathVariable Long id) {
+    public ResponseEntity<String> updateCliente(@RequestBody ClienteDTO clienteDTO, @PathVariable Long id) {
         clienteService.updateCliente(clienteDTO, id);
         return ResponseEntity.ok("Cliente actualizado exitosamente");
     }
 
     @PostMapping("/delete/{id}")
-    public ResponseEntity<String> deleteCliente(Long id) {
+    public ResponseEntity<String> deleteCliente(@PathVariable Long id) {
         clienteService.deleteCliente(id);
         return ResponseEntity.ok("Cliente eliminado exitosamente");
     }
