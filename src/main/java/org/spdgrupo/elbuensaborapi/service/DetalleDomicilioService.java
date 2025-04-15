@@ -54,7 +54,7 @@ public class DetalleDomicilioService {
         return detallesDomicilioDTO;
     }
 
-    public void updateDetalleDomicilio(DetalleDomicilioDTO detalleDomicilioDTO, Long id) {
+    public void updateDetalleDomicilio(Long id, DetalleDomicilioDTO detalleDomicilioDTO) {
         DetalleDomicilio detalleDomicilio = detalleDomicilioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("DetalleDomicilio no encontrado"));
 

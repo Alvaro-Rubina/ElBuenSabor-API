@@ -4,10 +4,7 @@ import org.spdgrupo.elbuensaborapi.model.dto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.service.DetalleProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,24 +16,26 @@ public class DetalleProductoController {
     private DetalleProductoService detalleProductoService;
 
     @GetMapping
+    @ResponseBody
     public ResponseEntity<List<DetalleProductoDTO>> getAllDetallesProducto() {
         return ResponseEntity.ok(detalleProductoService.getAllDetallesProducto());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DetalleProductoDTO> getDetalleProductoById(Long id) {
+    @ResponseBody
+    public ResponseEntity<DetalleProductoDTO> getDetalleProductoById(@PathVariable Long id) {
         DetalleProductoDTO detalleProductoDTO = detalleProductoService.getDetalleProductoById(id);
         return ResponseEntity.ok(detalleProductoDTO);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> saveDetalleProducto(DetalleProductoDTO detalleProductoDTO) {
+    public ResponseEntity<String> saveDetalleProducto(@RequestBody DetalleProductoDTO detalleProductoDTO) {
         detalleProductoService.saveDetalleProducto(detalleProductoDTO);
         return ResponseEntity.ok("Detalle de producto guardado exitosamente");
     }
 
-    @PostMapping("/update/{id}")
-    public ResponseEntity<String> updateDetalleProducto(Long id, DetalleProductoDTO detalleProductoDTO) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateDetalleProducto(@PathVariable Long id,@RequestBody DetalleProductoDTO detalleProductoDTO) {
         detalleProductoService.updateDetalleProducto(id, detalleProductoDTO);
         return ResponseEntity.ok("Detalle de producto actualizado exitosamente");
     }

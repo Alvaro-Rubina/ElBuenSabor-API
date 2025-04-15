@@ -33,8 +33,9 @@ public class DetallePromocionController {
         return ResponseEntity.ok("Detalle de promoción guardado exitosamente");
     }
 
-    @PostMapping("/update/{id}")
-    public ResponseEntity<String> updateDetallePromocion(@RequestBody DetallePromocionDTO detallePromocionDTO, @PathVariable Long id) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateDetallePromocion(@PathVariable Long id,
+                                                         @RequestBody DetallePromocionDTO detallePromocionDTO) {
         detallePromocionService.updateDetallePromocion(id, detallePromocionDTO);
         return ResponseEntity.ok("Detalle de promoción actualizado exitosamente");
     }

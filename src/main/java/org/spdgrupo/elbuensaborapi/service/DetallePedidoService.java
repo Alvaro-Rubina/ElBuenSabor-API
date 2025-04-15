@@ -35,7 +35,7 @@ public class DetallePedidoService {
         detallePedidoRepository.save(detallePedido);
     }
 
-    public void updateDetallePedido(DetallePedidoDTO detallePedidoDTO, Long id) {
+    public void updateDetallePedido(Long id, DetallePedidoDTO detallePedidoDTO) {
         DetallePedido detallePedido = detallePedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Detalle de pedido no encontrado"));
 

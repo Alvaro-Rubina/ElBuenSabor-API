@@ -27,7 +27,7 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
-    public void updateCliente(ClienteDTO clienteDTO, Long id) {
+    public void updateCliente(Long id, ClienteDTO clienteDTO) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 

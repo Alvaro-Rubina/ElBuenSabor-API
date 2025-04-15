@@ -33,13 +33,14 @@ public class ClienteController {
         return ResponseEntity.ok("Cliente guardado exitosamente");
     }
 
-    @PostMapping("/update/{id}")
-    public ResponseEntity<String> updateCliente(@RequestBody ClienteDTO clienteDTO, @PathVariable Long id) {
-        clienteService.updateCliente(clienteDTO, id);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateCliente(@PathVariable Long id,
+                                                @RequestBody ClienteDTO clienteDTO) {
+        clienteService.updateCliente(id, clienteDTO);
         return ResponseEntity.ok("Cliente actualizado exitosamente");
     }
 
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteCliente(@PathVariable Long id) {
         clienteService.deleteCliente(id);
         return ResponseEntity.ok("Cliente eliminado exitosamente");
