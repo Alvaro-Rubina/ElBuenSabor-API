@@ -46,7 +46,4 @@ public class DomicilioController {
         return ResponseEntity.ok("Domicilio eliminado exitosamente");
     }
 
-
-
-
 }

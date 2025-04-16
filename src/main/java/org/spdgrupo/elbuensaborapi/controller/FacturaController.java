@@ -39,6 +39,4 @@ public class FacturaController {
         return ResponseEntity.ok("Factura actualizada correctamente");
     }
 
-
-
 }

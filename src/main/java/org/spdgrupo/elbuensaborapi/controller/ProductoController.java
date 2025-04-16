@@ -27,6 +27,18 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.getProductoById(id));
     }
 
+    @GetMapping("/denominacion/{denominacion}")
+    @ResponseBody
+    public ResponseEntity<List<ProductoDTO>> getProductosByDenominacion(@PathVariable String denominacion) {
+        return ResponseEntity.ok(productoService.getProductosByDenominacion(denominacion));
+    }
+
+    @GetMapping("/categoria/{categoria}")
+    @ResponseBody
+    public ResponseEntity<List<ProductoDTO>> getProductosByDenominacionCategoria(@PathVariable String categoria) {
+        return ResponseEntity.ok(productoService.getProductosByDenominacionCategoria(categoria));
+    }
+
     @PostMapping("/save")
     public ResponseEntity<String> saveProducto(@RequestBody ProductoDTO productoDTO) {
         productoService.saveProducto(productoDTO);
@@ -37,6 +49,12 @@ public class ProductoController {
     public ResponseEntity<String> updateProducto(@PathVariable Long id, @RequestBody ProductoDTO productoDTO) {
         productoService.updateProducto(id, productoDTO);
         return ResponseEntity.ok("Producto actualizado correctamente");
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<String> deleteProducto(@PathVariable Long id) {
+        productoService.deleteProducto(id);
+        return ResponseEntity.ok("Producto eliminado exitosamente");
     }
 
 

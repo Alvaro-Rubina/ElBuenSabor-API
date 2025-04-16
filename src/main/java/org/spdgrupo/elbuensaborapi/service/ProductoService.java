@@ -36,7 +36,7 @@ public class ProductoService {
     }
 
     // Acá busca por denominacion parcial. Ej para "Pizza Margarita" busca Pizza o margarita, etc
-    public List<ProductoDTO> getProductoByDenominacion(String denominacion) {
+    public List<ProductoDTO> getProductosByDenominacion(String denominacion) {
         List<Producto> productos = productoRepository.findByDenominacionContainingIgnoreCase(denominacion);
         List<ProductoDTO> productosDTO = new ArrayList<>();
 
