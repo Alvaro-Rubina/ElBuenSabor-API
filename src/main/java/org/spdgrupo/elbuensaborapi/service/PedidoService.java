@@ -33,9 +33,20 @@ public class PedidoService {
 
     // TODO: TERMINAR ESTE SERVICE
 
+    public void savePedido(PedidoDTO pedidoDTO) {
+        Pedido pedido = toEntity(pedidoDTO);
+        pedidoRepository.save(pedido);
+    }
+
     public PedidoDTO getPedidoById(Long id) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + id + " no encontrado"));
+        return toDTO(pedido);
+    }
+
+    public PedidoDTO getPedidoByNumero(Integer numero) {
+        Pedido pedido = pedidoRepository.findByNumero(numero)
+                .orElseThrow(() -> new NotFoundException("Pedido con el numero " + numero + " no encontrado"));
         return toDTO(pedido);
     }
 
@@ -47,6 +58,39 @@ public class PedidoService {
             pedidosDTO.add(pedidoDTO);
         }
         return pedidosDTO;
+    }
+
+    public void editPedido(Long id, PedidoDTO pedidoDTO) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Pedido con el id " + id + " no encontrado"));
+
+        if (!pedido.getFecha().equals(pedidoDTO.getFecha())) {
+            pedido.setFecha(pedidoDTO.getFecha());
+        }
+
+        if (!pedido.getNumero().equals(pedidoDTO.getNumero())) {
+            pedido.setNumero(pedidoDTO.getNumero());
+        }
+        if (!pedido.getEstado().equals(pedidoDTO.getEstado())) {
+            pedido.setEstado(pedidoDTO.getEstado());
+        }
+        if (!pedido.getHoraEstimadaFin().equals(pedidoDTO.getHoraEstimadaFin())) {
+            pedido.setHoraEstimadaFin(pedidoDTO.getHoraEstimadaFin());
+        }
+        if (!pedido.getTipoEnvio().equals(pedidoDTO.getTipoEnvio())) {
+            pedido.setTipoEnvio(pedidoDTO.getTipoEnvio());
+        }
+        if (!pedido.getTotalVenta().equals(pedidoDTO.getTotalVenta())) {
+            pedido.setTotalVenta(pedidoDTO.getTotalVenta());
+        }
+        if (!pedido.getTotalCosto().equals(pedidoDTO.getTotalCosto())) {
+            pedido.setTotalCosto(pedidoDTO.getTotalCosto());
+        }
+        if (!pedido.getFormaPago().equals(pedidoDTO.getFormaPago())) {
+            pedido.setFormaPago(pedidoDTO.getFormaPago());
+        }
+
+        pedidoRepository.save(pedido);
     }
 
     // MAPPERS

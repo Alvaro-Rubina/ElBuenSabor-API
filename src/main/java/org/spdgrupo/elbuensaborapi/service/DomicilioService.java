@@ -78,7 +78,7 @@ public class DomicilioService {
                 .activo(true)
                 .build();
     }
-    public static DomicilioDTO toDto(Domicilio domicilio) {
+    public DomicilioDTO toDto(Domicilio domicilio) {
         return DomicilioDTO.builder()
                 .id(domicilio.getId())
                 .calle(domicilio.getCalle())
