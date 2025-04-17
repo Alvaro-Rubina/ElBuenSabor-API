@@ -39,7 +39,8 @@ public class Pedido {
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "id_domicilio")
     private Domicilio domicilio;
 
 }
