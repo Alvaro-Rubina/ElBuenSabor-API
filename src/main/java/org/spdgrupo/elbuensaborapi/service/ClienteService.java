@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.ClienteDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
@@ -33,7 +34,7 @@ public class ClienteService {
 
     public void updateCliente(Long id, ClienteDTO clienteDTO) {
         Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
 
         if (!clienteDTO.getNombreCompleto().equals(cliente.getNombreCompleto())) {
             cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
@@ -46,7 +47,7 @@ public class ClienteService {
         }
         if (!clienteDTO.getUsuario().getId().equals(cliente.getUsuario().getId())) {
             cliente.setUsuario(usuarioRepository.findById(clienteDTO.getUsuario().getId())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
+                    .orElseThrow(() -> new NotFoundException("Usuario con el id " + cliente.getUsuario().getId() + " no encontrado")));
         }
 
         // me aseguro que el rol sea siempre cliente aunque se haya cambiado por accidente
@@ -56,7 +57,7 @@ public class ClienteService {
 
     public ClienteDTO getClienteById(Long id) {
         Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Cliente con el " +  id + " no encontrado"));
         return toDto(cliente);
     }
 
@@ -71,7 +72,7 @@ public class ClienteService {
 
     public void deleteCliente(Long id) {
         Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Cliente con el id" + id  + " no encontrado"));
         cliente.setActivo(false);
         clienteRepository.save(cliente);
     }
@@ -83,7 +84,7 @@ public class ClienteService {
                 .telefono(clienteDTO.getTelefono())
                 .activo(clienteDTO.getActivo())
                 .usuario(usuarioRepository.findById(clienteDTO.getUsuario().getId())
-                        .orElseThrow(() -> new RuntimeException("Usuario no encontrado")))
+                        .orElseThrow(() -> new NotFoundException("Usuario con el id" + clienteDTO.getUsuario().getId() + " no encontrado")))
                 .build();
     }
     public ClienteDTO toDto(Cliente cliente) {
