@@ -43,8 +43,8 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
 
-        if (!usuarioDTO.getNombreUsuario().equals(usuario.getNombreUsuario())) {
-            usuario.setNombreUsuario(usuarioDTO.getNombreUsuario());
+        if (!usuarioDTO.getNombreUsuario().equals(usuario.getEmail())) {
+            usuario.setEmail(usuarioDTO.getNombreUsuario());
         }
         if (!usuarioDTO.getContraseña().equals(usuario.getContraseña())) {
             usuario.setContraseña(usuarioDTO.getContraseña());
@@ -62,7 +62,7 @@ public class UsuarioService {
     // MAPPERS
     private Usuario toEntity(UsuarioDTO usuarioDTO) {
         return Usuario.builder()
-                .nombreUsuario(usuarioDTO.getNombreUsuario())
+                .email(usuarioDTO.getEmail())
                 .contraseña(usuarioDTO.getContraseña())
                 .auth0Id(usuarioDTO.getAuth0Id())
                 .rol(usuarioDTO.getRol())
@@ -71,7 +71,7 @@ public class UsuarioService {
     public UsuarioDTO toDto(Usuario usuario) {
         return UsuarioDTO.builder()
                 .id(usuario.getId())
-                .nombreUsuario(usuario.getNombreUsuario())
+                .email(usuario.getEmail())
                 .contraseña(usuario.getContraseña())
                 .auth0Id(usuario.getAuth0Id())
                 .rol(usuario.getRol())
