@@ -10,7 +10,7 @@ import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 @Builder
 public class UsuarioDTO {
     private Long id;
-    private String nombreUsuario;
+    private String email;
     private String contraseña;
     private String auth0Id;
     private Rol rol;
