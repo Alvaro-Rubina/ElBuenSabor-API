@@ -1,8 +1,8 @@
 package org.spdgrupo.elbuensaborapi.service;
 
 import org.spdgrupo.elbuensaborapi.model.dto.ClienteDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.UsuarioDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
+import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.spdgrupo.elbuensaborapi.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,10 @@ public class ClienteService {
 
     public void saveCliente(ClienteDTO clienteDTO) {
         Cliente cliente = toEntity(clienteDTO);
+
+        // me aseguro que el rol sea siempre cliente
+        cliente.getUsuario().setRol(Rol.CLIENTE);
+        cliente.setActivo(true);
         clienteRepository.save(cliente);
     }
 
@@ -48,6 +52,8 @@ public class ClienteService {
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
         }
 
+        // me aseguro que el rol sea siempre cliente aunque se haya cambiado por accidente
+        cliente.getUsuario().setRol(Rol.CLIENTE);
         clienteRepository.save(cliente);
     }
 
