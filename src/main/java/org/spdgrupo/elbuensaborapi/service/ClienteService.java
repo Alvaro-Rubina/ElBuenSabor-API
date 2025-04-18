@@ -35,11 +35,8 @@ public class ClienteService {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-        if (!clienteDTO.getNombre().equals(cliente.getNombre())) {
-            cliente.setNombre(clienteDTO.getNombre());
-        }
-        if (!clienteDTO.getApellido().equals(cliente.getApellido())) {
-            cliente.setApellido(clienteDTO.getApellido());
+        if (!clienteDTO.getNombreCompleto().equals(cliente.getNombreCompleto())) {
+            cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
         }
         if (!clienteDTO.getTelefono().equals(cliente.getTelefono())) {
             cliente.setTelefono(clienteDTO.getTelefono());
@@ -82,8 +79,7 @@ public class ClienteService {
 
     private Cliente toEntity(ClienteDTO clienteDTO) {
         return Cliente.builder()
-                .nombre(clienteDTO.getNombre())
-                .apellido(clienteDTO.getApellido())
+                .nombreCompleto(clienteDTO.getNombreCompleto())
                 .telefono(clienteDTO.getTelefono())
                 .activo(clienteDTO.getActivo())
                 .usuario(usuarioRepository.findById(clienteDTO.getUsuario().getId())
@@ -93,8 +89,7 @@ public class ClienteService {
     public ClienteDTO toDto(Cliente cliente) {
         return ClienteDTO.builder()
                 .id(cliente.getId())
-                .nombre(cliente.getNombre())
-                .apellido(cliente.getApellido())
+                .nombreCompleto(cliente.getNombreCompleto())
                 .telefono(cliente.getTelefono())
                 .activo(cliente.getActivo())
                 .usuario(usuarioService.toDto(cliente.getUsuario()))
