@@ -26,31 +26,7 @@ public class ClienteService {
     public void saveCliente(ClienteDTO clienteDTO) {
         Cliente cliente = toEntity(clienteDTO);
 
-        // me aseguro que el rol sea siempre cliente
-        cliente.getUsuario().setRol(Rol.CLIENTE);
-        cliente.setActivo(true);
-        clienteRepository.save(cliente);
-    }
-
-    public void updateCliente(Long id, ClienteDTO clienteDTO) {
-        Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
-
-        if (!clienteDTO.getNombreCompleto().equals(cliente.getNombreCompleto())) {
-            cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
-        }
-        if (!clienteDTO.getTelefono().equals(cliente.getTelefono())) {
-            cliente.setTelefono(clienteDTO.getTelefono());
-        }
-        if (!clienteDTO.getActivo().equals(cliente.getActivo())) {
-            cliente.setActivo(clienteDTO.getActivo());
-        }
-        if (!clienteDTO.getUsuario().getId().equals(cliente.getUsuario().getId())) {
-            cliente.setUsuario(usuarioRepository.findById(clienteDTO.getUsuario().getId())
-                    .orElseThrow(() -> new NotFoundException("Usuario con el id " + cliente.getUsuario().getId() + " no encontrado")));
-        }
-
-        // me aseguro que el rol sea siempre cliente aunque se haya cambiado por accidente
+        // Me aseguro que el rol sea siempre cliente.
         cliente.getUsuario().setRol(Rol.CLIENTE);
         clienteRepository.save(cliente);
     }
@@ -70,6 +46,28 @@ public class ClienteService {
         return clientesDTO;
     }
 
+    public void updateCliente(Long id, ClienteDTO clienteDTO) {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
+
+        if (!clienteDTO.getNombreCompleto().equals(cliente.getNombreCompleto())) {
+            cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
+        }
+        if (!clienteDTO.getTelefono().equals(cliente.getTelefono())) {
+            cliente.setTelefono(clienteDTO.getTelefono());
+        }
+        if (!clienteDTO.getActivo().equals(cliente.getActivo())) {
+            cliente.setActivo(clienteDTO.getActivo());
+        }
+
+        // actualizo el usuario del cliente
+        usuarioService.updateUsuario(cliente.getUsuario().getId(), clienteDTO.getUsuario());
+
+        // me aseguro que el rol sea siempre cliente aunque se haya cambiado por accidente
+        cliente.getUsuario().setRol(Rol.CLIENTE);
+        clienteRepository.save(cliente);
+    }
+
     public void deleteCliente(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el id" + id  + " no encontrado"));
@@ -77,14 +75,13 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
-
+    // MAPPERS
     private Cliente toEntity(ClienteDTO clienteDTO) {
         return Cliente.builder()
                 .nombreCompleto(clienteDTO.getNombreCompleto())
                 .telefono(clienteDTO.getTelefono())
-                .activo(clienteDTO.getActivo())
-                .usuario(usuarioRepository.findById(clienteDTO.getUsuario().getId())
-                        .orElseThrow(() -> new NotFoundException("Usuario con el id" + clienteDTO.getUsuario().getId() + " no encontrado")))
+                .activo(true)
+                .usuario(usuarioService.saveUsuario(clienteDTO.getUsuario()))
                 .build();
     }
     public ClienteDTO toDto(Cliente cliente) {
