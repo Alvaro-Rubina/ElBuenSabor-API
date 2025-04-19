@@ -5,7 +5,6 @@ import org.spdgrupo.elbuensaborapi.model.dto.ClienteDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
-import org.spdgrupo.elbuensaborapi.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +18,6 @@ public class ClienteService {
 
     @Autowired
     private UsuarioService usuarioService;
-
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
     public void saveCliente(ClienteDTO clienteDTO) {
         Cliente cliente = toEntity(clienteDTO);

@@ -14,10 +14,10 @@ public class DomicilioService {
     @Autowired
     private DomicilioRepository domicilioRepository;
 
-    public void saveDomicilio(DomicilioDTO domicilioDTO){
+    public Domicilio saveDomicilio(DomicilioDTO domicilioDTO){
         Domicilio domicilio = toEntity(domicilioDTO);
         domicilioRepository.save(domicilio);
-
+        return domicilio;
     }
 
     public List<DomicilioDTO> getAllDomicilios(){
