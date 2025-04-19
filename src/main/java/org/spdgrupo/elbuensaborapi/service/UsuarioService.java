@@ -15,11 +15,10 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public void saveUsuario(UsuarioDTO usuarioDTO){
-
+    public Usuario saveUsuario(UsuarioDTO usuarioDTO){
         Usuario usuario = toEntity(usuarioDTO);
         usuarioRepository.save(usuario);
-
+        return usuario;
     }
 
     public UsuarioDTO getUsuarioById(Long id) {
@@ -43,8 +42,8 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
 
-        if (!usuarioDTO.getNombreUsuario().equals(usuario.getEmail())) {
-            usuario.setEmail(usuarioDTO.getNombreUsuario());
+        if (!usuarioDTO.getEmail().equals(usuario.getEmail())) {
+            usuario.setEmail(usuarioDTO.getEmail());
         }
         if (!usuarioDTO.getContraseña().equals(usuario.getContraseña())) {
             usuario.setContraseña(usuarioDTO.getContraseña());
