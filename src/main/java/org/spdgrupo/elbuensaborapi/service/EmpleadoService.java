@@ -1,13 +1,18 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import org.spdgrupo.elbuensaborapi.config.exception.InvalidRolException;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.EmpleadoDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Empleado;
+import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
 import org.spdgrupo.elbuensaborapi.repository.EmpleadoRepository;
 import org.spdgrupo.elbuensaborapi.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class EmpleadoService {
@@ -27,16 +32,67 @@ public class EmpleadoService {
     @Autowired
     private DomicilioRepository domicilioRepository;
 
+    public void saveEmpleado(EmpleadoDTO empleadoDTO) {
+        Empleado empleado = toEntity(empleadoDTO);
+
+        if (empleado.getUsuario().getRol() == Rol.CLIENTE) {
+            throw new InvalidRolException("No se puede asignar el rol CLIENTE a un empleado");
+        }
+        empleadoRepository.save(empleado);
+    }
+
+    public EmpleadoDTO getEmpleadoById(Long id) {
+        Empleado empleado = empleadoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Empleado con el " +  id + " no encontrado"));
+        return toDTO(empleado);
+    }
+
+    public List<EmpleadoDTO> getAllEmpleados() {
+        List<Empleado> empleados = empleadoRepository.findAll();
+        List<EmpleadoDTO> empleadosDTO = new ArrayList<>();
+        for (Empleado empleado : empleados) {
+            empleadosDTO.add(toDTO(empleado));
+        }
+        return empleadosDTO;
+    }
+
+    public void updateEmpleado(Long id, EmpleadoDTO empleadoDTO) {
+        Empleado empleado = empleadoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Empleado con el " +  id + " no encontrado"));
+
+        if (!empleado.getNombreCompleto().equals(empleadoDTO.getNombreCompleto())) {
+            empleado.setNombreCompleto(empleadoDTO.getNombreCompleto());
+        }
+
+        if (!empleado.getTelefono().equals(empleadoDTO.getTelefono())) {
+            empleado.setTelefono(empleadoDTO.getTelefono());
+        }
+
+        if (!empleado.getActivo().equals(empleadoDTO.getActivo())) {
+            empleado.setActivo(empleadoDTO.getActivo());
+        }
+
+        // actualizo el domicilio del empleado
+        domicilioService.updateDomicilio(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());
+
+        // actualizo el usuario del empleado
+        usuarioService.updateUsuario(empleado.getUsuario().getId(), empleadoDTO.getUsuario());
+
+        if (empleado.getUsuario().getRol() == Rol.CLIENTE) {
+            throw new InvalidRolException("No se puede asignar el rol CLIENTE a un empleado");
+        }
+
+        empleadoRepository.save(empleado);
+    }
+
     // MAPPERS
     private Empleado toEntity(EmpleadoDTO empleadoDTO) {
         return Empleado.builder()
                 .nombreCompleto(empleadoDTO.getNombreCompleto())
                 .telefono(empleadoDTO.getTelefono())
-                .activo(empleadoDTO.getActivo())
-                .usuario(usuarioRepository.findById(empleadoDTO.getUsuario().getId())
-                        .orElseThrow(() -> new NotFoundException("Usuario no encontrado")))
-                .domicilio(domicilioRepository.findById(empleadoDTO.getDomicilio().getId())
-                        .orElseThrow(() -> new NotFoundException("Domicilio no encontrado")))
+                .activo(true)
+                .usuario(usuarioService.saveUsuario(empleadoDTO.getUsuario()))
+                .domicilio(domicilioService.saveDomicilio(empleadoDTO.getDomicilio()))
                 .build();
     }
 
