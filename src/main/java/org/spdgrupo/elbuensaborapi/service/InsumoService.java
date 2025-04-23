@@ -119,6 +119,7 @@ public class InsumoService {
 
     public InsumoDTO toDTO(Insumo insumo) {
         return InsumoDTO.builder()
+                .id(insumo.getId())
                 .denominacion(insumo.getDenominacion())
                 .urlImagen(insumo.getUrlImagen())
                 .precioCompra(insumo.getPrecioCompra())

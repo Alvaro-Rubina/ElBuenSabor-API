@@ -86,10 +86,20 @@ public class DetallePromocionService {
     private DetallePromocion toEntity(DetallePromocionDTO detallePromocionDTO) {
         return DetallePromocion.builder()
                 .cantidad(detallePromocionDTO.getCantidad())
-                .promocion(promocionRepository.findById(detallePromocionDTO.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("Promocion con el id " + detallePromocionDTO.getPromocion().getId() + " no encontrada")))
-                .producto(productoRepository.findById(detallePromocionDTO.getProducto().getId()).orElse(null))
-                .insumo(insumoRepository.findById(detallePromocionDTO.getInsumo().getId()).orElse(null))
+                .promocion(
+                        promocionRepository.findById(detallePromocionDTO.getPromocion().getId())
+                                .orElseThrow(() -> new IllegalArgumentException("Promocion con el id " + detallePromocionDTO.getPromocion().getId() + " no encontrada"))
+                )
+                .producto(
+                        detallePromocionDTO.getProducto() != null && detallePromocionDTO.getProducto().getId() != null
+                                ? productoRepository.findById(detallePromocionDTO.getProducto().getId()).orElse(null)
+                                : null
+                )
+                .insumo(
+                        detallePromocionDTO.getInsumo() != null && detallePromocionDTO.getInsumo().getId() != null
+                                ? insumoRepository.findById(detallePromocionDTO.getInsumo().getId()).orElse(null)
+                                : null
+                )
                 .build();
     }
 
@@ -98,8 +108,8 @@ public class DetallePromocionService {
                 .id(detallePromocion.getId())
                 .cantidad(detallePromocion.getCantidad())
                 .promocion(promocionService.toDTO(detallePromocion.getPromocion()))
-                .producto(productoService.toDTO(detallePromocion.getProducto()))
-                .insumo(insumoService.toDTO(detallePromocion.getInsumo()))
+                .producto(detallePromocion.getProducto() != null ? productoService.toDTO(detallePromocion.getProducto()) : null)
+                .insumo(detallePromocion.getInsumo() != null ? insumoService.toDTO(detallePromocion.getInsumo()) : null)
                 .build();
     }
 }

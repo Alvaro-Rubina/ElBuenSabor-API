@@ -69,8 +69,12 @@ public class RubroInsumoService {
                 .denominacion(rubroInsumoDTO.getDenominacion())
                 .unidadMedida(rubroInsumoDTO.getUnidadMedida())
                 .activo(rubroInsumoDTO.isActivo())
-                .rubroPadre(rubroInsumoRepository.findById(rubroInsumoDTO.getRubroPadre().getId())
-                        .orElseThrow(() -> new NotFoundException("RubroInsumo (padre) con el id" + rubroInsumoDTO.getRubroPadre().getId() + "no encontrado")))
+                .rubroPadre(
+                        rubroInsumoDTO.getRubroPadre() != null
+                                ? rubroInsumoRepository.findById(rubroInsumoDTO.getRubroPadre().getId())
+                                .orElseThrow(() -> new NotFoundException("RubroInsumo (padre) con el id " + rubroInsumoDTO.getRubroPadre().getId() + " no encontrado"))
+                                : null
+                )
                 .build();
     }
 
