@@ -2,8 +2,9 @@ package org.spdgrupo.elbuensaborapi.model.enums;
 
 public enum UnidadMedida {
 
-    KG,GR,LT
-
-
-
+    KILOGRAMOS,
+    GRAMOS,
+    LITROS,
+    MILILITROS,
+    UNIDADES
 }
