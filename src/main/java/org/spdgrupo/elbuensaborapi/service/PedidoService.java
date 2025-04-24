@@ -31,10 +31,13 @@ public class PedidoService {
     @Autowired
     private ClienteService clienteService;
 
-    // TODO: TERMINAR ESTE SERVICE
+    @Autowired
+    private DetallePedidoService detallePedidoService;
 
     public void savePedido(PedidoDTO pedidoDTO) {
         Pedido pedido = toEntity(pedidoDTO);
+        pedidoRepository.save(pedido);
+        pedido.setHoraEstimadaFin(detallePedidoService.getMayorTiempoEstimado(pedido.getId()));
         pedidoRepository.save(pedido);
     }
 
@@ -93,13 +96,20 @@ public class PedidoService {
         pedidoRepository.save(pedido);
     }
 
+    public void agregarTiempoAlPedido(Long pedidoId, long minutos) {
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
+
+        pedido.setHoraEstimadaFin(pedido.getHoraEstimadaFin().plusMinutes(minutos));
+    }
+
     // MAPPERS
     public Pedido toEntity(PedidoDTO pedidoDTO) {
         return Pedido.builder()
                 .fecha(LocalDate.now())
                 .numero(pedidoDTO.getNumero())
                 .estado(pedidoDTO.getEstado())
-                .horaEstimadaFin(pedidoDTO.getHoraEstimadaFin())
+                .horaEstimadaFin(null)
                 .tipoEnvio(pedidoDTO.getTipoEnvio())
                 .totalVenta(pedidoDTO.getTotalVenta())
                 .totalCosto(pedidoDTO.getTotalCosto())
