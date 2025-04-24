@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import org.spdgrupo.elbuensaborapi.model.dto.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetallePedido;
+import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.repository.DetallePedidoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.PedidoRepository;
@@ -93,13 +94,25 @@ public class DetallePedidoService {
         LocalTime mayorTiempo = LocalTime.MIN;
 
         for (DetallePedido detallePedido : detallesPedido) {
-            LocalTime tiempo = detallePedido.getPedido().getHoraEstimadaFin();
-            if (tiempo.isAfter(mayorTiempo)) {
-                mayorTiempo = tiempo;
+            Producto producto = detallePedido.getProducto();
+            if (producto != null) {
+                long tiempoEstimado = producto.getTiempoEstimadoPreparacion();
+                if (detallePedido.getCantidad() == 2) {
+                    tiempoEstimado = Math.round(tiempoEstimado * 1.25);
+
+                } else if (detallePedido.getCantidad() >= 3) {
+                    tiempoEstimado = Math.round(tiempoEstimado * 1.5);
+                }
+                // TODO: Despues ver si a partir de tal cantidad se agrega mas tiempo
+
+                LocalTime tiempoPreparacion = LocalTime.ofSecondOfDay(tiempoEstimado * 60); // Convertir minutos a LocalTime
+                if (tiempoPreparacion.isAfter(mayorTiempo)) {
+                    mayorTiempo = tiempoPreparacion;
+                }
             }
         }
 
-        // El tiempo de preparacion sera el del producto con mayor tiempo + 10 minutos
+        // El tiempo de preparación será el mayor tiempo + 10 minutos
         return mayorTiempo.plusMinutes(10);
     }
 
