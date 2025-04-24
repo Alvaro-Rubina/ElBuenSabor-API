@@ -63,7 +63,7 @@ public class PedidoService {
         return pedidosDTO;
     }
 
-    public void editPedido(Long id, PedidoDTO pedidoDTO) {
+    public void updatePedido(Long id, PedidoDTO pedidoDTO) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + id + " no encontrado"));
 
@@ -96,7 +96,7 @@ public class PedidoService {
         pedidoRepository.save(pedido);
     }
 
-    public void agregarTiempoAlPedido(Long pedidoId, long minutos) {
+    public void agregarTiempoAlPedido(Long pedidoId, Long minutos) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
 
