@@ -22,13 +22,20 @@ public class UsuarioService {
     }
 
     public UsuarioDTO getUsuarioById(Long id) {
-        Usuario usuario = usuarioRepository.getElementById(id);
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario con el id " + id + " no encontrado"));
+        return toDto(usuario);
+    }
+
+    public UsuarioDTO getUsuarioByEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario con el email " + email + " no encontrado"));
         return toDto(usuario);
     }
 
     public List<UsuarioDTO> getAllUsuarios() {
          List<Usuario> usuarios = usuarioRepository.findAll();
-         List<UsuarioDTO> usuariosDTO = new ArrayList<UsuarioDTO>();
+         List<UsuarioDTO> usuariosDTO = new ArrayList<>();
 
          for (Usuario usuario : usuarios) {
                 usuariosDTO.add(toDto(usuario));
