@@ -9,6 +9,7 @@ import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,6 +86,21 @@ public class DetallePedidoService {
             detallesPedidoDTO.add(detallePedidoDTO);
         }
         return detallesPedidoDTO;
+    }
+
+    public LocalTime getMayorTiempoEstimado(Long pedidoId) {
+        List<DetallePedido> detallesPedido = detallePedidoRepository.findByPedidoId(pedidoId);
+        LocalTime mayorTiempo = LocalTime.MIN;
+
+        for (DetallePedido detallePedido : detallesPedido) {
+            LocalTime tiempo = detallePedido.getPedido().getHoraEstimadaFin();
+            if (tiempo.isAfter(mayorTiempo)) {
+                mayorTiempo = tiempo;
+            }
+        }
+
+        // El tiempo de preparacion sera el del producto con mayor tiempo + 10 minutos
+        return mayorTiempo.plusMinutes(10);
     }
 
     private DetallePedido toEntity(DetallePedidoDTO detallePedidoDTO) {
