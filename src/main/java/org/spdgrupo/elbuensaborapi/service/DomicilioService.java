@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.DomicilioDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
@@ -9,10 +10,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DomicilioService {
 
-    @Autowired
-    private DomicilioRepository domicilioRepository;
+    // Dependencias
+    private final DomicilioRepository domicilioRepository;
 
     public Domicilio saveDomicilio(DomicilioDTO domicilioDTO){
         Domicilio domicilio = toEntity(domicilioDTO);
