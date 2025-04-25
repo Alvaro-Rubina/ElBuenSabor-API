@@ -98,6 +98,10 @@ public class ProductoService {
             producto.setUrlImagen(productoDTO.getUrlImagen());
         }
 
+        if (!producto.getTiempoEstimadoPreparacion().equals(productoDTO.getTiempoEstimadoPreparacion())) {
+            producto.setTiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion());
+        }
+
         if (!producto.isActivo() == productoDTO.isActivo()) {
             producto.setActivo(productoDTO.isActivo());
         }
@@ -122,6 +126,7 @@ public class ProductoService {
         return Producto.builder()
                 .denominacion(productoDTO.getDenominacion())
                 .descripcion(productoDTO.getDescripcion())
+                .tiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion())
                 .precioVenta(productoDTO.getPrecioVenta())
                 .urlImagen(productoDTO.getUrlImagen())
                 .activo(productoDTO.isActivo())
