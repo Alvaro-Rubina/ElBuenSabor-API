@@ -1,8 +1,8 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.DetallePromocionDTO;
 import org.spdgrupo.elbuensaborapi.service.DetallePromocionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,10 +10,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/detallePromocion")
+@RequiredArgsConstructor
 public class DetallePromocionController {
 
-    @Autowired
-    private DetallePromocionService detallePromocionService;
+    private final DetallePromocionService detallePromocionService;
 
     @GetMapping
     @ResponseBody
