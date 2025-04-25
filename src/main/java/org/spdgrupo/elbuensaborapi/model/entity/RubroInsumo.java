@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,8 +16,9 @@ public class RubroInsumo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String denominacion;
-    private String unidadMedida;
     private boolean activo;
+    @Enumerated(EnumType.STRING)
+    private UnidadMedida unidadMedida;
 
     @ManyToOne
     @JoinColumn(name = "rubro_padre_id")

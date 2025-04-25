@@ -1,6 +1,9 @@
 package org.spdgrupo.elbuensaborapi.model.dto;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
+import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,7 +14,8 @@ public class RubroInsumoDTO {
 
     private Long id;
     private String denominacion;
-    private String unidadMedida;
     private boolean activo;
+    @Enumerated(EnumType.STRING)
+    private UnidadMedida unidadMedida;
     private RubroInsumoDTO rubroPadre;
 }
