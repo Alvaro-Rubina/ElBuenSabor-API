@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.InvalidRolException;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.EmpleadoDTO;
@@ -15,22 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class EmpleadoService {
+@RequiredArgsConstructor
+public class EmpleadoService {  // TODO: HACER EL EmpleadoController
 
-    @Autowired
-    private EmpleadoRepository empleadoRepository;
-
-    @Autowired
-    private UsuarioService usuarioService;
-
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private DomicilioService domicilioService;
-
-    @Autowired
-    private DomicilioRepository domicilioRepository;
+    // Dependencias
+    private final EmpleadoRepository empleadoRepository;
+    private final UsuarioService usuarioService;
+    private final UsuarioRepository usuarioRepository;
+    private final DomicilioService domicilioService;
+    private final DomicilioRepository domicilioRepository;
 
     public void saveEmpleado(EmpleadoDTO empleadoDTO) {
         Empleado empleado = toEntity(empleadoDTO);
