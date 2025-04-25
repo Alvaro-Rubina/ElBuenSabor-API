@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetallePedido;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
@@ -7,7 +8,6 @@ import org.spdgrupo.elbuensaborapi.repository.DetallePedidoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.PedidoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -15,51 +15,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DetallePedidoService {
 
-    @Autowired
-    private DetallePedidoRepository detallePedidoRepository;
-    @Autowired
-    private PedidoService pedidoService;
-    @Autowired
-    private PedidoRepository pedidoRepository;
-    @Autowired
-    private ProductoService productoService;
-    @Autowired
-    ProductoRepository productoRepository;
-    @Autowired
-    private InsumoService insumoService;
-    @Autowired
-    private InsumoRepository insumoRepository;
+    // Dependencias
+    private final DetallePedidoRepository detallePedidoRepository;
+    private final PedidoService pedidoService;
+    private final PedidoRepository pedidoRepository;
+    private final ProductoService productoService;
+    private final ProductoRepository productoRepository;
+    private final InsumoService insumoService;
+    private final InsumoRepository insumoRepository;
 
     public void saveDetallePedido(DetallePedidoDTO detallePedidoDTO) {
         DetallePedido detallePedido = toEntity(detallePedidoDTO);
-        detallePedidoRepository.save(detallePedido);
-    }
-
-    public void updateDetallePedido(Long id, DetallePedidoDTO detallePedidoDTO) {
-        DetallePedido detallePedido = detallePedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Detalle de pedido no encontrado"));
-
-        if (!detallePedidoDTO.getCantidad().equals(detallePedido.getCantidad())) {
-            detallePedido.setCantidad(detallePedidoDTO.getCantidad());
-        }
-        if (!detallePedidoDTO.getSubTotal().equals(detallePedido.getSubTotal())) {
-            detallePedido.setSubTotal(detallePedidoDTO.getSubTotal());
-        }
-        if (!detallePedidoDTO.getProducto().getId().equals(detallePedido.getProducto().getId())) {
-            detallePedido.setProducto(productoRepository.findById(detallePedidoDTO.getProducto().getId())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado")));
-        }
-        if (!detallePedidoDTO.getInsumo().getId().equals(detallePedido.getInsumo().getId())) {
-            detallePedido.setInsumo(insumoRepository.findById(detallePedidoDTO.getInsumo().getId())
-                    .orElseThrow(() -> new RuntimeException("Insumo no encontrado")));
-        }
-        if (!detallePedidoDTO.getPedido().getId().equals(detallePedido.getPedido().getId())) {
-            detallePedido.setPedido(pedidoRepository.findById(detallePedidoDTO.getPedido().getId())
-                    .orElseThrow(() -> new RuntimeException("Pedido no encontrado")));
-        }
-
         detallePedidoRepository.save(detallePedido);
     }
 
@@ -89,6 +58,32 @@ public class DetallePedidoService {
         return detallesPedidoDTO;
     }
 
+    public void updateDetallePedido(Long id, DetallePedidoDTO detallePedidoDTO) {
+        DetallePedido detallePedido = detallePedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Detalle de pedido no encontrado"));
+
+        if (!detallePedidoDTO.getCantidad().equals(detallePedido.getCantidad())) {
+            detallePedido.setCantidad(detallePedidoDTO.getCantidad());
+        }
+        if (!detallePedidoDTO.getSubTotal().equals(detallePedido.getSubTotal())) {
+            detallePedido.setSubTotal(detallePedidoDTO.getSubTotal());
+        }
+        if (!detallePedidoDTO.getProducto().getId().equals(detallePedido.getProducto().getId())) {
+            detallePedido.setProducto(productoRepository.findById(detallePedidoDTO.getProducto().getId())
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado")));
+        }
+        if (!detallePedidoDTO.getInsumo().getId().equals(detallePedido.getInsumo().getId())) {
+            detallePedido.setInsumo(insumoRepository.findById(detallePedidoDTO.getInsumo().getId())
+                    .orElseThrow(() -> new RuntimeException("Insumo no encontrado")));
+        }
+        if (!detallePedidoDTO.getPedido().getId().equals(detallePedido.getPedido().getId())) {
+            detallePedido.setPedido(pedidoRepository.findById(detallePedidoDTO.getPedido().getId())
+                    .orElseThrow(() -> new RuntimeException("Pedido no encontrado")));
+        }
+
+        detallePedidoRepository.save(detallePedido);
+    }
+
     public LocalTime getMayorTiempoEstimado(Long pedidoId) {
         List<DetallePedido> detallesPedido = detallePedidoRepository.findByPedidoId(pedidoId);
         LocalTime mayorTiempo = LocalTime.MIN;
@@ -105,17 +100,19 @@ public class DetallePedidoService {
                 }
                 // TODO: Despues ver si a partir de tal cantidad se agrega mas tiempo
 
-                LocalTime tiempoPreparacion = LocalTime.ofSecondOfDay(tiempoEstimado * 60); // Convertir minutos a LocalTime
+                LocalTime tiempoPreparacion = LocalTime.ofSecondOfDay(tiempoEstimado * 60); // Aca convierto minutos a LocalTime
                 if (tiempoPreparacion.isAfter(mayorTiempo)) {
                     mayorTiempo = tiempoPreparacion;
                 }
             }
         }
 
-        // El tiempo de preparación será el mayor tiempo + 10 minutos
+        // tiempo de prep = el mayor + 10 minutos
         return mayorTiempo.plusMinutes(10);
     }
 
+
+    // MAPPERS
     private DetallePedido toEntity(DetallePedidoDTO detallePedidoDTO) {
         return DetallePedido.builder()
                 .cantidad(detallePedidoDTO.getCantidad())
