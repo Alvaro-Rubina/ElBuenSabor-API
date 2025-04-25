@@ -25,6 +25,8 @@ public class DetalleDomicilioService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    // TODO: Es posible que se pueda cambiar la relcion entre Cliente y Domicilio de [N a N] a [1 a N]
+
     public void saveDetalleDomicilio(DetalleDomicilioDTO detalleDomicilioDTO) {
         DetalleDomicilio detalleDomicilio = toEntity(detalleDomicilioDTO);
         detalleDomicilioRepository.save(detalleDomicilio);
@@ -75,8 +77,7 @@ public class DetalleDomicilioService {
         return DetalleDomicilio.builder()
                 .cliente(clienteRepository.findById(detalleDomicilioDTO.getCliente().getId())
                         .orElseThrow(() -> new RuntimeException("Cliente no encontrado")))
-                .domicilio(domicilioRepository.findById(detalleDomicilioDTO.getDomicilio().getId())
-                        .orElseThrow(() -> new RuntimeException("Domicilio no encontrado")))
+                .domicilio(domicilioService.saveDomicilio(detalleDomicilioDTO.getDomicilio()))
                 .build();
     }
     public DetalleDomicilioDTO toDto(DetalleDomicilio detalleDomicilio) {
