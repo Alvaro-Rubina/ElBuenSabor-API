@@ -6,7 +6,6 @@ import org.spdgrupo.elbuensaborapi.model.entity.DetalleDomicilio;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.spdgrupo.elbuensaborapi.repository.DetalleDomicilioRepository;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

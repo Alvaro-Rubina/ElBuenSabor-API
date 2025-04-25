@@ -1,23 +1,23 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.ClienteDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ClienteService {
-    @Autowired
-    private ClienteRepository clienteRepository;
 
-    @Autowired
-    private UsuarioService usuarioService;
+    // Dependencias
+    private final ClienteRepository clienteRepository;
+    private final UsuarioService usuarioService;
 
     public void saveCliente(ClienteDTO clienteDTO) {
         Cliente cliente = toEntity(clienteDTO);
