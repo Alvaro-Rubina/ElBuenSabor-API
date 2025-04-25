@@ -1,33 +1,26 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
 import org.spdgrupo.elbuensaborapi.repository.DetalleProductoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DetalleProductoService {
 
-    @Autowired
-    private DetalleProductoRepository detalleProductoRepository;
-
-    @Autowired
-    private ProductoService productoService;
-
-    @Autowired
-    private ProductoRepository productoRepository;
-
-    @Autowired
-    private InsumoService insumoService;
-
-    @Autowired
-    private InsumoRepository insumoRepository;
+    // Dependencias
+    private final DetalleProductoRepository detalleProductoRepository;
+    private final ProductoService productoService;
+    private final ProductoRepository productoRepository;
+    private final InsumoService insumoService;
+    private final InsumoRepository insumoRepository;
 
     public void saveDetalleProducto(DetalleProductoDTO detalleProductoDTO) {
         DetalleProducto detalleProducto = toEntity(detalleProductoDTO);
