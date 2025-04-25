@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.DetalleDomicilioDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleDomicilio;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
@@ -12,18 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DetalleDomicilioService {
 
-    @Autowired
-    private DetalleDomicilioRepository detalleDomicilioRepository;
-    @Autowired
-    private ClienteService clienteService;
-    @Autowired
-    private DomicilioService domicilioService;
-    @Autowired
-    private DomicilioRepository domicilioRepository;
-    @Autowired
-    private ClienteRepository clienteRepository;
+    // Dependencias
+    private final DetalleDomicilioRepository detalleDomicilioRepository;
+    private final ClienteService clienteService;
+    private final ClienteRepository clienteRepository;
+    private final DomicilioService domicilioService;
+    private final DomicilioRepository domicilioRepository;
 
     // TODO: Es posible que se pueda cambiar la relcion entre Cliente y Domicilio de [N a N] a [1 a N]
 

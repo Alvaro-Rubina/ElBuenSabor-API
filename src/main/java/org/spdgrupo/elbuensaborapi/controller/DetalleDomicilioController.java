@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.DetalleDomicilioDTO;
 import org.spdgrupo.elbuensaborapi.service.DetalleDomicilioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/detalleDomicilio")
+@RequiredArgsConstructor
 public class DetalleDomicilioController {
 
-    @Autowired
-    private DetalleDomicilioService detalleDomicilioService;
+    private final DetalleDomicilioService detalleDomicilioService;
 
     @GetMapping
     @ResponseBody
