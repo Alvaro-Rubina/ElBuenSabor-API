@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Pedido;
@@ -15,22 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PedidoService {
 
-    @Autowired
-    private PedidoRepository pedidoRepository;
-
-    @Autowired
-    private ClienteRepository clienteRepository;
-
-    @Autowired
-    private DomicilioRepository domicilioRepository;
-
-    @Autowired
-    private DomicilioService domicilioService;
-
-    @Autowired
-    private ClienteService clienteService;
+    // Dependencias
+    private final PedidoRepository pedidoRepository;
+    private final ClienteRepository clienteRepository;
+    private final DomicilioRepository domicilioRepository;
+    private final DomicilioService domicilioService;
+    private final ClienteService clienteService;
 
     @Autowired
     @Lazy

@@ -1,6 +1,7 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pedidos")
+@RequiredArgsConstructor
 public class PedidoController {
 
-    @Autowired
-    private PedidoService pedidoService;
+    private final PedidoService pedidoService;
 
     @PostMapping("/save")
     public ResponseEntity<String> savePedido(@RequestBody PedidoDTO pedidoDTO) {
