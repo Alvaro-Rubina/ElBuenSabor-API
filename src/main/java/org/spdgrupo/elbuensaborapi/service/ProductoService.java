@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.ProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
@@ -11,15 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductoService {
 
     //TODO :marcar productos que no tienen stock de insumos como “no disponibles”.
-
-    @Autowired
-    private ProductoRepository productoRepository;
-
-    @Autowired
-    private RubroProductoService rubroProductoService;
+    // Dependencias
+    private final ProductoRepository productoRepository;
+    private final RubroProductoService rubroProductoService;
 
     @Autowired
     private RubroProductoRepository rubroProductoRepository;
