@@ -78,6 +78,13 @@ public class EmpleadoService {  // TODO: HACER EL EmpleadoController
         empleadoRepository.save(empleado);
     }
 
+    public void deleteEmpleado(Long id) {
+        Empleado empleado = empleadoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Empleado con el id" + id  + " no encontrado"));
+        empleado.setActivo(false);
+        empleadoRepository.save(empleado);
+    }
+
     // MAPPERS
     private Empleado toEntity(EmpleadoDTO empleadoDTO) {
         return Empleado.builder()
