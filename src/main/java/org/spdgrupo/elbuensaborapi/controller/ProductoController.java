@@ -29,14 +29,14 @@ public class ProductoController {
 
     @GetMapping("/buscar")
     @ResponseBody
-    public ResponseEntity<List<ProductoDTO>> getProductosByDenominacion(@RequestParam(required = true) String denominacion) {
+    public ResponseEntity<List<ProductoDTO>> getProductosByDenominacion(@RequestParam String denominacion) {
         return ResponseEntity.ok(productoService.getProductosByDenominacion(denominacion));
     }
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<ProductoDTO>> getAllProductos(@RequestParam(required = false) String rubro) {
-        return ResponseEntity.ok(productoService.getAllProductos(rubro));
+    public ResponseEntity<List<ProductoDTO>> getAllProductos(@RequestParam(required = false) Long rubroId) {
+        return ResponseEntity.ok(productoService.getAllProductos(rubroId));
     }
 
     @PutMapping("/update/{id}")

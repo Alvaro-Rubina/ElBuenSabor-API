@@ -43,13 +43,13 @@ public class ProductoService {
         return productosDTO;
     }
 
-    // Acá busca por categoria, y si no se le pasa parametro, busca todos
-    public List<ProductoDTO> getAllProductos(String rubro) {
+    // Acá busca por rubro, y si no se le pasa parametro (o es 0), busca todos
+    public List<ProductoDTO> getAllProductos(Long rubroId) {
         List<Producto> productos = new ArrayList<>();
-        if (rubro == null || rubro.isEmpty()) {
+        if (rubroId == null || rubroId == 0L) {
             productos = productoRepository.findAll();
         } else {
-            productos = productoRepository.findByRubroDenominacionIgnoreCase(rubro);
+            productos = productoRepository.findByRubroId(rubroId);
         }
         List<ProductoDTO> productosDTO = new ArrayList<>();
 
@@ -58,19 +58,6 @@ public class ProductoService {
         }
         return productosDTO;
     }
-
-    // Acá busca por id del rubro
-    public List<ProductoDTO> getProductosByCategoriaId(Long categoriaId) {
-        List<Producto> productos = productoRepository.findByRubroId(categoriaId);
-        List<ProductoDTO> productosDTO = new ArrayList<>();
-
-        for (Producto producto : productos) {
-            productosDTO.add(toDTO(producto));
-        }
-        return productosDTO;
-    }
-
-
 
     public void updateProducto(Long id, ProductoDTO productoDTO) {
         Producto producto = productoRepository.findById(id)
