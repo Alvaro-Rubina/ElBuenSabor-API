@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.FacturaDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Factura;
@@ -13,16 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class FacturaService {
 
-    @Autowired
-    private FacturaRepository facturaRepository;
-
-    @Autowired
-    private PedidoRepository pedidoRepository;
-
-    @Autowired
-    private PedidoService pedidoService;
+    // Dependencias
+    private final FacturaRepository facturaRepository;
+    private final PedidoRepository pedidoRepository;
+    private final PedidoService pedidoService;
 
     public void saveFactura(FacturaDTO facturaDTO) {
         Factura factura = toEntity(facturaDTO);
