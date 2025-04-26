@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.InsumoDTO;
 import org.spdgrupo.elbuensaborapi.service.InsumoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/insumos")
+@RequiredArgsConstructor
 public class InsumoController {
-    
-    @Autowired
-    private InsumoService insumoService;
+
+    private final InsumoService insumoService;
     
     @GetMapping
     @ResponseBody

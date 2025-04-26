@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.InsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
@@ -12,13 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class InsumoService {
 
-    @Autowired
-    private InsumoRepository insumoRepository;
-
-    @Autowired
-    private RubroInsumoRepository rubroInsumoRepository;
+    // Dependencias
+    private final InsumoRepository insumoRepository;
+    private final RubroInsumoRepository rubroInsumoRepository;
 
     @Autowired
     private RubroInsumoService rubroInsumoService;
