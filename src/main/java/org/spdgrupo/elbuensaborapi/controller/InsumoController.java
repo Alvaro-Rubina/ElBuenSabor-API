@@ -3,7 +3,6 @@ package org.spdgrupo.elbuensaborapi.controller;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.InsumoDTO;
 import org.spdgrupo.elbuensaborapi.service.InsumoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

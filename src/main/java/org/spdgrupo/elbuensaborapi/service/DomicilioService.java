@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.DomicilioDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -6,7 +6,6 @@ import org.spdgrupo.elbuensaborapi.model.dto.FacturaDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Factura;
 import org.spdgrupo.elbuensaborapi.repository.FacturaRepository;
 import org.spdgrupo.elbuensaborapi.repository.PedidoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

@@ -25,10 +25,7 @@ public class PedidoService {
     private final DomicilioRepository domicilioRepository;
     private final DomicilioService domicilioService;
     private final ClienteService clienteService;
-
-    @Autowired
-    @Lazy
-    private DetallePedidoService detallePedidoService;
+    private final DetallePedidoService detallePedidoService;
 
     public void savePedido(PedidoDTO pedidoDTO) {
         Pedido pedido = toEntity(pedidoDTO);

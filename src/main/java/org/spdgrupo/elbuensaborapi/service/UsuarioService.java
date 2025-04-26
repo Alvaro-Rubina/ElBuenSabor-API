@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.UsuarioDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

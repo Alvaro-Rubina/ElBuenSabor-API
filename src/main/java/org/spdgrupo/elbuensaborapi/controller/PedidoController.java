@@ -4,7 +4,6 @@ package org.spdgrupo.elbuensaborapi.controller;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.service.PedidoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

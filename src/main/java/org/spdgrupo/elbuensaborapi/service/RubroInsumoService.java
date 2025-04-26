@@ -5,7 +5,6 @@ import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.RubroInsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroInsumo;
 import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

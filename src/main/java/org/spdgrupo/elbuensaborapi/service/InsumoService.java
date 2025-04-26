@@ -6,7 +6,6 @@ import org.spdgrupo.elbuensaborapi.model.dto.InsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,9 +18,7 @@ public class InsumoService {
     // Dependencias
     private final InsumoRepository insumoRepository;
     private final RubroInsumoRepository rubroInsumoRepository;
-
-    @Autowired
-    private RubroInsumoService rubroInsumoService;
+    private final RubroInsumoService rubroInsumoService;
 
     public void saveInsumo(InsumoDTO insumoDTO) {
         Insumo insumo = toEntity(insumoDTO);

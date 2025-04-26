@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.PromocionDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Promocion;
 import org.spdgrupo.elbuensaborapi.repository.PromocionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

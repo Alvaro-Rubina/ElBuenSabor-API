@@ -5,7 +5,6 @@ import org.spdgrupo.elbuensaborapi.model.dto.ProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroProductoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,12 +15,11 @@ import java.util.List;
 public class ProductoService {
 
     //TODO :marcar productos que no tienen stock de insumos como “no disponibles”.
+
     // Dependencias
     private final ProductoRepository productoRepository;
     private final RubroProductoService rubroProductoService;
-
-    @Autowired
-    private RubroProductoRepository rubroProductoRepository;
+    private final RubroProductoRepository rubroProductoRepository;
 
     public void saveProducto(ProductoDTO productoDTO) {
         Producto producto = toEntity(productoDTO);
