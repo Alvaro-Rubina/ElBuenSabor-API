@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,4 +22,7 @@ public class Promocion {
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
     private Double descuento;
+
+    @OneToMany(mappedBy = "promocion")
+    private List<DetallePromocion> detallePromociones;
 }

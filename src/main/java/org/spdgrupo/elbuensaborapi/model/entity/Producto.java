@@ -3,6 +3,8 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -23,4 +25,7 @@ public class Producto {
 
     @ManyToOne
     private RubroProducto rubro;
+
+    @OneToMany(mappedBy = "producto")
+    private List<DetalleProducto> detalleProductos;
 }
