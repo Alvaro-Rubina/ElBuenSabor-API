@@ -18,7 +18,7 @@ public class ClienteController {
     @PostMapping("/save")
     public ResponseEntity<String> saveCliente(@RequestBody ClienteDTO clienteDTO) {
         clienteService.saveCliente(clienteDTO);
-        return ResponseEntity.ok("Cliente guardado exitosamente");
+        return ResponseEntity.ok("Cliente guardado correctamente");
     }
 
     @GetMapping("/{id}")
@@ -37,7 +37,7 @@ public class ClienteController {
     public ResponseEntity<String> updateCliente(@PathVariable Long id,
                                                 @RequestBody ClienteDTO clienteDTO) {
         clienteService.updateCliente(id, clienteDTO);
-        return ResponseEntity.ok("Cliente actualizado exitosamente");
+        return ResponseEntity.ok("Cliente actualizado correctamente");
     }
 
     @DeleteMapping("/delete/{id}")

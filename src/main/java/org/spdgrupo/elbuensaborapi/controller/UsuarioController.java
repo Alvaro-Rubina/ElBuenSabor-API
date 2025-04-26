@@ -15,10 +15,10 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<UsuarioDTO>> getUsuarios() {
-        return ResponseEntity.ok(usuarioService.getAllUsuarios());
+    @PostMapping("/save")
+    public ResponseEntity<String> saveUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+        usuarioService.saveUsuario(usuarioDTO);
+        return ResponseEntity.ok("Usuario guardado correctamente");
     }
 
     @GetMapping("/{id}")
@@ -27,19 +27,17 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.getUsuarioById(id));
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-        usuarioService.saveUsuario(usuarioDTO);
-        return ResponseEntity.ok("Usuario guardado exitosamente");
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<List<UsuarioDTO>> getUsuarios() {
+        return ResponseEntity.ok(usuarioService.getAllUsuarios());
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateUsuario(@PathVariable Long id,
                                                 @RequestBody UsuarioDTO usuarioDTO ) {
         usuarioService.updateUsuario(id, usuarioDTO);
-        return ResponseEntity.ok("Usuario actualizado exitosamente");
+        return ResponseEntity.ok("Usuario actualizado correctamente");
     }
-
-
 
 }

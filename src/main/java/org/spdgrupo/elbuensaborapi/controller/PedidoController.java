@@ -47,7 +47,7 @@ public class PedidoController {
     public ResponseEntity<String> agregarTiempoAlPedido(@PathVariable Long pedidoId,
                                                         @RequestParam Long minutos) {
         pedidoService.agregarTiempoAlPedido(pedidoId, minutos);
-        return ResponseEntity.ok("Tiempo agregado al pedido");
+        return ResponseEntity.ok("Tiempo agregado al pedido correctamente");
     }
 
 }
