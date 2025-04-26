@@ -15,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RubroInsumoService {
 
+    // Dependencias
     private final RubroInsumoRepository rubroInsumoRepository;
 
     public void saveRubroInsumo(RubroInsumoDTO rubroInsumoDTO) {

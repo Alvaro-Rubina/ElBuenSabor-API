@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.RubroProductoDTO;
 import org.spdgrupo.elbuensaborapi.service.RubroProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/rubroProducto")
+@RequiredArgsConstructor
 public class RubroProductoController {
 
-    @Autowired
-    private RubroProductoService rubroProductoService;
+    private final RubroProductoService rubroProductoService;
 
     @GetMapping
     @ResponseBody

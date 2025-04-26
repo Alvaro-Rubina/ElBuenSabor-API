@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.RubroProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroProducto;
@@ -11,10 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class RubroProductoService {
 
-    @Autowired
-    private RubroProductoRepository rubroProductoRepository;
+    // Dependencias
+    private final RubroProductoRepository rubroProductoRepository;
 
     public void saveRubroProducto(RubroProductoDTO rubroProductoDTO) {
         RubroProducto rubroProducto = toEntity(rubroProductoDTO);
