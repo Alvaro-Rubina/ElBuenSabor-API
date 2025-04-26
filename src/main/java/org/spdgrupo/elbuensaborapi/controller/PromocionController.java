@@ -15,10 +15,10 @@ public class PromocionController {
 
     private final PromocionService promocionService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<PromocionDTO>> getPromociones() {
-        return ResponseEntity.ok(promocionService.getAllPromociones());
+    @PostMapping("/save")
+    public ResponseEntity<String> savePromocion(@RequestBody PromocionDTO promocionDTO) {
+        promocionService.savePromocion(promocionDTO);
+        return ResponseEntity.ok("Promocion guardada correctamente");
     }
 
     @GetMapping("/{id}")
@@ -27,10 +27,10 @@ public class PromocionController {
         return ResponseEntity.ok(promocionService.getPromocionById(id));
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<String> savePromocion(@RequestBody PromocionDTO promocionDTO) {
-        promocionService.savePromocion(promocionDTO);
-        return ResponseEntity.ok("Promocion guardada correctamente");
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<List<PromocionDTO>> getPromociones() {
+        return ResponseEntity.ok(promocionService.getAllPromociones());
     }
 
     @PutMapping("/update/{id}")

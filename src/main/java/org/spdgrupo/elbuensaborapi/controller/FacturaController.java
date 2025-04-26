@@ -15,22 +15,22 @@ public class FacturaController {
 
     private final FacturaService facturaService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<FacturaDTO>> getFacturas() {
-        return ResponseEntity.ok(facturaService.getAllFacturas());
+    @PostMapping("/save")
+    public ResponseEntity<String> saveFactura(@RequestBody FacturaDTO facturaDTO) {
+        facturaService.saveFactura(facturaDTO);
+        return ResponseEntity.ok("Factura guardada correctamente");
     }
 
-    @GetMapping("/factura/{id}")
+    @GetMapping("/{id}")
     @ResponseBody
     public ResponseEntity<FacturaDTO> getFacturaById(@PathVariable Long id) {
         return ResponseEntity.ok(facturaService.getFacturaById(id));
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveFactura(@RequestBody FacturaDTO facturaDTO) {
-        facturaService.saveFactura(facturaDTO);
-        return ResponseEntity.ok("Factura guardada correctamente");
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<List<FacturaDTO>> getFacturas() {
+        return ResponseEntity.ok(facturaService.getAllFacturas());
     }
 
     @PutMapping("/update/{id}")

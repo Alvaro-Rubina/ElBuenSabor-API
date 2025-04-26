@@ -15,10 +15,10 @@ public class DetalleFacturaController {
 
     private final DetalleFacturaService detalleFacturaService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<DetalleFacturaDTO>> getDetallesFactura() {
-        return ResponseEntity.ok(detalleFacturaService.getAllDetallesFactura());
+    @PostMapping("/save")
+    public ResponseEntity<String> saveDetalleFactura(@RequestBody DetalleFacturaDTO detalleFacturaDTO) {
+        detalleFacturaService.saveDetalleFactura(detalleFacturaDTO);
+        return ResponseEntity.ok("Detalle de factura guardado correctamente");
     }
 
     @GetMapping ("/{id}")
@@ -27,17 +27,17 @@ public class DetalleFacturaController {
         return ResponseEntity.ok(detalleFacturaService.getDetalleFacturaById(id));
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveDetalleFactura(@RequestBody DetalleFacturaDTO detalleFacturaDTO) {
-        detalleFacturaService.saveDetalleFactura(detalleFacturaDTO);
-        return ResponseEntity.ok("Detalle de factura guardado exitosamente");
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<List<DetalleFacturaDTO>> getDetallesFactura() {
+        return ResponseEntity.ok(detalleFacturaService.getAllDetallesFactura());
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateDetalleFactura(@PathVariable Long id,
                                                        @RequestBody DetalleFacturaDTO detalleFacturaDTO) {
         detalleFacturaService.updateDetalleFactura(id, detalleFacturaDTO);
-        return ResponseEntity.ok("Detalle de factura actualizado exitosamente");
+        return ResponseEntity.ok("Detalle de factura actualizado correctamente");
     }
 
 

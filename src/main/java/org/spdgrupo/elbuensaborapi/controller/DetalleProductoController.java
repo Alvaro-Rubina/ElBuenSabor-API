@@ -15,10 +15,10 @@ public class DetalleProductoController {
 
     private final DetalleProductoService detalleProductoService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<DetalleProductoDTO>> getAllDetallesProducto() {
-        return ResponseEntity.ok(detalleProductoService.getAllDetallesProducto());
+    @PostMapping("/save")
+    public ResponseEntity<String> saveDetalleProducto(@RequestBody DetalleProductoDTO detalleProductoDTO) {
+        detalleProductoService.saveDetalleProducto(detalleProductoDTO);
+        return ResponseEntity.ok("Detalle de producto guardado correctamente");
     }
 
     @GetMapping("/{id}")
@@ -28,18 +28,16 @@ public class DetalleProductoController {
         return ResponseEntity.ok(detalleProductoDTO);
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveDetalleProducto(@RequestBody DetalleProductoDTO detalleProductoDTO) {
-        detalleProductoService.saveDetalleProducto(detalleProductoDTO);
-        return ResponseEntity.ok("Detalle de producto guardado exitosamente");
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<List<DetalleProductoDTO>> getAllDetallesProducto() {
+        return ResponseEntity.ok(detalleProductoService.getAllDetallesProducto());
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateDetalleProducto(@PathVariable Long id,@RequestBody DetalleProductoDTO detalleProductoDTO) {
         detalleProductoService.updateDetalleProducto(id, detalleProductoDTO);
-        return ResponseEntity.ok("Detalle de producto actualizado exitosamente");
+        return ResponseEntity.ok("Detalle de producto actualizado correctamente");
     }
-
-
 
 }

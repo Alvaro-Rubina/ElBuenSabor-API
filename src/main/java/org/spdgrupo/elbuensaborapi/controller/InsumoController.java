@@ -14,23 +14,23 @@ import java.util.List;
 public class InsumoController {
 
     private final InsumoService insumoService;
-    
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<InsumoDTO>> getAllInsumos() {
-        return ResponseEntity.ok(insumoService.getAllInsumos());
+
+    @PostMapping("/save")
+    public ResponseEntity<String> saveInsumo(@RequestBody InsumoDTO insumoDTO) {
+        insumoService.saveInsumo(insumoDTO);
+        return ResponseEntity.ok("Insumo guardado correctamente");
     }
-    
+
     @GetMapping("/{id}")
     @ResponseBody
     public ResponseEntity<InsumoDTO> getInsumoById(@PathVariable Long id) {
         return ResponseEntity.ok(insumoService.getInsumoById(id));
     }
-    
-    @PostMapping("/save")
-    public ResponseEntity<String> saveInsumo(@RequestBody InsumoDTO insumoDTO) {
-        insumoService.saveInsumo(insumoDTO);
-        return ResponseEntity.ok("Insumo guardado correctamente");
+
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<List<InsumoDTO>> getAllInsumos() {
+        return ResponseEntity.ok(insumoService.getAllInsumos());
     }
     
     @PutMapping("/update/{id}")
@@ -38,6 +38,5 @@ public class InsumoController {
         insumoService.updateInsumo(id, insumoDTO);
         return ResponseEntity.ok("Insumo actualizado correctamente");
     }
-    
     
 }

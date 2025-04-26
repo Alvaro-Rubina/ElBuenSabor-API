@@ -15,10 +15,10 @@ public class DetallePromocionController {
 
     private final DetallePromocionService detallePromocionService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<DetallePromocionDTO>> getDetallesPromocion() {
-        return ResponseEntity.ok(detallePromocionService.getAllDetallesPromocion());
+    @PostMapping("/save")
+    public ResponseEntity<String> saveDetallePromocion(@RequestBody DetallePromocionDTO detallePromocionDTO) {
+        detallePromocionService.saveDetallePromocion(detallePromocionDTO);
+        return ResponseEntity.ok("Detalle de promoción guardado correctamente");
     }
 
     @GetMapping("/{id}")
@@ -27,18 +27,17 @@ public class DetallePromocionController {
         return ResponseEntity.ok(detallePromocionService.getDetallePromocionById(id));
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveDetallePromocion(@RequestBody DetallePromocionDTO detallePromocionDTO) {
-        detallePromocionService.saveDetallePromocion(detallePromocionDTO);
-        return ResponseEntity.ok("Detalle de promoción guardado exitosamente");
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<List<DetallePromocionDTO>> getDetallesPromocion() {
+        return ResponseEntity.ok(detallePromocionService.getAllDetallesPromocion());
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateDetallePromocion(@PathVariable Long id,
                                                          @RequestBody DetallePromocionDTO detallePromocionDTO) {
         detallePromocionService.updateDetallePromocion(id, detallePromocionDTO);
-        return ResponseEntity.ok("Detalle de promoción actualizado exitosamente");
+        return ResponseEntity.ok("Detalle de promoción actualizado correctamente");
     }
-
 
 }

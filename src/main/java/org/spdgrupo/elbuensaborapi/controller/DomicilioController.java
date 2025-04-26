@@ -15,10 +15,10 @@ public class DomicilioController {
 
     private final DomicilioService domicilioService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<DomicilioDTO>> getDomicilios() {
-        return ResponseEntity.ok(domicilioService.getAllDomicilios());
+    @PostMapping("/save")
+    public ResponseEntity<String> saveDomicilio(@RequestBody DomicilioDTO domicilioDTO) {
+        domicilioService.saveDomicilio(domicilioDTO);
+        return ResponseEntity.ok("Domicilio guardado exitosamente");
     }
 
     @GetMapping("/{id}")
@@ -27,23 +27,23 @@ public class DomicilioController {
         return ResponseEntity.ok(domicilioService.getDomicilioById(id));
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveDomicilio(@RequestBody DomicilioDTO domicilioDTO) {
-        domicilioService.saveDomicilio(domicilioDTO);
-        return ResponseEntity.ok("Domicilio guardado exitosamente");
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<List<DomicilioDTO>> getDomicilios() {
+        return ResponseEntity.ok(domicilioService.getAllDomicilios());
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateDomicilio(@PathVariable Long id,
                                                   @RequestBody DomicilioDTO domicilioDTO) {
         domicilioService.updateDomicilio(id, domicilioDTO);
-        return ResponseEntity.ok("Domicilio actualizado exitosamente");
+        return ResponseEntity.ok("Domicilio actualizado correctamente");
     }
 
     @PutMapping("/delete/{id}")
     public ResponseEntity<String> deleteDomicilio(@PathVariable Long id) {
         domicilioService.deleteDomicilio(id);
-        return ResponseEntity.ok("Domicilio eliminado exitosamente");
+        return ResponseEntity.ok("Domicilio eliminado correctamente");
     }
 
 }

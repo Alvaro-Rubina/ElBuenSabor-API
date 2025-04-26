@@ -15,10 +15,10 @@ public class DetalleDomicilioController {
 
     private final DetalleDomicilioService detalleDomicilioService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<DetalleDomicilioDTO>> getDetallesDomicilio() {
-        return ResponseEntity.ok(detalleDomicilioService.getAllDetallesDomicilio());
+    @PostMapping("/save")
+    public ResponseEntity<String> saveDetalleDomicilio(@RequestBody DetalleDomicilioDTO detalleDomicilioDTO) {
+        detalleDomicilioService.saveDetalleDomicilio(detalleDomicilioDTO);
+        return ResponseEntity.ok("Detalle de domicilio guardado correctamente");
     }
 
     @GetMapping("/{id}")
@@ -27,17 +27,10 @@ public class DetalleDomicilioController {
         return ResponseEntity.ok(detalleDomicilioService.getDetalleDomicilioById(id));
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveDetalleDomicilio(@RequestBody DetalleDomicilioDTO detalleDomicilioDTO) {
-        detalleDomicilioService.saveDetalleDomicilio(detalleDomicilioDTO);
-        return ResponseEntity.ok("Detalle de domicilio guardado exitosamente");
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateDetalleDomicilio(@PathVariable Long id,
-                                                         @RequestBody DetalleDomicilioDTO detalleDomicilioDTO) {
-        detalleDomicilioService.updateDetalleDomicilio(id, detalleDomicilioDTO);
-        return ResponseEntity.ok("Detalle de domicilio actualizado exitosamente");
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<List<DetalleDomicilioDTO>> getDetallesDomicilio() {
+        return ResponseEntity.ok(detalleDomicilioService.getAllDetallesDomicilio());
     }
 
     @GetMapping("/cliente/{clienteId}")
@@ -46,6 +39,12 @@ public class DetalleDomicilioController {
         return ResponseEntity.ok(detalleDomicilioService.getDetallesDomicilioByClienteId(clienteId));
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateDetalleDomicilio(@PathVariable Long id,
+                                                         @RequestBody DetalleDomicilioDTO detalleDomicilioDTO) {
+        detalleDomicilioService.updateDetalleDomicilio(id, detalleDomicilioDTO);
+        return ResponseEntity.ok("Detalle de domicilio actualizado correctamente");
+    }
 
 }
 

@@ -15,10 +15,10 @@ public class DetallePedidoController {
 
     private final DetallePedidoService detallePedidoService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<DetallePedidoDTO>> getDetallesPedido() {
-        return ResponseEntity.ok(detallePedidoService.getAllDetallesPedido());
+    @PostMapping("/save")
+    public ResponseEntity<String> saveDetallePedido(@RequestBody DetallePedidoDTO detallePedidoDTO) {
+        detallePedidoService.saveDetallePedido(detallePedidoDTO);
+        return ResponseEntity.ok("Detalle de pedido guardado correctamente");
     }
 
     @GetMapping("/{id}")
@@ -27,24 +27,23 @@ public class DetallePedidoController {
         return ResponseEntity.ok(detallePedidoService.getDetallePedidoById(id));
     }
 
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<List<DetallePedidoDTO>> getDetallesPedido() {
+        return ResponseEntity.ok(detallePedidoService.getAllDetallesPedido());
+    }
+
     @GetMapping("/pedido/{pedidoId}")
     @ResponseBody
     public ResponseEntity<List<DetallePedidoDTO>> getDetallesPedidoByPedidoId(@PathVariable Long pedidoId) {
         return ResponseEntity.ok(detallePedidoService.getDetallesPedidoByPedidoId(pedidoId));
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveDetallePedido(@RequestBody DetallePedidoDTO detallePedidoDTO) {
-        detallePedidoService.saveDetallePedido(detallePedidoDTO);
-        return ResponseEntity.ok("Detalle de pedido guardado exitosamente");
-    }
-
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateDetallePedido(@PathVariable Long id,
                                                       @RequestBody DetallePedidoDTO detallePedidoDTO) {
         detallePedidoService.updateDetallePedido(id, detallePedidoDTO);
-        return ResponseEntity.ok("Detalle de pedido actualizado exitosamente");
+        return ResponseEntity.ok("Detalle de pedido actualizado correctamente");
     }
-
 
 }

@@ -15,10 +15,10 @@ public class RubroInsumoController {
 
     private final RubroInsumoService rubroInsumoService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<RubroInsumoDTO>> getAllRubroInsumos() {
-        return ResponseEntity.ok(rubroInsumoService.getAllRubroInsumos());
+    @PostMapping("/save")
+    public ResponseEntity<String> saveRubroInsumo(@RequestBody RubroInsumoDTO rubroInsumoDTO) {
+        rubroInsumoService.saveRubroInsumo(rubroInsumoDTO);
+        return ResponseEntity.ok("RubroInsumo guardado correctamente");
     }
 
     @GetMapping("/{id}")
@@ -27,10 +27,10 @@ public class RubroInsumoController {
         return ResponseEntity.ok(rubroInsumoService.getRubroInsumoById(id));
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveRubroInsumo(@RequestBody RubroInsumoDTO rubroInsumoDTO) {
-        rubroInsumoService.saveRubroInsumo(rubroInsumoDTO);
-        return ResponseEntity.ok("RubroInsumo guardado correctamente");
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<List<RubroInsumoDTO>> getAllRubroInsumos() {
+        return ResponseEntity.ok(rubroInsumoService.getAllRubroInsumos());
     }
 
     @PutMapping("/update/{id}")
