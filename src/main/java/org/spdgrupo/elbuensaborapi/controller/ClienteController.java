@@ -15,10 +15,10 @@ public class ClienteController {
 
     private final ClienteService clienteService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<ClienteDTO>> getClientes() {
-        return ResponseEntity.ok(clienteService.getAllClientes());
+    @PostMapping("/save")
+    public ResponseEntity<String> saveCliente(@RequestBody ClienteDTO clienteDTO) {
+        clienteService.saveCliente(clienteDTO);
+        return ResponseEntity.ok("Cliente guardado exitosamente");
     }
 
     @GetMapping("/{id}")
@@ -27,10 +27,10 @@ public class ClienteController {
         return ResponseEntity.ok(clienteService.getClienteById(id));
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveCliente(@RequestBody ClienteDTO clienteDTO) {
-        clienteService.saveCliente(clienteDTO);
-        return ResponseEntity.ok("Cliente guardado exitosamente");
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<List<ClienteDTO>> getClientes() {
+        return ResponseEntity.ok(clienteService.getAllClientes());
     }
 
     @PutMapping("/update/{id}")
