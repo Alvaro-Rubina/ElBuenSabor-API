@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.PromocionDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Promocion;
 import org.spdgrupo.elbuensaborapi.repository.PromocionRepository;
@@ -10,10 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PromocionService {
 
-    @Autowired
-    private PromocionRepository promocionRepository;
+    // Dependencias
+    private final PromocionRepository promocionRepository;
 
     public void savePromocion(PromocionDTO promocionDTO) {
         Promocion promocion = toEntity(promocionDTO);
