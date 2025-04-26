@@ -15,10 +15,10 @@ public class ProductoController {
 
     private final ProductoService productoService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<ProductoDTO>> getAllProductos() {
-        return ResponseEntity.ok(productoService.getAllProductos());
+    @PostMapping("/save")
+    public ResponseEntity<String> saveProducto(@RequestBody ProductoDTO productoDTO) {
+        productoService.saveProducto(productoDTO);
+        return ResponseEntity.ok("Producto guardado correctamente");
     }
 
     @GetMapping("/{id}")
@@ -27,22 +27,16 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.getProductoById(id));
     }
 
-    @GetMapping("/denominacion/{denominacion}")
+    @GetMapping("/buscar")
     @ResponseBody
-    public ResponseEntity<List<ProductoDTO>> getProductosByDenominacion(@PathVariable String denominacion) {
+    public ResponseEntity<List<ProductoDTO>> getProductosByDenominacion(@RequestParam(required = true) String denominacion) {
         return ResponseEntity.ok(productoService.getProductosByDenominacion(denominacion));
     }
 
-    @GetMapping("/categoria/{categoria}")
+    @GetMapping
     @ResponseBody
-    public ResponseEntity<List<ProductoDTO>> getProductosByDenominacionCategoria(@PathVariable String categoria) {
-        return ResponseEntity.ok(productoService.getProductosByDenominacionCategoria(categoria));
-    }
-
-    @PostMapping("/save")
-    public ResponseEntity<String> saveProducto(@RequestBody ProductoDTO productoDTO) {
-        productoService.saveProducto(productoDTO);
-        return ResponseEntity.ok("Producto guardado correctamente");
+    public ResponseEntity<List<ProductoDTO>> getAllProductos(@RequestParam(required = false) String rubro) {
+        return ResponseEntity.ok(productoService.getAllProductos(rubro));
     }
 
     @PutMapping("/update/{id}")
@@ -51,7 +45,7 @@ public class ProductoController {
         return ResponseEntity.ok("Producto actualizado correctamente");
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteProducto(@PathVariable Long id) {
         productoService.deleteProducto(id);
         return ResponseEntity.ok("Producto eliminado exitosamente");

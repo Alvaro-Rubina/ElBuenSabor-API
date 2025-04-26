@@ -43,9 +43,14 @@ public class ProductoService {
         return productosDTO;
     }
 
-    // Acá busca por rubro parcial. Ej para "Pizza" busca Pizza o izza, etc
-    public List<ProductoDTO> getProductosByDenominacionCategoria(String categoria) {
-        List<Producto> productos = productoRepository.findByRubroDenominacionContainingIgnoreCase(categoria);
+    // Acá busca por categoria, y si no se le pasa parametro, busca todos
+    public List<ProductoDTO> getAllProductos(String rubro) {
+        List<Producto> productos = new ArrayList<>();
+        if (rubro == null || rubro.isEmpty()) {
+            productos = productoRepository.findAll();
+        } else {
+            productos = productoRepository.findByRubroDenominacionIgnoreCase(rubro);
+        }
         List<ProductoDTO> productosDTO = new ArrayList<>();
 
         for (Producto producto : productos) {
@@ -65,15 +70,7 @@ public class ProductoService {
         return productosDTO;
     }
 
-    public List<ProductoDTO> getAllProductos() {
-        List<Producto> productos = productoRepository.findAll();
-        List<ProductoDTO> productosDTO = new ArrayList<>();
 
-        for (Producto producto : productos) {
-            productosDTO.add(toDTO(producto));
-        }
-        return productosDTO;
-    }
 
     public void updateProducto(Long id, ProductoDTO productoDTO) {
         Producto producto = productoRepository.findById(id)
