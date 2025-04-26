@@ -31,8 +31,25 @@ public class InsumoService {
         return toDTO(insumo);
     }
 
-    public List<InsumoDTO> getAllInsumos() {
-        List<Insumo> insumos = insumoRepository.findAll();
+    public List<InsumoDTO> getInsumosByDenominacion(String denominacion) {
+        List<Insumo> insumos = insumoRepository.findByDenominacionContainingIgnoreCase(denominacion);
+        List<InsumoDTO> insumosDTO = new ArrayList<>();
+
+        for (Insumo insumo : insumos) {
+            insumosDTO.add(toDTO(insumo));
+        }
+        return insumosDTO;
+    }
+
+    // Acá busca por rubro, y si no se le pasa parametro (o es 0), busca todos
+    public List<InsumoDTO> getAllInsumos(Long rubroId) {
+        List<Insumo> insumos = new ArrayList<>();
+
+        if (rubroId == null || rubroId == 0L) {
+            insumos = insumoRepository.findAll();
+        } else {
+            insumos = insumoRepository.findByRubroId(rubroId);
+        }
         List<InsumoDTO> insumosDTO = new ArrayList<>();
 
         for (Insumo insumo : insumos) {
