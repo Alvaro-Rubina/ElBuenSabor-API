@@ -27,10 +27,16 @@ public class InsumoController {
         return ResponseEntity.ok(insumoService.getInsumoById(id));
     }
 
+    @GetMapping("/buscar")
+    @ResponseBody
+    public ResponseEntity<List<InsumoDTO>> getInsumosByDenominacion(@RequestParam String denominacion) {
+        return ResponseEntity.ok(insumoService.getInsumosByDenominacion(denominacion));
+    }
+
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<InsumoDTO>> getAllInsumos() {
-        return ResponseEntity.ok(insumoService.getAllInsumos());
+    public ResponseEntity<List<InsumoDTO>> getAllInsumos(@RequestParam(required = false) Long rubroId) {
+        return ResponseEntity.ok(insumoService.getAllInsumos(rubroId));
     }
     
     @PutMapping("/update/{id}")
