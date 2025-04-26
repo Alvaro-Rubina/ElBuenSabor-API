@@ -63,7 +63,7 @@ public class RubroProductoService {
     public RubroProducto toEntity(RubroProductoDTO rubroProductoDTO) {
         return RubroProducto.builder()
                 .denominacion(rubroProductoDTO.getDenominacion())
-                .activo(rubroProductoDTO.isActivo())
+                .activo(true)
                 .build();
     };
 

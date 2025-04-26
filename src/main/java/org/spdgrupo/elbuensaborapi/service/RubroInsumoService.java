@@ -68,7 +68,7 @@ public class RubroInsumoService {
         return RubroInsumo.builder()
                 .denominacion(rubroInsumoDTO.getDenominacion())
                 .unidadMedida(rubroInsumoDTO.getUnidadMedida())
-                .activo(rubroInsumoDTO.isActivo())
+                .activo(true)
                 .rubroPadre(
                         rubroInsumoDTO.getRubroPadre() != null
                                 ? rubroInsumoRepository.findById(rubroInsumoDTO.getRubroPadre().getId())
