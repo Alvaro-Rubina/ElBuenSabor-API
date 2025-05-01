@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.InsumoDTO;
 import org.spdgrupo.elbuensaborapi.service.InsumoService;
@@ -16,7 +17,7 @@ public class InsumoController {
     private final InsumoService insumoService;
 
     @PostMapping("/save")
-    public ResponseEntity<String> saveInsumo(@RequestBody InsumoDTO insumoDTO) {
+    public ResponseEntity<String> saveInsumo(@Valid @RequestBody InsumoDTO insumoDTO) {
         insumoService.saveInsumo(insumoDTO);
         return ResponseEntity.ok("Insumo guardado correctamente");
     }
@@ -40,7 +41,7 @@ public class InsumoController {
     }
     
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateInsumo(@PathVariable Long id, @RequestBody InsumoDTO insumoDTO) {
+    public ResponseEntity<String> updateInsumo(@PathVariable Long id,@Valid @RequestBody InsumoDTO insumoDTO) {
         insumoService.updateInsumo(id, insumoDTO);
         return ResponseEntity.ok("Insumo actualizado correctamente");
     }
