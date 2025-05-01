@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.DetallePromocionDTO;
 import org.spdgrupo.elbuensaborapi.service.DetallePromocionService;
@@ -16,7 +17,7 @@ public class DetallePromocionController {
     private final DetallePromocionService detallePromocionService;
 
     @PostMapping("/save")
-    public ResponseEntity<String> saveDetallePromocion(@RequestBody DetallePromocionDTO detallePromocionDTO) {
+    public ResponseEntity<String> saveDetallePromocion(@Valid @RequestBody DetallePromocionDTO detallePromocionDTO) {
         detallePromocionService.saveDetallePromocion(detallePromocionDTO);
         return ResponseEntity.ok("Detalle de promoción guardado correctamente");
     }
@@ -35,7 +36,7 @@ public class DetallePromocionController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateDetallePromocion(@PathVariable Long id,
-                                                         @RequestBody DetallePromocionDTO detallePromocionDTO) {
+                                                         @Valid @RequestBody DetallePromocionDTO detallePromocionDTO) {
         detallePromocionService.updateDetallePromocion(id, detallePromocionDTO);
         return ResponseEntity.ok("Detalle de promoción actualizado correctamente");
     }
