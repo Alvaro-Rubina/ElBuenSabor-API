@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.DetalleFacturaDTO;
 import org.spdgrupo.elbuensaborapi.service.DetalleFacturaService;
@@ -16,7 +17,7 @@ public class DetalleFacturaController {
     private final DetalleFacturaService detalleFacturaService;
 
     @PostMapping("/save")
-    public ResponseEntity<String> saveDetalleFactura(@RequestBody DetalleFacturaDTO detalleFacturaDTO) {
+    public ResponseEntity<String> saveDetalleFactura(@Valid @RequestBody DetalleFacturaDTO detalleFacturaDTO) {
         detalleFacturaService.saveDetalleFactura(detalleFacturaDTO);
         return ResponseEntity.ok("Detalle de factura guardado correctamente");
     }
@@ -35,7 +36,7 @@ public class DetalleFacturaController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateDetalleFactura(@PathVariable Long id,
-                                                       @RequestBody DetalleFacturaDTO detalleFacturaDTO) {
+                                                       @Valid @RequestBody DetalleFacturaDTO detalleFacturaDTO) {
         detalleFacturaService.updateDetalleFactura(id, detalleFacturaDTO);
         return ResponseEntity.ok("Detalle de factura actualizado correctamente");
     }
