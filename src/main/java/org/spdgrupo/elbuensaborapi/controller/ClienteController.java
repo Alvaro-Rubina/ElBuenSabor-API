@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.ClienteDTO;
 import org.spdgrupo.elbuensaborapi.service.ClienteService;
@@ -16,7 +17,7 @@ public class ClienteController {
     private final ClienteService clienteService;
 
     @PostMapping("/save")
-    public ResponseEntity<String> saveCliente(@RequestBody ClienteDTO clienteDTO) {
+    public ResponseEntity<String> saveCliente(@Valid @RequestBody ClienteDTO clienteDTO) {
         clienteService.saveCliente(clienteDTO);
         return ResponseEntity.ok("Cliente guardado correctamente");
     }
@@ -35,7 +36,7 @@ public class ClienteController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateCliente(@PathVariable Long id,
-                                                @RequestBody ClienteDTO clienteDTO) {
+                                                @Valid @RequestBody ClienteDTO clienteDTO) {
         clienteService.updateCliente(id, clienteDTO);
         return ResponseEntity.ok("Cliente actualizado correctamente");
     }
