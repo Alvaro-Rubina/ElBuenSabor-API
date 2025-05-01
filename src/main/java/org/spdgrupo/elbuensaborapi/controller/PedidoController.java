@@ -1,6 +1,7 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.service.PedidoService;
@@ -17,7 +18,7 @@ public class PedidoController {
     private final PedidoService pedidoService;
 
     @PostMapping("/save")
-    public ResponseEntity<String> savePedido(@RequestBody PedidoDTO pedidoDTO) {
+    public ResponseEntity<String> savePedido(@Valid @RequestBody PedidoDTO pedidoDTO) {
         pedidoService.savePedido(pedidoDTO);
         return ResponseEntity.ok("Pedido guardado correctamente");
     }
@@ -37,7 +38,7 @@ public class PedidoController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updatePedido(@PathVariable Long id,
-                                               @RequestBody PedidoDTO pedidoDTO) {
+                                               @Valid @RequestBody PedidoDTO pedidoDTO) {
         pedidoService.updatePedido(id, pedidoDTO);
         return ResponseEntity.ok("Pedido actualizado correctamente");
     }
