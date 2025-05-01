@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class EmpleadoService {  // TODO: HACER EL EmpleadoController
+public class EmpleadoService {
 
     // Dependencias
     private final EmpleadoRepository empleadoRepository;
