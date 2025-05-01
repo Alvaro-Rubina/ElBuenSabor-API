@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.DomicilioDTO;
 import org.spdgrupo.elbuensaborapi.service.DomicilioService;
@@ -16,7 +17,7 @@ public class DomicilioController {
     private final DomicilioService domicilioService;
 
     @PostMapping("/save")
-    public ResponseEntity<String> saveDomicilio(@RequestBody DomicilioDTO domicilioDTO) {
+    public ResponseEntity<String> saveDomicilio(@Valid @RequestBody DomicilioDTO domicilioDTO) {
         domicilioService.saveDomicilio(domicilioDTO);
         return ResponseEntity.ok("Domicilio guardado exitosamente");
     }
@@ -35,7 +36,7 @@ public class DomicilioController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateDomicilio(@PathVariable Long id,
-                                                  @RequestBody DomicilioDTO domicilioDTO) {
+                                                  @Valid @RequestBody DomicilioDTO domicilioDTO) {
         domicilioService.updateDomicilio(id, domicilioDTO);
         return ResponseEntity.ok("Domicilio actualizado correctamente");
     }
