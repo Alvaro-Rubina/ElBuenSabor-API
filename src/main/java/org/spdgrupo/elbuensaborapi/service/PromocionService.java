@@ -17,6 +17,8 @@ public class PromocionService {
     private final PromocionRepository promocionRepository;
 
     public void savePromocion(PromocionDTO promocionDTO) {
+
+        validarFechas(promocionDTO);
         Promocion promocion = toEntity(promocionDTO);
         promocionRepository.save(promocion);
     }
@@ -38,6 +40,7 @@ public class PromocionService {
     }
 
     public void updatePromocion(Long id, PromocionDTO promocionDTO) {
+        validarFechas(promocionDTO);
         Promocion promocion = promocionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Promocion con el id " + id + " no encontrado"));
 
@@ -86,5 +89,10 @@ public class PromocionService {
                 .fechaHasta(promocion.getFechaHasta())
                 .descuento(promocion.getDescuento())
                 .build();
+    }
+    private void validarFechas(PromocionDTO promocionDTO) {
+        if (promocionDTO.getFechaHasta().isBefore(promocionDTO.getFechaDesde())) {
+            throw new IllegalArgumentException("La fecha hasta no puede ser anterior a la fecha desde.");
+        }
     }
 }
