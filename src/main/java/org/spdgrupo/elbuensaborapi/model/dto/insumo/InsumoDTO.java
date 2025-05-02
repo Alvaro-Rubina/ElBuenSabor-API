@@ -1,10 +1,12 @@
 package org.spdgrupo.elbuensaborapi.model.dto.insumo;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.spdgrupo.elbuensaborapi.model.dto.RubroInsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 
 @AllArgsConstructor
@@ -36,12 +38,16 @@ public class InsumoDTO {
     @DecimalMin(value = "0.0", message = "El campo stockMinimo no puede ser menor a 0")
     private Double stockMinimo;
 
+    @NotNull(message = "El campo esParaElaborar no puede ser nulo")
     private boolean esParaElaborar;
+
     private boolean activo;
 
     @NotNull(message = "El campo unidadMedida no puede ser nulo")
+    @Enumerated(EnumType.STRING)
     private UnidadMedida unidadMedida;
 
     @NotNull(message = "El campo rubro no puede ser nulo")
-    private RubroInsumoDTO rubro;
+    @Min(value = 1, message = "El campo rubroId no puede ser menor a 1")
+    private Long rubroId;
 }
