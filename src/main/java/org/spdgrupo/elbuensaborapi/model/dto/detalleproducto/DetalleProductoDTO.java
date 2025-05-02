@@ -12,7 +12,7 @@ import lombok.*;
 public class DetalleProductoDTO {
 
     @NotNull(message = "El campo cantidad no puede ser nulo")
-    @Min(value = 1, message = "La cantidad debe ser mayor a 0")
+    @Min(value = 1, message = "El campo cantidad no puede ser menor a 1")
     private Double cantidad;
 
     @NotNull(message = "El campo productoId no puede ser nulo")
