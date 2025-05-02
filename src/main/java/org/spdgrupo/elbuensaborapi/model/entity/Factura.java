@@ -16,7 +16,7 @@ public class Factura {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDate fecha;
+    private LocalDate fechaFacturacion;
     private Long numeroComprobante;
     private Double montoDescuento;
     @Enumerated(EnumType.STRING)
@@ -25,7 +25,6 @@ public class Factura {
     private String totalVenta;
     private Double costoEnvio;
 
-    @OneToOne
-    private Pedido pedido;
+    // TODO: Después ver el temita de MercadoPagoDatos
 
 }

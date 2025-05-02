@@ -34,8 +34,6 @@ public class Pedido {
     @Enumerated(EnumType.STRING)
     private FormaPago formaPago;
 
-    // TODO: Después ver el temita de MercadoPagoDatos
-
     @ManyToOne
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
@@ -46,5 +44,8 @@ public class Pedido {
 
     @OneToMany(mappedBy = "pedido")
     private List<DetallePedido> detallePedidos;
+
+    @OneToOne
+    private Factura factura;
 
 }
