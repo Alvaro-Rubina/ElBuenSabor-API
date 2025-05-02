@@ -23,6 +23,7 @@ public class Pedido {
     private Long id;
 
     private LocalDate fecha;
+    private LocalTime hora;
     private Integer numero;
     @Enumerated(EnumType.STRING)
     private Estado estado;
