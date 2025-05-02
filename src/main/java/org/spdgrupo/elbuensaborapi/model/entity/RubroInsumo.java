@@ -17,8 +17,6 @@ public class RubroInsumo {
     private Long id;
     private String denominacion;
     private boolean activo;
-    @Enumerated(EnumType.STRING)
-    private UnidadMedida unidadMedida;
 
     @ManyToOne
     @JoinColumn(name = "rubro_padre_id")
