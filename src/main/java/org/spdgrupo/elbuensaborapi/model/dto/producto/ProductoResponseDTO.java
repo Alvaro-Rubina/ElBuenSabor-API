@@ -1,8 +1,8 @@
 package org.spdgrupo.elbuensaborapi.model.dto.producto;
 
 import lombok.*;
-import org.spdgrupo.elbuensaborapi.model.dto.RubroProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoResponseDTO;
 
 import java.util.List;
 
@@ -20,6 +20,6 @@ public class ProductoResponseDTO {
     private Long precioVenta;
     private String urlImagen;
     private boolean activo;
-    private RubroProductoDTO rubro;
+    private RubroProductoResponseDTO rubro;
     private List<DetalleProductoResponseDTO> detalleProductos;
 }
