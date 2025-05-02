@@ -16,9 +16,10 @@ public class Domicilio {
     private Long id;
 
     private String calle;
-    private String localidad;
     private Integer numero;
+    private String localidad;
     private Integer codigoPostal;
+    private String infoAdicional;
     private Boolean activo;
 
 }
