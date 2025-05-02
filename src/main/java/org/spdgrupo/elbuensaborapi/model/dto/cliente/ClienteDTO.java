@@ -1,8 +1,8 @@
-package org.spdgrupo.elbuensaborapi.model.dto;
+package org.spdgrupo.elbuensaborapi.model.dto.cliente;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioDTO;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -11,8 +11,6 @@ import lombok.*;
 @Builder
 public class ClienteDTO {
 
-    private Long id;
-
     @NotBlank (message = "El campo nombreCompleto no puede estar vacío")
     private String nombreCompleto;
 
@@ -20,5 +18,4 @@ public class ClienteDTO {
     private String telefono;
 
     private UsuarioDTO usuario;
-    private Boolean activo;
 }
