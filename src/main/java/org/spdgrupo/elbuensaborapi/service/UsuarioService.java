@@ -25,13 +25,13 @@ public class UsuarioService {
     public UsuarioResponseDTO getUsuarioById(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario con el id " + id + " no encontrado"));
-        return toDto(usuario);
+        return toDTO(usuario);
     }
 
     public UsuarioResponseDTO getUsuarioByEmail(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario con el email " + email + " no encontrado"));
-        return toDto(usuario);
+        return toDTO(usuario);
     }
 
     public List<UsuarioResponseDTO> getAllUsuarios() {
@@ -39,7 +39,7 @@ public class UsuarioService {
          List<UsuarioResponseDTO> usuarioDTOs = new ArrayList<>();
 
          for (Usuario usuario : usuarios) {
-                usuarioDTOs.add(toDto(usuario));
+                usuarioDTOs.add(toDTO(usuario));
          }
 
          return usuarioDTOs;
@@ -69,7 +69,7 @@ public class UsuarioService {
                 .rol(usuarioDTO.getRol())
                 .build();
     }
-    public UsuarioResponseDTO toDto(Usuario usuario) {
+    public UsuarioResponseDTO toDTO(Usuario usuario) {
         return UsuarioResponseDTO.builder()
                 .id(usuario.getId())
                 .email(usuario.getEmail())

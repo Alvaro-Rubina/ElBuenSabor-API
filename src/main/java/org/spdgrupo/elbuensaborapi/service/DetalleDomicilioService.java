@@ -7,7 +7,6 @@ import org.spdgrupo.elbuensaborapi.model.dto.detalledomicilio.DetalleDomicilioRe
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleDomicilio;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.spdgrupo.elbuensaborapi.repository.DetalleDomicilioRepository;
-import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ public class DetalleDomicilioService {
     private final DetalleDomicilioRepository detalleDomicilioRepository;
     private final ClienteRepository clienteRepository;
     private final DomicilioService domicilioService;
-    private final DomicilioRepository domicilioRepository;
 
     public void saveDetalleDomicilio(DetalleDomicilioDTO detalleDomicilioDTO) {
         DetalleDomicilio detalleDomicilio = toEntity(detalleDomicilioDTO);
