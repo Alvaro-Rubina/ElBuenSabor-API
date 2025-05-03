@@ -2,7 +2,8 @@ package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.EmpleadoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.EmpleadoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +25,13 @@ public class EmpleadoController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<EmpleadoDTO> getEmpleadoById(@PathVariable Long id) {
+    public ResponseEntity<EmpleadoResponseDTO> getEmpleadoById(@PathVariable Long id) {
         return ResponseEntity.ok(empleadoService.getEmpleadoById(id));
     }
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<EmpleadoDTO>> getAllEmpleados () {
+    public ResponseEntity<List<EmpleadoResponseDTO>> getAllEmpleados () {
         return ResponseEntity.ok(empleadoService.getAllEmpleados());
     }
 

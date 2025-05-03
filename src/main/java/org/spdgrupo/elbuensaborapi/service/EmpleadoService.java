@@ -3,12 +3,11 @@ package org.spdgrupo.elbuensaborapi.service;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.InvalidRolException;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
-import org.spdgrupo.elbuensaborapi.model.dto.EmpleadoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Empleado;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
-import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
 import org.spdgrupo.elbuensaborapi.repository.EmpleadoRepository;
-import org.spdgrupo.elbuensaborapi.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,9 +20,7 @@ public class EmpleadoService {
     // Dependencias
     private final EmpleadoRepository empleadoRepository;
     private final UsuarioService usuarioService;
-    private final UsuarioRepository usuarioRepository;
     private final DomicilioService domicilioService;
-    private final DomicilioRepository domicilioRepository;
 
     public void saveEmpleado(EmpleadoDTO empleadoDTO) {
         Empleado empleado = toEntity(empleadoDTO);
@@ -34,15 +31,15 @@ public class EmpleadoService {
         empleadoRepository.save(empleado);
     }
 
-    public EmpleadoDTO getEmpleadoById(Long id) {
+    public EmpleadoResponseDTO getEmpleadoById(Long id) {
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Empleado con el " +  id + " no encontrado"));
         return toDTO(empleado);
     }
 
-    public List<EmpleadoDTO> getAllEmpleados() {
+    public List<EmpleadoResponseDTO> getAllEmpleados() {
         List<Empleado> empleados = empleadoRepository.findAll();
-        List<EmpleadoDTO> empleadosDTO = new ArrayList<>();
+        List<EmpleadoResponseDTO> empleadosDTO = new ArrayList<>();
         for (Empleado empleado : empleados) {
             empleadosDTO.add(toDTO(empleado));
         }
@@ -56,20 +53,18 @@ public class EmpleadoService {
         if (!empleado.getNombreCompleto().equals(empleadoDTO.getNombreCompleto())) {
             empleado.setNombreCompleto(empleadoDTO.getNombreCompleto());
         }
-
         if (!empleado.getTelefono().equals(empleadoDTO.getTelefono())) {
             empleado.setTelefono(empleadoDTO.getTelefono());
         }
-
-        if (!empleado.getActivo().equals(empleadoDTO.getActivo())) {
-            empleado.setActivo(empleadoDTO.getActivo());
+        if (!empleado.isActivo() == empleadoDTO.isActivo()) {
+            empleado.setActivo(empleadoDTO.isActivo());
         }
-
-        // actualizo el domicilio del empleado
-        domicilioService.updateDomicilio(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());
 
         // actualizo el usuario del empleado
         usuarioService.updateUsuario(empleado.getUsuario().getId(), empleadoDTO.getUsuario());
+
+        // actualizo el domicilio del empleado
+        domicilioService.updateDomicilio(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());
 
         if (empleado.getUsuario().getRol() == Rol.CLIENTE) {
             throw new InvalidRolException("No se puede asignar el rol CLIENTE a un empleado");
@@ -96,14 +91,14 @@ public class EmpleadoService {
                 .build();
     }
 
-    public EmpleadoDTO toDTO(Empleado empleado) {
-        return EmpleadoDTO.builder()
+    public EmpleadoResponseDTO toDTO(Empleado empleado) {
+        return EmpleadoResponseDTO.builder()
                 .id(empleado.getId())
                 .nombreCompleto(empleado.getNombreCompleto())
                 .telefono(empleado.getTelefono())
-                .activo(empleado.getActivo())
-                .usuario(usuarioService.toDto(empleado.getUsuario()))
-                .domicilio(domicilioService.toDto(empleado.getDomicilio()))
+                .activo(empleado.isActivo())
+                .usuario(usuarioService.toDTO(empleado.getUsuario()))
+                .domicilio(domicilioService.toDTO(empleado.getDomicilio()))
                 .build();
     }
 
