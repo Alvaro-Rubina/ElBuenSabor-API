@@ -2,7 +2,8 @@ package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.DomicilioDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.DomicilioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +25,13 @@ public class DomicilioController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<DomicilioDTO> getDomicilioById(@PathVariable Long id) {
+    public ResponseEntity<DomicilioResponseDTO> getDomicilioById(@PathVariable Long id) {
         return ResponseEntity.ok(domicilioService.getDomicilioById(id));
     }
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<DomicilioDTO>> getDomicilios() {
+    public ResponseEntity<List<DomicilioResponseDTO>> getDomicilios() {
         return ResponseEntity.ok(domicilioService.getAllDomicilios());
     }
 
