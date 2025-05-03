@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.model.dto.empleado;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioDTO;
 
 @NoArgsConstructor
@@ -23,6 +24,5 @@ public class EmpleadoDTO {
 
     private UsuarioDTO usuario;
 
-    @NotNull(message = "El campo domicilioId no puede ser nulo")
-    private Long domicilioId;
+    private DomicilioDTO domicilio;
 }
