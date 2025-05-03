@@ -54,30 +54,14 @@ public class DetalleDomicilioService {
         return detallesDomicilioDTOs;
     }
 
-    // NOTE: no hay endpoint que ocupe este metodo en el controller porque no es tan necesario pero está por las dudas
-    public void updateDetalleDomicilio(Long id, DetalleDomicilioDTO detalleDomicilioDTO) {
-        DetalleDomicilio detalleDomicilio = detalleDomicilioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("DetalleDomicilio con el id " + id + " no encontrado"));
-
-        if (!detalleDomicilioDTO.getClienteId().equals(detalleDomicilio.getCliente().getId())) {
-            detalleDomicilio.setCliente(clienteRepository.findById(detalleDomicilioDTO.getClienteId())
-                    .orElseThrow(() -> new RuntimeException("Cliente con el id " + detalleDomicilioDTO.getClienteId() + " no encontrado")));
-        }
-        if (!detalleDomicilioDTO.getDomicilioId().equals(detalleDomicilio.getDomicilio().getId())) {
-            detalleDomicilio.setDomicilio(domicilioRepository.findById(detalleDomicilioDTO.getDomicilioId())
-                    .orElseThrow(() -> new RuntimeException("Domicilio con el id " + detalleDomicilioDTO.getDomicilioId() + " no encontrado")));
-        }
-
-        detalleDomicilioRepository.save(detalleDomicilio);
-    }
+    // NOTE: No hay metodo updateDetalleDomicilio ya que lo que se edita/actualiza es el domicilio o cliente en sí
 
     // MAPPERS
     private DetalleDomicilio toEntity(DetalleDomicilioDTO detalleDomicilioDTO) {
         return DetalleDomicilio.builder()
                 .cliente(clienteRepository.findById(detalleDomicilioDTO.getClienteId())
                         .orElseThrow(() -> new NotFoundException("Cliente con el id " + detalleDomicilioDTO.getClienteId() + " no encontrado")))
-                .domicilio(domicilioRepository.findById(detalleDomicilioDTO.getDomicilioId())
-                        .orElseThrow(() -> new NotFoundException("Domicilio con el id " + detalleDomicilioDTO.getDomicilioId() + " no encontrado")))
+                .domicilio(domicilioService.saveDomicilio(detalleDomicilioDTO.getDomicilio()))
                 .build();
     }
 

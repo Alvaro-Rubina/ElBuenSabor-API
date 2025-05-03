@@ -26,7 +26,7 @@ public class DomicilioDTO {
     // este campo es opcional
     private String infoAdicional;
 
-    // este campo es opcional
+    // este campo es opcional, util para EDITAR un domicilio ya que al crearlo por defecto activo = true
     private boolean activo;
 
 }
