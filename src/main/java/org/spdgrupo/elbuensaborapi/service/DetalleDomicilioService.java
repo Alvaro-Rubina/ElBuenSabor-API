@@ -1,7 +1,9 @@
 package org.spdgrupo.elbuensaborapi.service;
 
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.DetalleDomicilioDTO;
+import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.model.dto.detalledomicilio.DetalleDomicilioDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.detalledomicilio.DetalleDomicilioResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleDomicilio;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.spdgrupo.elbuensaborapi.repository.DetalleDomicilioRepository;
@@ -17,53 +19,53 @@ public class DetalleDomicilioService {
 
     // Dependencias
     private final DetalleDomicilioRepository detalleDomicilioRepository;
-    private final ClienteService clienteService;
     private final ClienteRepository clienteRepository;
     private final DomicilioService domicilioService;
     private final DomicilioRepository domicilioRepository;
-
-    // TODO: Es posible que se pueda cambiar la relcion entre Cliente y Domicilio de [N a N] a [1 a N]
 
     public void saveDetalleDomicilio(DetalleDomicilioDTO detalleDomicilioDTO) {
         DetalleDomicilio detalleDomicilio = toEntity(detalleDomicilioDTO);
         detalleDomicilioRepository.save(detalleDomicilio);
     }
 
-    public DetalleDomicilioDTO getDetalleDomicilioById(Long id) {
+    public DetalleDomicilioResponseDTO getDetalleDomicilioById(Long id) {
         DetalleDomicilio detalleDomicilio = detalleDomicilioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DetalleDomicilio no encontrado"));
-        return toDto(detalleDomicilio);
+                .orElseThrow(() -> new RuntimeException("DetalleDomicilio con el id " + id + " no encontrado"));
+        return toDTO(detalleDomicilio);
     }
 
-    public List<DetalleDomicilioDTO> getAllDetallesDomicilio() {
+    public List<DetalleDomicilioResponseDTO> getAllDetallesDomicilio() {
         List<DetalleDomicilio> detallesDomicilio = detalleDomicilioRepository.findAll();
-        List<DetalleDomicilioDTO> detallesDomicilioDTO = new ArrayList<>();
-        for (DetalleDomicilio detalle : detallesDomicilio) {
-            detallesDomicilioDTO.add(toDto(detalle));
+        List<DetalleDomicilioResponseDTO> detallesDomicilioDTOs = new ArrayList<>();
+        
+        for (DetalleDomicilio detalleDomicilio : detallesDomicilio) {
+            detallesDomicilioDTOs.add(toDTO(detalleDomicilio));
         }
-        return detallesDomicilioDTO;
+        return detallesDomicilioDTOs;
     }
 
-    public List<DetalleDomicilioDTO> getDetallesDomicilioByClienteId(Long clienteId) {
+    public List<DetalleDomicilioResponseDTO> getDetallesDomicilioByClienteId(Long clienteId) {
         List<DetalleDomicilio> detallesDomicilio = detalleDomicilioRepository.findByClienteId(clienteId);
-        List<DetalleDomicilioDTO> detallesDomicilioDTO = new ArrayList<>();
-        for (DetalleDomicilio detalle : detallesDomicilio) {
-            detallesDomicilioDTO.add(toDto(detalle));
+        List<DetalleDomicilioResponseDTO> detallesDomicilioDTOs = new ArrayList<>();
+        
+        for (DetalleDomicilio detalleDomicilio : detallesDomicilio) {
+            detallesDomicilioDTOs.add(toDTO(detalleDomicilio));
         }
-        return detallesDomicilioDTO;
+        return detallesDomicilioDTOs;
     }
 
+    // NOTE: no hay endpoint que ocupe este metodo en el controller porque no es tan necesario pero está por las dudas
     public void updateDetalleDomicilio(Long id, DetalleDomicilioDTO detalleDomicilioDTO) {
         DetalleDomicilio detalleDomicilio = detalleDomicilioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DetalleDomicilio no encontrado"));
+                .orElseThrow(() -> new NotFoundException("DetalleDomicilio con el id " + id + " no encontrado"));
 
-        if (!detalleDomicilioDTO.getCliente().getId().equals(detalleDomicilio.getCliente().getId())) {
-            detalleDomicilio.setCliente(clienteRepository.findById(detalleDomicilioDTO.getCliente().getId())
-                    .orElseThrow(() -> new RuntimeException("Cliente no encontrado")));
+        if (!detalleDomicilioDTO.getClienteId().equals(detalleDomicilio.getCliente().getId())) {
+            detalleDomicilio.setCliente(clienteRepository.findById(detalleDomicilioDTO.getClienteId())
+                    .orElseThrow(() -> new RuntimeException("Cliente con el id " + detalleDomicilioDTO.getClienteId() + " no encontrado")));
         }
-        if (!detalleDomicilioDTO.getDomicilio().getId().equals(detalleDomicilio.getDomicilio().getId())) {
-            detalleDomicilio.setDomicilio(domicilioRepository.findById(detalleDomicilioDTO.getDomicilio().getId())
-                    .orElseThrow(() -> new RuntimeException("Domicilio no encontrado")));
+        if (!detalleDomicilioDTO.getDomicilioId().equals(detalleDomicilio.getDomicilio().getId())) {
+            detalleDomicilio.setDomicilio(domicilioRepository.findById(detalleDomicilioDTO.getDomicilioId())
+                    .orElseThrow(() -> new RuntimeException("Domicilio con el id " + detalleDomicilioDTO.getDomicilioId() + " no encontrado")));
         }
 
         detalleDomicilioRepository.save(detalleDomicilio);
@@ -72,16 +74,17 @@ public class DetalleDomicilioService {
     // MAPPERS
     private DetalleDomicilio toEntity(DetalleDomicilioDTO detalleDomicilioDTO) {
         return DetalleDomicilio.builder()
-                .cliente(clienteRepository.findById(detalleDomicilioDTO.getCliente().getId())
-                        .orElseThrow(() -> new RuntimeException("Cliente no encontrado")))
-                .domicilio(domicilioService.saveDomicilio(detalleDomicilioDTO.getDomicilio()))
+                .cliente(clienteRepository.findById(detalleDomicilioDTO.getClienteId())
+                        .orElseThrow(() -> new NotFoundException("Cliente con el id " + detalleDomicilioDTO.getClienteId() + " no encontrado")))
+                .domicilio(domicilioRepository.findById(detalleDomicilioDTO.getDomicilioId())
+                        .orElseThrow(() -> new NotFoundException("Domicilio con el id " + detalleDomicilioDTO.getDomicilioId() + " no encontrado")))
                 .build();
     }
-    public DetalleDomicilioDTO toDto(DetalleDomicilio detalleDomicilio) {
-        return DetalleDomicilioDTO.builder()
+
+    public DetalleDomicilioResponseDTO toDTO(DetalleDomicilio detalleDomicilio) {
+        return DetalleDomicilioResponseDTO.builder()
                 .id(detalleDomicilio.getId())
-                .cliente(clienteService.toDto(detalleDomicilio.getCliente()))
-                .domicilio(domicilioService.toDto(detalleDomicilio.getDomicilio()))
+                .domicilio(domicilioService.toDTO(detalleDomicilio.getDomicilio()))
                 .build();
     }
 }

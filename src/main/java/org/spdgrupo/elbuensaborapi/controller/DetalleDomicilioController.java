@@ -2,7 +2,8 @@ package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.DetalleDomicilioDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.detalledomicilio.DetalleDomicilioDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.detalledomicilio.DetalleDomicilioResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.DetalleDomicilioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,27 +25,20 @@ public class DetalleDomicilioController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<DetalleDomicilioDTO> getDetalleDomicilioById(@PathVariable Long id) {
+    public ResponseEntity<DetalleDomicilioResponseDTO> getDetalleDomicilioById(@PathVariable Long id) {
         return ResponseEntity.ok(detalleDomicilioService.getDetalleDomicilioById(id));
     }
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<DetalleDomicilioDTO>> getDetallesDomicilio() {
+    public ResponseEntity<List<DetalleDomicilioResponseDTO>> getDetallesDomicilio() {
         return ResponseEntity.ok(detalleDomicilioService.getAllDetallesDomicilio());
     }
 
     @GetMapping("/cliente/{clienteId}")
     @ResponseBody
-    public ResponseEntity<List<DetalleDomicilioDTO>> getDetallesDomicilioByClienteId(@PathVariable Long clienteId) {
+    public ResponseEntity<List<DetalleDomicilioResponseDTO>> getDetallesDomicilioByClienteId(@PathVariable Long clienteId) {
         return ResponseEntity.ok(detalleDomicilioService.getDetallesDomicilioByClienteId(clienteId));
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateDetalleDomicilio(@PathVariable Long id,
-                                                         @Valid @RequestBody DetalleDomicilioDTO detalleDomicilioDTO) {
-        detalleDomicilioService.updateDetalleDomicilio(id, detalleDomicilioDTO);
-        return ResponseEntity.ok("Detalle de domicilio actualizado correctamente");
     }
 
 }
