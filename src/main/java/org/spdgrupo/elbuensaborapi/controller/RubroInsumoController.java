@@ -2,7 +2,8 @@ package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.RubroInsumoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.RubroInsumoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +25,13 @@ public class RubroInsumoController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<RubroInsumoDTO> getRubroInsumoById(@PathVariable Long id) {
+    public ResponseEntity<RubroInsumoResponseDTO> getRubroInsumoById(@PathVariable Long id) {
         return ResponseEntity.ok(rubroInsumoService.getRubroInsumoById(id));
     }
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<RubroInsumoDTO>> getAllRubroInsumos() {
+    public ResponseEntity<List<RubroInsumoResponseDTO>> getAllRubroInsumos() {
         return ResponseEntity.ok(rubroInsumoService.getAllRubroInsumos());
     }
 
@@ -38,6 +39,12 @@ public class RubroInsumoController {
     public ResponseEntity<String> updateRubroInsumo(@PathVariable Long id,@Valid @RequestBody RubroInsumoDTO rubroInsumoDTO) {
         rubroInsumoService.updateRubroInsumo(id, rubroInsumoDTO);
         return ResponseEntity.ok("RubroInsumo actualizado correctamente");
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteRubroInsumo(@PathVariable Long id) {
+        rubroInsumoService.deleteRubroInsumo(id);
+        return ResponseEntity.ok("RubroInsumo eliminado correctamente");
     }
 
 }
