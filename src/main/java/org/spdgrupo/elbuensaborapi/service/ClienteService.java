@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.detalledomicilio.DetalleDomicilioResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
-import org.spdgrupo.elbuensaborapi.model.entity.DetalleDomicilio;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
@@ -92,7 +90,7 @@ public class ClienteService {
                 .nombreCompleto(cliente.getNombreCompleto())
                 .telefono(cliente.getTelefono())
                 .activo(cliente.isActivo())
-                .usuario(usuarioService.toDto(cliente.getUsuario()))
+                .usuario(usuarioService.toDTO(cliente.getUsuario()))
                 .detalleDomicilios(cliente.getDetalleDomicilios().stream()
                         .map(detalleDomicilioService::toDTO)
                         .collect(Collectors.toList()))
