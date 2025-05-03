@@ -1,7 +1,5 @@
 package org.spdgrupo.elbuensaborapi.model.dto.insumo;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -44,7 +42,6 @@ public class InsumoDTO {
     private boolean activo;
 
     @NotNull(message = "El campo unidadMedida no puede ser nulo")
-    @Enumerated(EnumType.STRING)
     private UnidadMedida unidadMedida;
 
     @NotNull(message = "El campo rubro no puede ser nulo")

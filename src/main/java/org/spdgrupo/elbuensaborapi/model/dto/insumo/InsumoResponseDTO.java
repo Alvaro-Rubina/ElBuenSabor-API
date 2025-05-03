@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.model.dto.insumo;
 
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,6 +20,6 @@ public class InsumoResponseDTO {
     private Double stockMinimo;
     private boolean esParaElaborar;
     private boolean activo;
-    private String unidadMedida;
+    private UnidadMedida unidadMedida;
     private RubroInsumoResponseDTO rubro;
 }

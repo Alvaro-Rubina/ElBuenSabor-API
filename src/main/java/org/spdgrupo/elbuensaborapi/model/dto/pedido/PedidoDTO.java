@@ -1,18 +1,12 @@
 package org.spdgrupo.elbuensaborapi.model.dto.pedido;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioDTO;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
 import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
 import org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @AllArgsConstructor
 @NoArgsConstructor

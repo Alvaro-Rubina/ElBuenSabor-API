@@ -4,7 +4,6 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 
 @NoArgsConstructor
 @AllArgsConstructor

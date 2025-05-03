@@ -4,7 +4,6 @@ import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.factura.FacturaResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Factura;
 import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
 import org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio;
