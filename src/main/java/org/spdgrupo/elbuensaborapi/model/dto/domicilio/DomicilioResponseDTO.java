@@ -11,8 +11,9 @@ public class DomicilioResponseDTO {
 
     private Long id;
     private String calle;
+    private Integer numero;
     private String localidad;
     private Integer codigoPostal;
-    private Boolean activo;
     private String infoAdicional;
+    private Boolean activo;
 }

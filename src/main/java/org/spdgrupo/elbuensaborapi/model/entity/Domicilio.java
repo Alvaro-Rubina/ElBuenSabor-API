@@ -20,6 +20,6 @@ public class Domicilio {
     private String localidad;
     private Integer codigoPostal;
     private String infoAdicional;
-    private Boolean activo;
+    private boolean activo;
 
 }
