@@ -24,6 +24,6 @@ public class DomicilioDTO {
     private Integer codigoPostal;
 
     // este campo es opcional
-    private String infoAdicional;
+    private String infoAdicional = "Sin información adicional";
 
 }
