@@ -16,7 +16,7 @@ public class ClienteResponseDTO {
     private Long id;
     private String nombreCompleto;
     private String telefono;
-    private UsuarioResponseDTO usuario;
     private boolean activo;
+    private UsuarioResponseDTO usuario;
     private List<DetalleDomicilioResponseDTO> detalleDomicilios;
 }
