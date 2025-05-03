@@ -2,7 +2,8 @@ package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.ClienteDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.ClienteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +25,13 @@ public class ClienteController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<ClienteDTO> getClienteById(@PathVariable Long id) {
+    public ResponseEntity<ClienteResponseDTO> getClienteById(@PathVariable Long id) {
         return ResponseEntity.ok(clienteService.getClienteById(id));
     }
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<ClienteDTO>> getClientes() {
+    public ResponseEntity<List<ClienteResponseDTO>> getClientes() {
         return ResponseEntity.ok(clienteService.getAllClientes());
     }
 
