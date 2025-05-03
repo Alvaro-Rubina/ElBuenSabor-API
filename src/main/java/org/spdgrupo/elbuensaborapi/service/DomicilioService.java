@@ -28,7 +28,7 @@ public class DomicilioService {
         List<DomicilioResponseDTO> domicilioDTOs = new ArrayList<>();
 
         for (Domicilio domicilio : domicilios) {
-            domicilioDTOs.add(toDto(domicilio));
+            domicilioDTOs.add(toDTO(domicilio));
         }
 
         return domicilioDTOs;
@@ -37,7 +37,7 @@ public class DomicilioService {
     public DomicilioResponseDTO getDomicilioById(Long id){
         Domicilio domicilio = domicilioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Domicilio con el id " + id + " no encontrado"));
-        return toDto(domicilio);
+        return toDTO(domicilio);
     }
 
     public void deleteDomicilio(Long id){
@@ -85,7 +85,7 @@ public class DomicilioService {
                 .activo(true) // cuando se GUARDA un domicilio, se le asigna el valor activo = true por defecto
                 .build();
     }
-    public DomicilioResponseDTO toDto(Domicilio domicilio) {
+    public DomicilioResponseDTO toDTO(Domicilio domicilio) {
         return DomicilioResponseDTO.builder()
                 .id(domicilio.getId())
                 .calle(domicilio.getCalle())
