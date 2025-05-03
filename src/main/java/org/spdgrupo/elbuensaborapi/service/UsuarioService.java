@@ -49,10 +49,8 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario con el id " + id + " no encontrado"));
 
-
-        if (!usuarioDTO.getEmail().equals(usuario.getEmail())) {
-            usuario.setEmail(usuarioDTO.getEmail());
-        }
+        // saqué la opcion para editar el email ya que no debería poder editarse. La contraseña en cambio, si
+        
         if (!usuarioDTO.getContraseña().equals(usuario.getContraseña())) {
             usuario.setContraseña(usuarioDTO.getContraseña());
         }
