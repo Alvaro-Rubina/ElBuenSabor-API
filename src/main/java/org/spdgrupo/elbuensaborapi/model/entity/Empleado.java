@@ -16,7 +16,7 @@ public class Empleado {
     private Long id;
     private String nombreCompleto;
     private String telefono;
-    private Boolean activo;
+    private boolean activo;
 
     @OneToOne
     private Usuario usuario;

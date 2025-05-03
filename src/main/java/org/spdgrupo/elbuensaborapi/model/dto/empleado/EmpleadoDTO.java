@@ -18,6 +18,9 @@ public class EmpleadoDTO {
     @NotBlank(message = "El campo telefono no puede estar vacío")
     private String telefono;
 
+    // este campo es opcional, util para EDITAR un empleado ya que al crearlo por defecto activo = true
+    private boolean activo;
+
     private UsuarioDTO usuario;
 
     @NotNull(message = "El campo domicilioId no puede ser nulo")
