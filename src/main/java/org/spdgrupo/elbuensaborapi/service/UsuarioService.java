@@ -1,7 +1,8 @@
 package org.spdgrupo.elbuensaborapi.service;
 
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.UsuarioDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
@@ -21,32 +22,32 @@ public class UsuarioService {
         return usuario;
     }
 
-    public UsuarioDTO getUsuarioById(Long id) {
+    public UsuarioResponseDTO getUsuarioById(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario con el id " + id + " no encontrado"));
         return toDto(usuario);
     }
 
-    public UsuarioDTO getUsuarioByEmail(String email) {
+    public UsuarioResponseDTO getUsuarioByEmail(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario con el email " + email + " no encontrado"));
         return toDto(usuario);
     }
 
-    public List<UsuarioDTO> getAllUsuarios() {
+    public List<UsuarioResponseDTO> getAllUsuarios() {
          List<Usuario> usuarios = usuarioRepository.findAll();
-         List<UsuarioDTO> usuariosDTO = new ArrayList<>();
+         List<UsuarioResponseDTO> usuarioDTOs = new ArrayList<>();
 
          for (Usuario usuario : usuarios) {
-                usuariosDTO.add(toDto(usuario));
+                usuarioDTOs.add(toDto(usuario));
          }
 
-         return usuariosDTO;
+         return usuarioDTOs;
     }
 
     public void updateUsuario(Long id, UsuarioDTO usuarioDTO) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuario con el id " + id + " no encontrado"));
 
 
         if (!usuarioDTO.getEmail().equals(usuario.getEmail())) {
@@ -55,14 +56,11 @@ public class UsuarioService {
         if (!usuarioDTO.getContraseña().equals(usuario.getContraseña())) {
             usuario.setContraseña(usuarioDTO.getContraseña());
         }
-        if (!usuarioDTO.getAuth0Id().equals(usuario.getAuth0Id())) {
-            usuario.setAuth0Id(usuarioDTO.getAuth0Id());
-        }
         if (!usuarioDTO.getRol().equals(usuario.getRol())) {
             usuario.setRol(usuarioDTO.getRol());
         }
-        usuarioRepository.save(usuario);
 
+        usuarioRepository.save(usuario);
     }
 
     // MAPPERS
@@ -70,15 +68,13 @@ public class UsuarioService {
         return Usuario.builder()
                 .email(usuarioDTO.getEmail())
                 .contraseña(usuarioDTO.getContraseña())
-                .auth0Id(usuarioDTO.getAuth0Id())
                 .rol(usuarioDTO.getRol())
                 .build();
     }
-    public UsuarioDTO toDto(Usuario usuario) {
-        return UsuarioDTO.builder()
+    public UsuarioResponseDTO toDto(Usuario usuario) {
+        return UsuarioResponseDTO.builder()
                 .id(usuario.getId())
                 .email(usuario.getEmail())
-                .contraseña(usuario.getContraseña())
                 .auth0Id(usuario.getAuth0Id())
                 .rol(usuario.getRol())
                 .build();

@@ -2,7 +2,8 @@ package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.UsuarioDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +25,19 @@ public class UsuarioController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<UsuarioDTO> getUsuarioById(@PathVariable Long id) {
+    public ResponseEntity<UsuarioResponseDTO> getUsuarioById(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.getUsuarioById(id));
+    }
+
+    @GetMapping("/buscar")
+    @ResponseBody
+    public ResponseEntity<UsuarioResponseDTO> getUsuarioByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(usuarioService.getUsuarioByEmail(email));
     }
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<UsuarioDTO>> getUsuarios() {
+    public ResponseEntity<List<UsuarioResponseDTO>> getUsuarios() {
         return ResponseEntity.ok(usuarioService.getAllUsuarios());
     }
 
