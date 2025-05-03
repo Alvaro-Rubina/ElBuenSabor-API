@@ -2,7 +2,6 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 
 @AllArgsConstructor
 @NoArgsConstructor

@@ -15,7 +15,7 @@ public class RubroInsumoDTO {
     @NotBlank(message = "El campo denominacion no puede estar vacio")
     private String denominacion;
 
-    @NotNull(message = "El campo activo no puede ser nulo")
+    // este campo es opcional, util para EDITAR un RubroInsumo ya que al crearlo por defecto activo = true
     private boolean activo;
 
     @NotNull(message = "El campo rubroPadreId no puede ser nulo")
