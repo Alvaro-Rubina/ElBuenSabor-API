@@ -2,7 +2,8 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
-import org.spdgrupo.elbuensaborapi.model.dto.InsumoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
@@ -25,15 +26,15 @@ public class InsumoService {
         insumoRepository.save(insumo);
     }
 
-    public InsumoDTO getInsumoById(Long id) {
+    public InsumoResponseDTO getInsumoById(Long id) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
         return toDTO(insumo);
     }
 
-    public List<InsumoDTO> getInsumosByDenominacion(String denominacion) {
+    public List<InsumoResponseDTO> getInsumosByDenominacion(String denominacion) {
         List<Insumo> insumos = insumoRepository.findByDenominacionContainingIgnoreCase(denominacion);
-        List<InsumoDTO> insumosDTO = new ArrayList<>();
+        List<InsumoResponseDTO> insumosDTO = new ArrayList<>();
 
         for (Insumo insumo : insumos) {
             insumosDTO.add(toDTO(insumo));
@@ -42,15 +43,15 @@ public class InsumoService {
     }
 
     // Acá busca por rubro, y si no se le pasa parametro (o es 0), busca todos
-    public List<InsumoDTO> getAllInsumos(Long rubroId) {
-        List<Insumo> insumos = new ArrayList<>();
+    public List<InsumoResponseDTO> getAllInsumos(Long rubroId) {
+        List<Insumo> insumos;
 
         if (rubroId == null || rubroId == 0L) {
             insumos = insumoRepository.findAll();
         } else {
             insumos = insumoRepository.findByRubroId(rubroId);
         }
-        List<InsumoDTO> insumosDTO = new ArrayList<>();
+        List<InsumoResponseDTO> insumosDTO = new ArrayList<>();
 
         for (Insumo insumo : insumos) {
             insumosDTO.add(toDTO(insumo));
@@ -66,44 +67,34 @@ public class InsumoService {
         if (!insumo.getDenominacion().equals(insumoDTO.getDenominacion())) {
             insumo.setDenominacion(insumoDTO.getDenominacion());
         }
-
         if (!insumo.getUrlImagen().equals(insumoDTO.getUrlImagen())) {
             insumo.setUrlImagen(insumoDTO.getUrlImagen());
         }
-
         if (!insumo.getPrecioCompra().equals(insumoDTO.getPrecioCompra())) {
             insumo.setPrecioCompra(insumoDTO.getPrecioCompra());
         }
-
         if (!insumo.getPrecioVenta().equals(insumoDTO.getPrecioVenta())) {
             insumo.setPrecioVenta(insumoDTO.getPrecioVenta());
         }
-
-        if (insumo.getStockActual().equals(insumoDTO.getStockActual())) {
+        if (!insumo.getStockActual().equals(insumoDTO.getStockActual())) {
             insumo.setStockActual(insumoDTO.getStockActual());
         }
-
-        if (insumo.getStockMinimo().equals(insumoDTO.getStockMinimo())) {
+        if (!insumo.getStockMinimo().equals(insumoDTO.getStockMinimo())) {
             insumo.setStockMinimo(insumoDTO.getStockMinimo());
         }
-
-        if (insumo.isEsParaElaborar() != insumoDTO.isEsParaElaborar()) {
+        if (!insumo.isEsParaElaborar() == insumoDTO.isEsParaElaborar()) {
             insumo.setEsParaElaborar(insumoDTO.isEsParaElaborar());
         }
-
-        if (insumo.isActivo() != insumoDTO.isActivo()) {
+        if (!insumo.isActivo() == insumoDTO.isActivo()) {
             insumo.setActivo(insumoDTO.isActivo());
         }
-
         if (!insumo.getUnidadMedida().equals(insumoDTO.getUnidadMedida())) {
             insumo.setUnidadMedida(insumoDTO.getUnidadMedida());
         }
-
-        if (!insumo.getRubro().getId().equals(insumoDTO.getRubro().getId())) {
-            insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubro().getId())
-                    .orElseThrow(() -> new NotFoundException("RubroInsumo con el id" + insumoDTO.getRubro().getId() + "no encontrado")));
+        if (!insumo.getRubro().getId().equals(insumoDTO.getRubroId())) {
+            insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
+                    .orElseThrow(() -> new NotFoundException("RubroInsumo con el id" + insumoDTO.getRubroId() + "no encontrado")));
         }
-
         insumoRepository.save(insumo);
     }
 
@@ -126,13 +117,13 @@ public class InsumoService {
                 .esParaElaborar(insumoDTO.isEsParaElaborar())
                 .activo(insumoDTO.isActivo())
                 .unidadMedida(insumoDTO.getUnidadMedida())
-                .rubro(rubroInsumoRepository.findById(insumoDTO.getRubro().getId())
-                        .orElseThrow(() -> new NotFoundException("RubroInsumo con el id" + insumoDTO.getRubro().getId() + "no encontrado")))
+                .rubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
+                        .orElseThrow(() -> new NotFoundException("RubroInsumo con el id" + insumoDTO.getRubroId() + "no encontrado")))
                 .build();
     }
 
-    public InsumoDTO toDTO(Insumo insumo) {
-        return InsumoDTO.builder()
+    public InsumoResponseDTO toDTO(Insumo insumo) {
+        return InsumoResponseDTO.builder()
                 .id(insumo.getId())
                 .denominacion(insumo.getDenominacion())
                 .urlImagen(insumo.getUrlImagen())

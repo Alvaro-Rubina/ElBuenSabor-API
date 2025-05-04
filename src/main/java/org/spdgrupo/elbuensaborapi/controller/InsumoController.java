@@ -2,7 +2,8 @@ package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.InsumoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.InsumoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,24 +25,25 @@ public class InsumoController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<InsumoDTO> getInsumoById(@PathVariable Long id) {
+    public ResponseEntity<InsumoResponseDTO> getInsumoById(@PathVariable Long id) {
         return ResponseEntity.ok(insumoService.getInsumoById(id));
     }
 
     @GetMapping("/buscar")
     @ResponseBody
-    public ResponseEntity<List<InsumoDTO>> getInsumosByDenominacion(@RequestParam String denominacion) {
+    public ResponseEntity<List<InsumoResponseDTO>> getInsumosByDenominacion(@RequestParam String denominacion) {
         return ResponseEntity.ok(insumoService.getInsumosByDenominacion(denominacion));
     }
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<InsumoDTO>> getAllInsumos(@RequestParam(required = false) Long rubroId) {
+    public ResponseEntity<List<InsumoResponseDTO>> getAllInsumos(@RequestParam(required = false) Long rubroId) {
         return ResponseEntity.ok(insumoService.getAllInsumos(rubroId));
     }
     
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateInsumo(@PathVariable Long id,@Valid @RequestBody InsumoDTO insumoDTO) {
+    public ResponseEntity<String> updateInsumo(@PathVariable Long id,
+                                               @Valid @RequestBody InsumoDTO insumoDTO) {
         insumoService.updateInsumo(id, insumoDTO);
         return ResponseEntity.ok("Insumo actualizado correctamente");
     }
