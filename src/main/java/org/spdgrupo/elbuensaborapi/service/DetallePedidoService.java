@@ -1,7 +1,9 @@
 package org.spdgrupo.elbuensaborapi.service;
 
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.DetallePedidoDTO;
+import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetallePedido;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.repository.DetallePedidoRepository;
@@ -20,7 +22,6 @@ public class DetallePedidoService {
 
     // Dependencias
     private final DetallePedidoRepository detallePedidoRepository;
-    private final PedidoService pedidoService;
     private final PedidoRepository pedidoRepository;
     private final ProductoService productoService;
     private final ProductoRepository productoRepository;
@@ -32,57 +33,37 @@ public class DetallePedidoService {
         detallePedidoRepository.save(detallePedido);
     }
 
-    public DetallePedidoDTO getDetallePedidoById(Long id) {
+    public DetallePedidoResponseDTO getDetallePedidoById(Long id) {
         DetallePedido detallePedido = detallePedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Detalle de pedido no encontrado"));
-        return toDto(detallePedido);
+                .orElseThrow(() -> new RuntimeException("DetallePedido con el id " + id + " no encontrado"));
+        return toDTO(detallePedido);
     }
 
-    public List<DetallePedidoDTO> getAllDetallesPedido() {
+    public List<DetallePedidoResponseDTO> getAllDetallesPedido() {
         List<DetallePedido> detallesPedido = detallePedidoRepository.findAll();
-        List<DetallePedidoDTO> detallesPedidoDTO = new ArrayList<>();
+        List<DetallePedidoResponseDTO> detallesPedidoDTO = new ArrayList<>();
+
         for (DetallePedido detallePedido : detallesPedido) {
-            DetallePedidoDTO detallePedidoDTO = toDto(detallePedido);
+            DetallePedidoResponseDTO detallePedidoDTO = toDTO(detallePedido);
             detallesPedidoDTO.add(detallePedidoDTO);
         }
         return detallesPedidoDTO;
     }
 
-    public List<DetallePedidoDTO> getDetallesPedidoByPedidoId(Long pedidoId) {
+    // TODO: Ver si este metodo se queda o hacer uno que cumpla la misma funcion en PedidoService
+    public List<DetallePedidoResponseDTO> getDetallesPedidoByPedidoId(Long pedidoId) {
         List<DetallePedido> detallesPedido = detallePedidoRepository.findByPedidoId(pedidoId);
-        List<DetallePedidoDTO> detallesPedidoDTO = new ArrayList<>();
+        List<DetallePedidoResponseDTO> detallesPedidoDTO = new ArrayList<>();
+
         for (DetallePedido detallePedido : detallesPedido) {
-            DetallePedidoDTO detallePedidoDTO = toDto(detallePedido);
+            DetallePedidoResponseDTO detallePedidoDTO = toDTO(detallePedido);
             detallesPedidoDTO.add(detallePedidoDTO);
         }
         return detallesPedidoDTO;
     }
 
-    public void updateDetallePedido(Long id, DetallePedidoDTO detallePedidoDTO) {
-        DetallePedido detallePedido = detallePedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Detalle de pedido no encontrado"));
-
-        if (!detallePedidoDTO.getCantidad().equals(detallePedido.getCantidad())) {
-            detallePedido.setCantidad(detallePedidoDTO.getCantidad());
-        }
-        if (!detallePedidoDTO.getSubTotal().equals(detallePedido.getSubTotal())) {
-            detallePedido.setSubTotal(detallePedidoDTO.getSubTotal());
-        }
-        if (!detallePedidoDTO.getProducto().getId().equals(detallePedido.getProducto().getId())) {
-            detallePedido.setProducto(productoRepository.findById(detallePedidoDTO.getProducto().getId())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado")));
-        }
-        if (!detallePedidoDTO.getInsumo().getId().equals(detallePedido.getInsumo().getId())) {
-            detallePedido.setInsumo(insumoRepository.findById(detallePedidoDTO.getInsumo().getId())
-                    .orElseThrow(() -> new RuntimeException("Insumo no encontrado")));
-        }
-        if (!detallePedidoDTO.getPedido().getId().equals(detallePedido.getPedido().getId())) {
-            detallePedido.setPedido(pedidoRepository.findById(detallePedidoDTO.getPedido().getId())
-                    .orElseThrow(() -> new RuntimeException("Pedido no encontrado")));
-        }
-
-        detallePedidoRepository.save(detallePedido);
-    }
+    // NOTE: No hay metodo updateDetallePedido ya que una vez concretado un Pedido, no tiene sentido editarlo
+    // NOTE: (ya que se supone que hubo una fase para elegir productos, cantidades, etc, antes de concretarlo)
 
     public LocalTime getMayorTiempoEstimado(Long pedidoId) {
         List<DetallePedido> detallesPedido = detallePedidoRepository.findByPedidoId(pedidoId);
@@ -111,26 +92,24 @@ public class DetallePedidoService {
         return mayorTiempo.plusMinutes(10);
     }
 
-
     // MAPPERS
     private DetallePedido toEntity(DetallePedidoDTO detallePedidoDTO) {
         return DetallePedido.builder()
                 .cantidad(detallePedidoDTO.getCantidad())
                 .subTotal(detallePedidoDTO.getSubTotal())
-                .pedido(pedidoRepository.findById(detallePedidoDTO.getPedido().getId())
-                        .orElseThrow(() -> new RuntimeException("Pedido no encontrado")))
-                .producto(productoRepository.findById(detallePedidoDTO.getProducto().getId())
-                        .orElseThrow(() -> new RuntimeException("Producto no encontrado")))
-                .insumo(insumoRepository.findById(detallePedidoDTO.getInsumo().getId())
-                        .orElseThrow(() -> new RuntimeException("Insumo no encontrado")))
+                .pedido(pedidoRepository.findById(detallePedidoDTO.getPedidoId())
+                        .orElseThrow(() -> new NotFoundException("Pedido con el id " + detallePedidoDTO.getPedidoId() + " no encontrado")))
+                .producto(detallePedidoDTO.getProductoId() == null ? null : productoRepository.findById(detallePedidoDTO.getProductoId())
+                        .orElseThrow(() -> new NotFoundException("Producto con el id " + detallePedidoDTO.getProductoId() + " no encontrado")))
+                .insumo(detallePedidoDTO.getInsumoId() == null ? null : insumoRepository.findById(detallePedidoDTO.getInsumoId())
+                        .orElseThrow(() -> new NotFoundException("Insumo con el id " + detallePedidoDTO.getInsumoId() + " no encontrado")))
                 .build();
     }
-    public DetallePedidoDTO toDto(DetallePedido detallePedido) {
-        return DetallePedidoDTO.builder()
+    public DetallePedidoResponseDTO toDTO(DetallePedido detallePedido) {
+        return DetallePedidoResponseDTO.builder()
                 .id(detallePedido.getId())
                 .cantidad(detallePedido.getCantidad())
                 .subTotal(detallePedido.getSubTotal())
-                .pedido(pedidoService.toDTO(detallePedido.getPedido()))
                 .producto(productoService.toDTO(detallePedido.getProducto()))
                 .insumo(insumoService.toDTO(detallePedido.getInsumo()))
                 .build();

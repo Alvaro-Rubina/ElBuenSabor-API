@@ -2,7 +2,8 @@ package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.DetallePedidoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.DetallePedidoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,27 +25,21 @@ public class DetallePedidoController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<DetallePedidoDTO> getDetallePedidoById(@PathVariable Long id) {
+    public ResponseEntity<DetallePedidoResponseDTO> getDetallePedidoById(@PathVariable Long id) {
         return ResponseEntity.ok(detallePedidoService.getDetallePedidoById(id));
     }
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<DetallePedidoDTO>> getDetallesPedido() {
+    public ResponseEntity<List<DetallePedidoResponseDTO>> getDetallesPedido() {
         return ResponseEntity.ok(detallePedidoService.getAllDetallesPedido());
     }
 
+    // TODO: Ver si este metodo se queda o hacer uno que cumpla la misma funcion en PedidoController
     @GetMapping("/pedido/{pedidoId}")
     @ResponseBody
-    public ResponseEntity<List<DetallePedidoDTO>> getDetallesPedidoByPedidoId(@PathVariable Long pedidoId) {
+    public ResponseEntity<List<DetallePedidoResponseDTO>> getDetallesPedidoByPedidoId(@PathVariable Long pedidoId) {
         return ResponseEntity.ok(detallePedidoService.getDetallesPedidoByPedidoId(pedidoId));
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateDetallePedido(@PathVariable Long id,
-                                                      @Valid @RequestBody DetallePedidoDTO detallePedidoDTO) {
-        detallePedidoService.updateDetallePedido(id, detallePedidoDTO);
-        return ResponseEntity.ok("Detalle de pedido actualizado correctamente");
     }
 
 }
