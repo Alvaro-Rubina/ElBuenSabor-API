@@ -3,6 +3,8 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -20,4 +22,7 @@ public class RubroInsumo {
     @ManyToOne
     @JoinColumn(name = "rubro_padre_id")
     private RubroInsumo rubroPadre;
+
+    @OneToMany(mappedBy = "rubroPadre")
+    private List<RubroInsumo> subRubros;
 }
