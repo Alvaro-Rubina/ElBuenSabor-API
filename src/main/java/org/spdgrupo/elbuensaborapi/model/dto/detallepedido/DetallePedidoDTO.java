@@ -24,11 +24,7 @@ public class DetallePedidoDTO {
     @Min(value = 1, message = "El campo pedidoId no puede ser menor a 1")
     private Long pedidoId;
 
-    @NotNull(message = "El campo productoId no puede ser nulo")
-    @Min(value = 1, message = "El campo productoId no puede ser menor a 1")
+    // Estos campos son opcionales por separado, PERO siempre debe haber por lo menos 1
     private Long productoId;
-
-    @NotNull(message = "El campo insumoId no puede ser nulo")
-    @Min(value = 1, message = "El campo insumoId no puede ser menor a 1")
     private Long insumoId;
 }
