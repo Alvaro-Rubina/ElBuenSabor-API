@@ -42,6 +42,7 @@ public class DetalleDomicilioService {
         return detallesDomicilioDTOs;
     }
 
+    // TODO: Ver si este metodo se queda o hacer uno que cumpla la misma funcion en ClienteService
     public List<DetalleDomicilioResponseDTO> getDetallesDomicilioByClienteId(Long clienteId) {
         List<DetalleDomicilio> detallesDomicilio = detalleDomicilioRepository.findByClienteId(clienteId);
         List<DetalleDomicilioResponseDTO> detallesDomicilioDTOs = new ArrayList<>();

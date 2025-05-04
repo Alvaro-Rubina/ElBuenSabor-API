@@ -35,6 +35,7 @@ public class DetalleDomicilioController {
         return ResponseEntity.ok(detalleDomicilioService.getAllDetallesDomicilio());
     }
 
+    // TODO: Ver si este metodo se queda o hacer uno que cumpla la misma funcion en ClienteController
     @GetMapping("/cliente/{clienteId}")
     @ResponseBody
     public ResponseEntity<List<DetalleDomicilioResponseDTO>> getDetallesDomicilioByClienteId(@PathVariable Long clienteId) {
