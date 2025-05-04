@@ -1,6 +1,7 @@
 package org.spdgrupo.elbuensaborapi.service;
 
 import lombok.RequiredArgsConstructor;
+import org.spdgrupo.elbuensaborapi.config.exception.CyclicParentException;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoResponseDTO;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,28 +45,41 @@ public class RubroInsumoService {
         RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
 
-        if(!rubroInsumo.getDenominacion().equals(rubroInsumoDTO.getDenominacion())) {
+        // Verificaciones para evitar recursiones infinitas
+        List<RubroInsumo> subRubros = rubroInsumo.getSubRubros();
+        if (rubroInsumoDTO.getRubroPadreId() != null) {
+            // NO SE PUEDE ASIGNAR ASI MISMO COMO PADRE
+            if (rubroInsumoDTO.getRubroPadreId().equals(id)) {
+                throw new CyclicParentException("No se puede asignar el rubro a sí mismo como padre");
+            }
+
+            // NO SE PUEDE ASIGNAR A UNO DE SUS HIJOS COMO SU PADRE
+            boolean isChild = subRubros.stream().anyMatch(subRubro -> subRubro.getId().equals(rubroInsumoDTO.getRubroPadreId()));
+            if (isChild) {
+                throw new CyclicParentException("No se puede asignar como padre de un rubro a uno de sus hijos");
+            }
+        }
+
+        if (!rubroInsumo.getDenominacion().equals(rubroInsumoDTO.getDenominacion())) {
             rubroInsumo.setDenominacion(rubroInsumoDTO.getDenominacion());
         }
-        if (!rubroInsumo.isActivo() == rubroInsumoDTO.isActivo()) {
+
+        if (rubroInsumo.isActivo() != rubroInsumoDTO.isActivo()) {
             rubroInsumo.setActivo(rubroInsumoDTO.isActivo());
         }
-        // El RubroInsumo no tiene padre pero el DTO SI
-        if (rubroInsumo.getRubroPadre() == null && rubroInsumoDTO.getRubroPadreId() != null) {
-            rubroInsumo.setRubroPadre(rubroInsumoRepository.findById(rubroInsumoDTO.getRubroPadreId())
-                .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + rubroInsumoDTO.getRubroPadreId() + " no encontrado")));
 
-        // El RubroInsumo SI tiene padre pero es DISTINTO al del DTO
-        } else if (rubroInsumo.getRubroPadre() != null && (!rubroInsumo.getRubroPadre().getId().equals(rubroInsumoDTO.getRubroPadreId()))) {
-            rubroInsumo.setRubroPadre(rubroInsumoRepository.findById(rubroInsumoDTO.getRubroPadreId())
-                    .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + rubroInsumoDTO.getRubroPadreId() + " no encontrado")));
-
-        // El RubroInsumo SI tiene padre pero el DTO NO
-        } else if (rubroInsumo.getRubroPadre() != null && rubroInsumoDTO.getRubroPadreId() == null) {
+        if (rubroInsumoDTO.getRubroPadreId() != null) {
+            RubroInsumo rubroPadre = rubroInsumoRepository.findById(rubroInsumoDTO.getRubroPadreId())
+                    .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + rubroInsumoDTO.getRubroPadreId() + " no encontrado"));
+            rubroInsumo.setRubroPadre(rubroPadre);
+        } else {
+            // si el DTO no viene con rubroPadre, este se elimina de la entidad
             rubroInsumo.setRubroPadre(null);
         }
+
         rubroInsumoRepository.save(rubroInsumo);
     }
+
 
     public void deleteRubroInsumo(Long id) {
         RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
@@ -90,6 +105,9 @@ public class RubroInsumoService {
                 .denominacion(rubroInsumo.getDenominacion())
                 .activo(rubroInsumo.isActivo())
                 .rubroPadre(rubroInsumo.getRubroPadre() == null ? null : toDTO(rubroInsumo.getRubroPadre()))
+                .subRubros(rubroInsumo.getSubRubros().stream()
+                        .map(this::toDTO)
+                        .collect(Collectors.toList()))
                 .build();
     }
 }
