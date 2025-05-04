@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -24,5 +25,5 @@ public class RubroInsumo {
     private RubroInsumo rubroPadre;
 
     @OneToMany(mappedBy = "rubroPadre")
-    private List<RubroInsumo> subRubros;
+    private List<RubroInsumo> subRubros = new ArrayList<>();
 }

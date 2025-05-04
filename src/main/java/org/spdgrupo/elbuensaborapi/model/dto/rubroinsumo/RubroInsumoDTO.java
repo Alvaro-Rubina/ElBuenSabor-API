@@ -1,8 +1,6 @@
 package org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @AllArgsConstructor
@@ -18,7 +16,6 @@ public class RubroInsumoDTO {
     // este campo es opcional, util para EDITAR un RubroInsumo ya que al crearlo por defecto activo = true
     private boolean activo;
 
-    @NotNull(message = "El campo rubroPadreId no puede ser nulo")
-    @Min(value = 1, message = "El campo rubroPadreId no puede ser menor a 1")
+    // este campo es opcional
     private Long rubroPadreId;
 }

@@ -2,6 +2,9 @@ package org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo;
 
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -13,4 +16,5 @@ public class RubroInsumoResponseDTO {
     private String denominacion;
     private boolean activo;
     private RubroInsumoResponseDTO rubroPadre;
+    private List<RubroInsumoResponseDTO> subRubros = new ArrayList<>();
 }
