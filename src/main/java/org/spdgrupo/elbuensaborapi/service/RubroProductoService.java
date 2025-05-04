@@ -2,7 +2,8 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
-import org.spdgrupo.elbuensaborapi.model.dto.RubroProductoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroProducto;
 import org.spdgrupo.elbuensaborapi.repository.RubroProductoRepository;
 import org.springframework.stereotype.Service;
@@ -22,15 +23,15 @@ public class RubroProductoService {
         rubroProductoRepository.save(rubroProducto);
     }
 
-    public RubroProductoDTO getRubroProductoById(Long id) {
+    public RubroProductoResponseDTO getRubroProductoById(Long id) {
         RubroProducto rubroProducto = rubroProductoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
         return toDTO(rubroProducto);
     }
 
-    public List<RubroProductoDTO> getAllRubroProductos() {
+    public List<RubroProductoResponseDTO> getAllRubroProductos() {
         List<RubroProducto> rubroProductos = rubroProductoRepository.findAll();
-        List<RubroProductoDTO> rubroProductosDTO = new ArrayList<>();
+        List<RubroProductoResponseDTO> rubroProductosDTO = new ArrayList<>();
 
         for (RubroProducto rubroProducto : rubroProductos) {
             rubroProductosDTO.add(toDTO(rubroProducto));
@@ -64,12 +65,12 @@ public class RubroProductoService {
     public RubroProducto toEntity(RubroProductoDTO rubroProductoDTO) {
         return RubroProducto.builder()
                 .denominacion(rubroProductoDTO.getDenominacion())
-                .activo(true)
+                .activo(true) // cuando se guarda un rubro siempre es activo = true
                 .build();
     };
 
-    public RubroProductoDTO toDTO(RubroProducto rubroProducto) {
-        return RubroProductoDTO.builder()
+    public RubroProductoResponseDTO toDTO(RubroProducto rubroProducto) {
+        return RubroProductoResponseDTO.builder()
                 .id(rubroProducto.getId())
                 .denominacion(rubroProducto.getDenominacion())
                 .activo(rubroProducto.isActivo())
