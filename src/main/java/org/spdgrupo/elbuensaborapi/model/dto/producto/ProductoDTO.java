@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,10 +33,11 @@ public class ProductoDTO {
     @NotBlank(message = "El campo urlImagen no puede estar vacio")
     private String urlImagen;
 
-    @NotNull(message = "El campo activo no puede ser nulo")
     private boolean activo;
 
     @NotNull(message = "El campo rubroId no puede ser nulo")
     @Min(value = 1, message = "El campo rubroId no puede ser menor a 1")
     private Long rubroId;
+
+    private List<DetalleProductoDTO> detalleProductos;
 }
