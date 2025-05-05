@@ -20,6 +20,7 @@ public class Producto {
     private String descripcion;
     private Long tiempoEstimadoPreparacion;
     private Double precioVenta;
+    private Double precioCosto;
     private String urlImagen;
     private boolean activo;
 
