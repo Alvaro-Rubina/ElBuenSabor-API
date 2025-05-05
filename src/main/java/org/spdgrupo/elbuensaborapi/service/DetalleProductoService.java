@@ -1,7 +1,9 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.DetalleProductoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
 import org.spdgrupo.elbuensaborapi.repository.DetalleProductoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +20,6 @@ public class DetalleProductoService {
 
     // Dependencias
     private final DetalleProductoRepository detalleProductoRepository;
-    private final ProductoService productoService;
     private final ProductoRepository productoRepository;
     private final InsumoService insumoService;
     private final InsumoRepository insumoRepository;
@@ -27,15 +29,25 @@ public class DetalleProductoService {
         detalleProductoRepository.save(detalleProducto);
     }
 
-    public DetalleProductoDTO getDetalleProductoById(Long id) {
+    @Transactional
+    public void saveMultipleDetalleProducto(List<DetalleProductoDTO> detalleProductoDTOList, Long productoId) {
+        detalleProductoDTOList.forEach(dto -> dto.setProductoId(productoId));
+
+        List<DetalleProducto> detalles = detalleProductoDTOList.stream()
+                .map(this::toEntity)
+                .collect(Collectors.toList());
+        detalleProductoRepository.saveAll(detalles);
+    }
+
+    public DetalleProductoResponseDTO getDetalleProductoById(Long id) {
         DetalleProducto detalleProducto = detalleProductoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Detalle de producto con el id " + id + " no encontrado"));
         return toDTO(detalleProducto);
     }
 
-    public List<DetalleProductoDTO> getAllDetallesProducto() {
+    public List<DetalleProductoResponseDTO> getAllDetallesProducto() {
         List<DetalleProducto> detallesProducto = detalleProductoRepository.findAll();
-        List<DetalleProductoDTO> detallesProductoDTO = new ArrayList<>();
+        List<DetalleProductoResponseDTO> detallesProductoDTO = new ArrayList<>();
 
         for (DetalleProducto detalleProducto : detallesProducto) {
             detallesProductoDTO.add(toDTO(detalleProducto));
@@ -43,43 +55,21 @@ public class DetalleProductoService {
         return detallesProductoDTO;
     }
 
-    public void updateDetalleProducto(Long id, DetalleProductoDTO detalleProductoDTO) {
-        DetalleProducto detalleProducto = detalleProductoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Detalle de producto con el id " + id + " no encontrado"));
-
-        if (!detalleProducto.getCantidad().equals(detalleProductoDTO.getCantidad())) {
-            detalleProducto.setCantidad(detalleProductoDTO.getCantidad());
-        }
-
-        if (!detalleProducto.getProducto().getId().equals(detalleProductoDTO.getProducto().getId())) {
-            detalleProducto.setProducto(productoRepository.findById(detalleProductoDTO.getProducto().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Producto con id " + detalleProductoDTO.getProducto().getId() + " no encontrado")));
-        }
-
-        if (!detalleProducto.getInsumo().getId().equals(detalleProductoDTO.getInsumo().getId())) {
-            detalleProducto.setInsumo(insumoRepository.findById(detalleProductoDTO.getInsumo().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Insumo con id " + detalleProductoDTO.getInsumo().getId() + " no encontrado")));
-        }
-        
-        detalleProductoRepository.save(detalleProducto);
-    }
-
     // MAPPERS
-    private DetalleProducto toEntity(DetalleProductoDTO detalleProductoDTO) {
+    public DetalleProducto toEntity(DetalleProductoDTO detalleProductoDTO) {
         return DetalleProducto.builder()
                 .cantidad(detalleProductoDTO.getCantidad())
-                .producto(productoRepository.findById(detalleProductoDTO.getProducto().getId())
-                        .orElseThrow(() -> new IllegalArgumentException("Producto con id " + detalleProductoDTO.getProducto().getId() + " no encontrado")))
-                .insumo(insumoRepository.findById(detalleProductoDTO.getInsumo().getId())
-                        .orElseThrow(() -> new IllegalArgumentException("Insumo con id " + detalleProductoDTO.getInsumo().getId() + " no encontrado")))
+                .producto(productoRepository.findById(detalleProductoDTO.getProductoId())
+                        .orElseThrow(() -> new IllegalArgumentException("Producto con el id " + detalleProductoDTO.getProductoId() + " no encontrado")))
+                .insumo(insumoRepository.findById(detalleProductoDTO.getInsumoId())
+                        .orElseThrow(() -> new IllegalArgumentException("Insumo con el id " + detalleProductoDTO.getInsumoId() + " no encontrado")))
                 .build();
     }
 
-    public DetalleProductoDTO toDTO(DetalleProducto detalleProducto) {
-        return DetalleProductoDTO.builder()
+    public DetalleProductoResponseDTO toDTO(DetalleProducto detalleProducto) {
+        return DetalleProductoResponseDTO.builder()
                 .id(detalleProducto.getId())
                 .cantidad(detalleProducto.getCantidad())
-                .producto(productoService.toDTO(detalleProducto.getProducto()))
                 .insumo(insumoService.toDTO(detalleProducto.getInsumo()))
                 .build();
     }
