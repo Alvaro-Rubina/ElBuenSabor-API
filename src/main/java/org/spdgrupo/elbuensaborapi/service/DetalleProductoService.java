@@ -8,10 +8,8 @@ import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.repository.DetalleProductoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
-import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,7 +18,6 @@ public class DetalleProductoService {
 
     // Dependencias
     private final DetalleProductoRepository detalleProductoRepository;
-    private final ProductoRepository productoRepository;
     private final InsumoService insumoService;
     private final InsumoRepository insumoRepository;
 
@@ -30,22 +27,6 @@ public class DetalleProductoService {
             DetalleProducto detalleProducto = toEntity(detalleProductoDTO, producto);
             detalleProductoRepository.save(detalleProducto);
         }
-    }
-
-    public DetalleProductoResponseDTO getDetalleProductoById(Long id) {
-        DetalleProducto detalleProducto = detalleProductoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Detalle de producto con el id " + id + " no encontrado"));
-        return toDTO(detalleProducto);
-    }
-
-    public List<DetalleProductoResponseDTO> getAllDetallesProducto() {
-        List<DetalleProducto> detallesProducto = detalleProductoRepository.findAll();
-        List<DetalleProductoResponseDTO> detallesProductoDTO = new ArrayList<>();
-
-        for (DetalleProducto detalleProducto : detallesProducto) {
-            detallesProductoDTO.add(toDTO(detalleProducto));
-        }
-        return detallesProductoDTO;
     }
 
     // MAPPERS
