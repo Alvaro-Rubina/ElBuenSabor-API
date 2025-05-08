@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
-    Optional<Pedido> findByNumero(Integer numero);
+    Optional<Pedido> findByCodigoOrden(String codigoOrden);
 }
