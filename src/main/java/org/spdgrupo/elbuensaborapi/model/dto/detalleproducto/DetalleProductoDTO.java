@@ -15,10 +15,6 @@ public class DetalleProductoDTO {
     @Min(value = 1, message = "El campo cantidad no puede ser menor a 1")
     private Double cantidad;
 
-    @NotNull(message = "El campo productoId no puede ser nulo")
-    @Min(value = 1, message = "El campo productoId no puede ser menor a 1")
-    private Long productoId;
-
     @NotNull(message = "El campo insumoId no puede ser nulo")
     @Min(value = 1, message = "El campo insumoId no puede ser menor a 1")
     private Long insumoId;
