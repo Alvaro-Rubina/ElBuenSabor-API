@@ -70,8 +70,8 @@ public class InsumoService {
         if (!insumo.getUrlImagen().equals(insumoDTO.getUrlImagen())) {
             insumo.setUrlImagen(insumoDTO.getUrlImagen());
         }
-        if (!insumo.getPrecioCompra().equals(insumoDTO.getPrecioCompra())) {
-            insumo.setPrecioCompra(insumoDTO.getPrecioCompra());
+        if (!insumo.getPrecioCosto().equals(insumoDTO.getPrecioCosto())) {
+            insumo.setPrecioCosto(insumoDTO.getPrecioCosto());
         }
         if (!insumo.getPrecioVenta().equals(insumoDTO.getPrecioVenta())) {
             insumo.setPrecioVenta(insumoDTO.getPrecioVenta());
@@ -110,7 +110,7 @@ public class InsumoService {
         return Insumo.builder()
                 .denominacion(insumoDTO.getDenominacion())
                 .urlImagen(insumoDTO.getUrlImagen())
-                .precioCompra(insumoDTO.getPrecioCompra())
+                .precioCosto(insumoDTO.getPrecioCosto())
                 .precioVenta(insumoDTO.getPrecioVenta())
                 .stockActual(insumoDTO.getStockActual())
                 .stockMinimo(insumoDTO.getStockMinimo())
@@ -127,7 +127,7 @@ public class InsumoService {
                 .id(insumo.getId())
                 .denominacion(insumo.getDenominacion())
                 .urlImagen(insumo.getUrlImagen())
-                .precioCompra(insumo.getPrecioCompra())
+                .precioCosto(insumo.getPrecioCosto())
                 .precioVenta(insumo.getPrecioVenta())
                 .stockActual(insumo.getStockActual())
                 .stockMinimo(insumo.getStockMinimo())

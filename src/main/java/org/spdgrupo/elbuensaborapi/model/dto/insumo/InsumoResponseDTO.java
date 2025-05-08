@@ -14,7 +14,7 @@ public class InsumoResponseDTO {
     private Long id;
     private String denominacion;
     private String urlImagen;
-    private Double precioCompra;
+    private Double precioCosto;
     private Double precioVenta;
     private Double stockActual;
     private Double stockMinimo;
