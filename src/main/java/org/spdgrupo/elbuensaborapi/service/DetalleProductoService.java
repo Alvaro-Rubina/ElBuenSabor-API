@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
+import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.repository.DetalleProductoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,19 +24,12 @@ public class DetalleProductoService {
     private final InsumoService insumoService;
     private final InsumoRepository insumoRepository;
 
-    public void saveDetalleProducto(DetalleProductoDTO detalleProductoDTO) {
-        DetalleProducto detalleProducto = toEntity(detalleProductoDTO);
-        detalleProductoRepository.save(detalleProducto);
-    }
-
     @Transactional
-    public void saveMultipleDetalleProducto(List<DetalleProductoDTO> detalleProductoDTOList, Long productoId) {
-        detalleProductoDTOList.forEach(dto -> dto.setProductoId(productoId));
-
-        List<DetalleProducto> detalles = detalleProductoDTOList.stream()
-                .map(this::toEntity)
-                .collect(Collectors.toList());
-        detalleProductoRepository.saveAll(detalles);
+    public void saveDetallesProductos(List<DetalleProductoDTO> detalleProductoDTOList, Producto producto) {
+        for (DetalleProductoDTO detalleProductoDTO : detalleProductoDTOList) {
+            DetalleProducto detalleProducto = toEntity(detalleProductoDTO, producto);
+            detalleProductoRepository.save(detalleProducto);
+        }
     }
 
     public DetalleProductoResponseDTO getDetalleProductoById(Long id) {
@@ -56,11 +49,10 @@ public class DetalleProductoService {
     }
 
     // MAPPERS
-    public DetalleProducto toEntity(DetalleProductoDTO detalleProductoDTO) {
+    public DetalleProducto toEntity(DetalleProductoDTO detalleProductoDTO, Producto producto) {
         return DetalleProducto.builder()
                 .cantidad(detalleProductoDTO.getCantidad())
-                .producto(productoRepository.findById(detalleProductoDTO.getProductoId())
-                        .orElseThrow(() -> new IllegalArgumentException("Producto con el id " + detalleProductoDTO.getProductoId() + " no encontrado")))
+                .producto(producto)
                 .insumo(insumoRepository.findById(detalleProductoDTO.getInsumoId())
                         .orElseThrow(() -> new IllegalArgumentException("Insumo con el id " + detalleProductoDTO.getInsumoId() + " no encontrado")))
                 .build();

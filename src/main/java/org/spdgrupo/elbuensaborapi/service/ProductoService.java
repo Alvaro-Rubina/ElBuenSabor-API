@@ -3,11 +3,10 @@ package org.spdgrupo.elbuensaborapi.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
-import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroProductoRepository;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,7 @@ public class ProductoService {
     private final RubroProductoService rubroProductoService;
     private final RubroProductoRepository rubroProductoRepository;
     private final DetalleProductoService detalleProductoService;
-    private final InsumoRepository insumoRepository;
+    private final InsumoService insumoService;
 
     @Transactional
     public void saveProducto(ProductoDTO productoDTO) {
@@ -35,9 +34,10 @@ public class ProductoService {
         Producto productoGuardado = productoRepository.save(producto);
 
         // Una vez guardado el producto, se guardan los detalleProductos y se calcula el precioCosto
-        detalleProductoService.saveMultipleDetalleProducto(productoDTO.getDetalleProductos(), productoGuardado.getId());
+        detalleProductoService.saveDetallesProductos(productoDTO.getDetalleProductos(), productoGuardado);
 
-        producto.setPrecioCosto(calcularPrecioCosto(productoDTO.getDetalleProductos()));
+        Double total = calcularPrecioCosto(productoDTO.getDetalleProductos());
+        productoGuardado.setPrecioCosto(total);
         productoRepository.save(producto);
     }
 
@@ -108,7 +108,7 @@ public class ProductoService {
                     .orElseThrow(() -> new RuntimeException("RubroProducto con el id" + productoDTO.getRubroId() + " no encontrado")));
         }
 
-        // TODO: SOLO FALTA LA LOGICA PARA ACTUALIZAR DETALLEPRODUCTOS; ACA O EN DETALLEPRODUCTOSERVICE
+        // TODO: SOLO FALTA LA LOGICA PARA ACTUALIZAR DETALLEPRODUCTOS (cantidades, precio del producto, etc); ACA O EN DETALLEPRODUCTOSERVICE
 
         productoRepository.save(producto);
     }
@@ -153,13 +153,12 @@ public class ProductoService {
     }
 
     // METODOS AUXILIARES
-    private double calcularPrecioCosto(List<DetalleProductoDTO> detalles) {
-        return detalles.stream()
-                .mapToDouble(detalle -> {
-                    Insumo insumo = insumoRepository.findById(detalle.getInsumoId())
-                            .orElseThrow(() -> new RuntimeException("Insumo no encontrado"));
-                    return insumo.getPrecioCompra() * detalle.getCantidad();
-                })
-                .sum();
+    private Double calcularPrecioCosto(List<DetalleProductoDTO> detalles) {
+        Double precioCosto = 0.0;
+        for (DetalleProductoDTO detalle : detalles) {
+            InsumoResponseDTO insumo = insumoService.getInsumoById(detalle.getInsumoId());
+            precioCosto += insumo.getPrecioCompra() * detalle.getCantidad();
+        }
+        return precioCosto;
     }
 }
