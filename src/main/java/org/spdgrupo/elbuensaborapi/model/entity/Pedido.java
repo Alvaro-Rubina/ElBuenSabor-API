@@ -24,7 +24,7 @@ public class Pedido {
 
     private LocalDate fecha;
     private LocalTime hora;
-    private Integer numero;
+    private String codigoOrden;
     @Enumerated(EnumType.STRING)
     private Estado estado;
     private LocalTime horaEstimadaFin;
