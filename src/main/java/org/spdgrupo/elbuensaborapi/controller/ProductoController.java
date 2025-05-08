@@ -2,7 +2,8 @@ package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.ProductoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.ProductoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,19 +25,19 @@ public class ProductoController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<ProductoDTO> getProductoById(@PathVariable Long id) {
+    public ResponseEntity<ProductoResponseDTO> getProductoById(@PathVariable Long id) {
         return ResponseEntity.ok(productoService.getProductoById(id));
     }
 
     @GetMapping("/buscar")
     @ResponseBody
-    public ResponseEntity<List<ProductoDTO>> getProductosByDenominacion(@RequestParam String denominacion) {
+    public ResponseEntity<List<ProductoResponseDTO>> getProductosByDenominacion(@RequestParam String denominacion) {
         return ResponseEntity.ok(productoService.getProductosByDenominacion(denominacion));
     }
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<ProductoDTO>> getAllProductos(@RequestParam(required = false) Long rubroId) {
+    public ResponseEntity<List<ProductoResponseDTO>> getAllProductos(@RequestParam(required = false) Long rubroId) {
         return ResponseEntity.ok(productoService.getAllProductos(rubroId));
     }
 
