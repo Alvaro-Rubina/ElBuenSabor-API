@@ -16,6 +16,7 @@ public class DetallePedido {
     private Long id;
     private Integer cantidad;
     private Double subTotal;
+    private Double subTotalCosto;
 
     @ManyToOne
     @JoinColumn(name = "id_pedido")
