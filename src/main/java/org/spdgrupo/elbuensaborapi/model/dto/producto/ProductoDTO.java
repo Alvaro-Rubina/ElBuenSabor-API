@@ -1,9 +1,6 @@
 package org.spdgrupo.elbuensaborapi.model.dto.producto;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
 
@@ -39,5 +36,6 @@ public class ProductoDTO {
     @Min(value = 1, message = "El campo rubroId no puede ser menor a 1")
     private Long rubroId;
 
+    @Size(min = 1, message = "El campo detalleProductos debe contener por lo menos 1 elemento")
     private List<DetalleProductoDTO> detalleProductos;
 }
