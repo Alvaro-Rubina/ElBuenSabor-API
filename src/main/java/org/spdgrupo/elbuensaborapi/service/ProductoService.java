@@ -35,10 +35,6 @@ public class ProductoService {
 
         // Una vez guardado el producto, se guardan los detalleProductos y se calcula el precioCosto
         detalleProductoService.saveDetallesProductos(productoDTO.getDetalleProductos(), productoGuardado);
-
-        Double total = calcularPrecioCosto(productoDTO.getDetalleProductos());
-        productoGuardado.setPrecioCosto(total);
-        productoRepository.save(producto);
     }
 
     public ProductoResponseDTO getProductoById(Long id) {
@@ -122,12 +118,14 @@ public class ProductoService {
 
     // MAPPERS
     public Producto toEntity(ProductoDTO productoDTO) {
+        Double precioCosto = calcularPrecioCosto(productoDTO.getDetalleProductos());
+
         return Producto.builder()
                 .denominacion(productoDTO.getDenominacion())
                 .descripcion(productoDTO.getDescripcion())
                 .tiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion())
                 .precioVenta(productoDTO.getPrecioVenta())
-                .precioCosto(0.0) // Precio temporal, esto se calcula una vez se guarden los detalleProductos
+                .precioCosto(precioCosto)
                 .urlImagen(productoDTO.getUrlImagen())
                 .activo(productoDTO.isActivo())
                 .rubro(rubroProductoRepository.findById(productoDTO.getRubroId())
@@ -157,7 +155,7 @@ public class ProductoService {
         Double precioCosto = 0.0;
         for (DetalleProductoDTO detalle : detalles) {
             InsumoResponseDTO insumo = insumoService.getInsumoById(detalle.getInsumoId());
-            precioCosto += insumo.getPrecioCompra() * detalle.getCantidad();
+            precioCosto += insumo.getPrecioCosto() * detalle.getCantidad();
         }
         return precioCosto;
     }
