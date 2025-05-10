@@ -23,7 +23,7 @@ public class DetallePedidoService {
     private final InsumoRepository insumoRepository;
 
     // MAPPERS
-    public DetallePedido toEntity(DetallePedidoDTO detallePedidoDTO, Pedido pedido) {
+    public DetallePedido toEntity(DetallePedidoDTO detallePedidoDTO) {
         Producto producto = detallePedidoDTO.getProductoId() == null ? null : productoRepository.findById(detallePedidoDTO.getProductoId())
                 .orElseThrow(() -> new NotFoundException("Producto con el id " + detallePedidoDTO.getProductoId() + " no encontrado"));
         Insumo insumo = detallePedidoDTO.getInsumoId() == null ? null : insumoRepository.findById(detallePedidoDTO.getInsumoId())
@@ -40,7 +40,6 @@ public class DetallePedidoService {
                 .cantidad(detallePedidoDTO.getCantidad())
                 .subTotal(precioVenta * detallePedidoDTO.getCantidad())
                 .subTotalCosto(precioCosto * detallePedidoDTO.getCantidad())
-                .pedido(pedido)
                 .producto(producto)
                 .insumo(insumo)
                 .build();
