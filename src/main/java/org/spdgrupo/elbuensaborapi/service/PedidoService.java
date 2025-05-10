@@ -91,12 +91,16 @@ public class PedidoService {
         pedidoRepository.save(pedido);
     }
 
-    // TODO: Esto hay que probarlo
     public void agregarTiempoAlPedido(Long pedidoId, Long minutos) {
+        if (minutos == null || minutos < 0) {
+            throw new IllegalArgumentException("El tiempo adicional debe ser un valor positivo.");
+        }
+    
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
 
         pedido.setHoraEstimadaFin(pedido.getHoraEstimadaFin().plusMinutes(minutos));
+        pedidoRepository.save(pedido);
     }
 
     // MAPPERS
