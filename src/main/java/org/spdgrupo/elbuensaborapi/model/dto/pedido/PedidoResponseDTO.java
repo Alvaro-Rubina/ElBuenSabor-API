@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.model.dto.pedido;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoResponseDTO;
@@ -22,9 +23,11 @@ public class PedidoResponseDTO {
 
     private Long id;
     private LocalDate fecha;
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime hora;
     private String codigoOrden;
     private Estado estado;
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime horaEstimadaFin;
     private TipoEnvio tipoEnvio;
     private Double totalVenta;
