@@ -38,15 +38,9 @@ public class PedidoService {
         pedidoRepository.save(pedido);
     }
 
-    public PedidoResponseDTO getPedidoById(Long id) {
-        Pedido pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Pedido con el id " + id + " no encontrado"));
-        return toDTO(pedido);
-    }
-
-    public PedidoResponseDTO getPedidoByCodigo(String codigoOrden) {
-        Pedido pedido = pedidoRepository.findByCodigoOrden(codigoOrden)
-                .orElseThrow(() -> new NotFoundException("Pedido con el código de orden " + codigoOrden + " no encontrado"));
+    public PedidoResponseDTO getPedidoByCodigo(String codigo) {
+        Pedido pedido = pedidoRepository.findByCodigoOrden(codigo)
+                .orElseThrow(() -> new NotFoundException("Pedido con el código de orden " + codigo + " no encontrado"));
         return toDTO(pedido);
     }
 
@@ -95,7 +89,7 @@ public class PedidoService {
         if (minutos == null || minutos < 0) {
             throw new IllegalArgumentException("El tiempo adicional debe ser un valor positivo.");
         }
-    
+
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
 
@@ -114,7 +108,7 @@ public class PedidoService {
         Pedido pedido = Pedido.builder()
                 .fecha(LocalDate.now())
                 .hora(LocalTime.now())
-                .codigoOrden(generateCodigoOrden())
+                .codigo(generateCodigo())
                 .estado(Estado.SOLICITADO) // Estado por defecto al crear un nuevo pedido.
                 .tipoEnvio(pedidoDTO.getTipoEnvio())
                 .formaPago(pedidoDTO.getFormaPago())
@@ -140,7 +134,7 @@ public class PedidoService {
                 .id(pedido.getId())
                 .fecha(pedido.getFecha())
                 .hora(pedido.getHora())
-                .codigoOrden(pedido.getCodigoOrden())
+                .codigoOrden(pedido.getCodigo())
                 .estado(pedido.getEstado())
                 .horaEstimadaFin(pedido.getHoraEstimadaFin())
                 .tipoEnvio(pedido.getTipoEnvio())
@@ -201,7 +195,7 @@ public class PedidoService {
         return pedido.getHora().plusMinutes(tiempoAdicional);
     }
 
-    private String generateCodigoOrden() {
+    private String generateCodigo() {
         LocalDate hoy = LocalDate.now();
         int anio = hoy.getYear();     // 2025
         int mes = hoy.getMonthValue(); // 5

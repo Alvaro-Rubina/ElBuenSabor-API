@@ -25,7 +25,7 @@ public class PedidoResponseDTO {
     private LocalDate fecha;
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime hora;
-    private String codigoOrden;
+    private String codigo;
     private Estado estado;
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime horaEstimadaFin;

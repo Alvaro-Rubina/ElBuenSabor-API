@@ -29,7 +29,8 @@ public class Pedido {
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime hora;
 
-    private String codigoOrden;
+    @Column(unique = true)
+    private String codigo;
 
     @Enumerated(EnumType.STRING)
     private Estado estado;

@@ -1,6 +1,5 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
@@ -24,10 +23,10 @@ public class PedidoController {
         return ResponseEntity.ok("Pedido guardado correctamente");
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{codigo}")
     @ResponseBody
-    public ResponseEntity<PedidoResponseDTO> getPedidoById(@PathVariable Long id) {
-        PedidoResponseDTO pedidoDTO = pedidoService.getPedidoById(id);
+    public ResponseEntity<PedidoResponseDTO> getPedidoByCodigoOrden(@PathVariable String codigo) {
+        PedidoResponseDTO pedidoDTO = pedidoService.getPedidoByCodigo(codigo);
         return ResponseEntity.ok(pedidoDTO);
     }
 
