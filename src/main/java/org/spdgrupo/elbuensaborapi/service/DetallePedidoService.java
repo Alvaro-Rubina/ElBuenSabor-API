@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
@@ -23,6 +24,7 @@ public class DetallePedidoService {
     private final InsumoRepository insumoRepository;
 
     // MAPPERS
+    @Transactional
     public DetallePedido toEntity(DetallePedidoDTO detallePedidoDTO) {
         Producto producto = detallePedidoDTO.getProductoId() == null ? null : productoRepository.findById(detallePedidoDTO.getProductoId())
                 .orElseThrow(() -> new NotFoundException("Producto con el id " + detallePedidoDTO.getProductoId() + " no encontrado"));

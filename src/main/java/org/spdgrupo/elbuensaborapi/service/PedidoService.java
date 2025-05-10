@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
@@ -33,13 +34,14 @@ public class PedidoService {
     private final ClienteService clienteService;
     private final DetallePedidoService detallePedidoService;
 
+    @Transactional
     public void savePedido(PedidoDTO pedidoDTO) {
         Pedido pedido = toEntity(pedidoDTO);
         pedidoRepository.save(pedido);
     }
 
     public PedidoResponseDTO getPedidoByCodigo(String codigo) {
-        Pedido pedido = pedidoRepository.findByCodigoOrden(codigo)
+        Pedido pedido = pedidoRepository.findByCodigo(codigo)
                 .orElseThrow(() -> new NotFoundException("Pedido con el código de orden " + codigo + " no encontrado"));
         return toDTO(pedido);
     }
@@ -99,7 +101,6 @@ public class PedidoService {
 
     // MAPPERS
     public Pedido toEntity(PedidoDTO pedidoDTO) {
-
         Cliente cliente = clienteRepository.findById(pedidoDTO.getClienteId())
                 .orElseThrow(() -> new NotFoundException("Cliente con el id " + pedidoDTO.getClienteId() + " no encontrado"));
         Domicilio domicilio = domicilioRepository.findById(pedidoDTO.getDomicilioId())
@@ -134,7 +135,7 @@ public class PedidoService {
                 .id(pedido.getId())
                 .fecha(pedido.getFecha())
                 .hora(pedido.getHora())
-                .codigoOrden(pedido.getCodigo())
+                .codigo(pedido.getCodigo())
                 .estado(pedido.getEstado())
                 .horaEstimadaFin(pedido.getHoraEstimadaFin())
                 .tipoEnvio(pedido.getTipoEnvio())

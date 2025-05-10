@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
-    Optional<Pedido> findByCodigoOrden(String codigoOrden);
+    Optional<Pedido> findByCodigo(String codigo);
 
     @Query("SELECT COUNT(p) FROM Pedido p WHERE YEAR(p.fecha) = :anio AND MONTH(p.fecha) = :mes")
     int countByYearAndMonth(@Param("anio") int anio, @Param("mes") int mes);
