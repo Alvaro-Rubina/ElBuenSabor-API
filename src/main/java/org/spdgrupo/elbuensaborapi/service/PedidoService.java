@@ -2,11 +2,13 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
 import org.spdgrupo.elbuensaborapi.model.entity.DetallePedido;
+import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
 import org.spdgrupo.elbuensaborapi.model.entity.Pedido;
-import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
@@ -33,15 +35,7 @@ public class PedidoService {
 
     public void savePedido(PedidoDTO pedidoDTO) {
         Pedido pedido = toEntity(pedidoDTO);
-        Pedido pedidoGuardado = pedidoRepository.save(pedido);
-
-        // Una vez guardado el pedido, se guardan los detallePedidos y se calcula el precioCosto
-        detallePedidoService.saveDetallesPedidos(pedidoDTO.getDetallePedidos(), pedidoGuardado);
-
-        pedido.setHoraEstimadaFin(calculateTiempoEstimadoPreparacion(pedidoGuardado));
-        pedidoGuardado.setTotalVenta(calculateTotalVenta(pedidoGuardado));
-        pedidoGuardado.setTotalCosto(calculateTotalCosto(pedidoGuardado));
-        pedidoRepository.save(pedidoGuardado);
+        pedidoRepository.save(pedido);
     }
 
     public PedidoResponseDTO getPedidoById(Long id) {
@@ -71,9 +65,33 @@ public class PedidoService {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + id + " no encontrado"));
 
+        // TODO: en cada validacion verificar tambien que el valor no sea null o vacio
+        if (pedido.getEstado() != pedidoDTO.getEstado()) {
+            pedido.setEstado(pedidoDTO.getEstado());
+        }
+
+        if (pedido.getTipoEnvio() != pedidoDTO.getTipoEnvio()) {
+            pedido.setTipoEnvio(pedidoDTO.getTipoEnvio());
+        }
+
+        if (pedido.getFormaPago() != pedidoDTO.getFormaPago()) {
+            pedido.setFormaPago(pedidoDTO.getFormaPago());
+        }
+
+        if (pedido.getCliente().getId() != pedidoDTO.getClienteId()) {
+            pedido.setCliente(clienteRepository.findById(pedidoDTO.getClienteId())
+                    .orElseThrow(() -> new NotFoundException("Cliente con el id " + pedidoDTO.getClienteId() + " no encontrado")));
+        }
+
+        if (pedido.getDomicilio().getId() != pedidoDTO.getDomicilioId()) {
+            pedido.setDomicilio(domicilioRepository.findById(pedidoDTO.getDomicilioId())
+                    .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado")));
+        }
+
         pedidoRepository.save(pedido);
     }
 
+    // TODO: Esto hay que probarlo
     public void agregarTiempoAlPedido(Long pedidoId, Long minutos) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
@@ -84,26 +102,39 @@ public class PedidoService {
     // MAPPERS
     public Pedido toEntity(PedidoDTO pedidoDTO) {
 
-        return Pedido.builder()
+        Cliente cliente = clienteRepository.findById(pedidoDTO.getClienteId())
+                .orElseThrow(() -> new NotFoundException("Cliente con el id " + pedidoDTO.getClienteId() + " no encontrado"));
+        Domicilio domicilio = domicilioRepository.findById(pedidoDTO.getDomicilioId())
+                .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado"));
+        Pedido pedido = Pedido.builder()
                 .fecha(LocalDate.now())
                 .hora(LocalTime.now())
                 .codigoOrden(null) // TODO: ACA VER LO DEL TEMA DEL CODIGO
                 .estado(Estado.SOLICITADO) // Estado por defecto al crear un nuevo pedido.
-                .horaEstimadaFin(null) // TODO: ACA VER LO DEL TEMA HORA ESTIMADA FIN
                 .tipoEnvio(pedidoDTO.getTipoEnvio())
-                .totalVenta(null)
-                .totalCosto(null) // TODO: ACA VER LO DEL TOTAL VENTA
                 .formaPago(pedidoDTO.getFormaPago())
-                .cliente(clienteRepository.findById(pedidoDTO.getClienteId())
-                        .orElseThrow(() -> new NotFoundException("Cliente con el id " + pedidoDTO.getClienteId() + " no encontrado")))
-                .domicilio(domicilioRepository.findById(pedidoDTO.getDomicilioId())
-                        .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado")))
+                .cliente(cliente)
+                .domicilio(domicilio)
+                .detallePedidos(new ArrayList<>())
                 .build();
+
+        for (DetallePedidoDTO detalleDTO : pedidoDTO.getDetallePedidos()) {
+            DetallePedido detalle = detallePedidoService.toEntity(detalleDTO);
+            detalle.setPedido(pedido);
+            pedido.getDetallePedidos().add(detalle);
+        }
+        pedido.setTotalVenta(getTotalVenta(pedido.getDetallePedidos()));
+        pedido.setTotalCosto(getTotalCosto(pedido.getDetallePedidos()));
+        pedido.setHoraEstimadaFin(getHoraEstimadaFin(pedido));
+
+        return pedido;
     }
 
     public PedidoResponseDTO toDTO(Pedido pedido) {
         return PedidoResponseDTO.builder()
+                .id(pedido.getId())
                 .fecha(pedido.getFecha())
+                .hora(pedido.getHora())
                 .codigoOrden(pedido.getCodigoOrden())
                 .estado(pedido.getEstado())
                 .horaEstimadaFin(pedido.getHoraEstimadaFin())
@@ -120,44 +151,49 @@ public class PedidoService {
     }
 
     // Metodos adicionales
-    public Double calculateTotalVenta(Pedido pedido) {
-        return pedido.getDetallePedidos().stream()
-                .mapToDouble(DetallePedido::getSubTotal)
-                .sum();
-    }
-
-    public Double calculateTotalCosto(Pedido pedido) {
-        return pedido.getDetallePedidos().stream()
-                .mapToDouble(DetallePedido::getSubTotalCosto)
-                .sum();
-    }
-
-    public LocalTime calculateTiempoEstimadoPreparacion(Pedido pedido) {
-        List<DetallePedido> detallePedidos = pedido.getDetallePedidos();
-        LocalTime mayorTiempo = LocalTime.MIN;
+    private Double getTotalVenta(List<DetallePedido> detallePedidos) {
+        Double totalVenta = 0.0;
 
         for (DetallePedido detallePedido : detallePedidos) {
-            Producto producto = detallePedido.getProducto();
-            if (producto != null) {
-                long tiempoEstimado = producto.getTiempoEstimadoPreparacion();
+            totalVenta += detallePedido.getSubTotal();
+        }
+        return totalVenta;
+    }
 
-                if (detallePedido.getCantidad() == 2) {
-                    tiempoEstimado = Math.round(tiempoEstimado * 1.25);
-                } else if (detallePedido.getCantidad() >= 3) {
-                    tiempoEstimado = Math.round(tiempoEstimado * 1.5);
-                }
+    private Double getTotalCosto(List<DetallePedido> detallePedidos) {
+        Double totalCosto = 0.0;
 
-                // Convertimos minutos a segundos, luego a LocalTime
-                LocalTime tiempoPreparacion = LocalTime.ofSecondOfDay(tiempoEstimado * 60);
+        for (DetallePedido detallePedido : detallePedidos) {
+            totalCosto += detallePedido.getSubTotalCosto();
+        }
 
-                if (tiempoPreparacion.isAfter(mayorTiempo)) {
-                    mayorTiempo = tiempoPreparacion;
+        return totalCosto;
+    }
+
+    private LocalTime getHoraEstimadaFin(Pedido pedido) {
+        int maxTiempoPreparacion = 0;
+        int cantidadProductos = 0;
+
+        for (DetallePedido detalle : pedido.getDetallePedidos()) {
+            if (detalle.getProducto() != null) {
+                cantidadProductos++;
+                Long tiempoPreparacion = detalle.getProducto().getTiempoEstimadoPreparacion();
+                if (tiempoPreparacion != null && tiempoPreparacion > maxTiempoPreparacion) {
+                    maxTiempoPreparacion = tiempoPreparacion.intValue();
                 }
             }
         }
 
-        // tiempo de prep = el mayor + 10 minutos
-        return mayorTiempo.plusMinutes(10);
+        // NOTE: Los tiempos adicionados pueden variar despues
+        // el tiempo va a ser el max + 10 minutos
+        int tiempoAdicional = maxTiempoPreparacion + 5;
+
+        // si hay 3 o más productos, 5 minutitos mas
+        if (cantidadProductos >= 3) {
+            tiempoAdicional += 5;
+        }
+
+        return pedido.getHora().plusMinutes(tiempoAdicional);
     }
 
 }
