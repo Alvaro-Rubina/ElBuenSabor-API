@@ -27,7 +27,7 @@ public class DetallePedido {
     private Producto producto;
 
     @ManyToOne
-    @JoinColumn(name = "insumo_id")
+    @JoinColumn(name = "id_insumo")
     private Insumo insumo;
 
 }
