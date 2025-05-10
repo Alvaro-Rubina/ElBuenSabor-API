@@ -27,6 +27,6 @@ public class Producto {
     @ManyToOne
     private RubroProducto rubro;
 
-    @OneToMany(mappedBy = "producto")
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleProducto> detalleProductos;
 }

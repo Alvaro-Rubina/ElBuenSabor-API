@@ -6,7 +6,9 @@ import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
+import org.spdgrupo.elbuensaborapi.model.entity.RubroProducto;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroProductoRepository;
 import org.springframework.stereotype.Service;
@@ -31,10 +33,7 @@ public class ProductoService {
     @Transactional
     public void saveProducto(ProductoDTO productoDTO) {
         Producto producto = toEntity(productoDTO);
-        Producto productoGuardado = productoRepository.save(producto);
-
-        // Una vez guardado el producto, se guardan los detalleProductos y se calcula el precioCosto
-        detalleProductoService.saveDetallesProductos(productoDTO.getDetalleProductos(), productoGuardado);
+        productoRepository.save(producto);
     }
 
     public ProductoResponseDTO getProductoById(Long id) {
@@ -118,19 +117,28 @@ public class ProductoService {
 
     // MAPPERS
     public Producto toEntity(ProductoDTO productoDTO) {
-        Double precioCosto = calcularPrecioCosto(productoDTO.getDetalleProductos());
+        RubroProducto rubro = rubroProductoRepository.findById(productoDTO.getRubroId())
+                .orElseThrow(() -> new RuntimeException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado"));
 
-        return Producto.builder()
+        Producto producto = Producto.builder()
                 .denominacion(productoDTO.getDenominacion())
                 .descripcion(productoDTO.getDescripcion())
                 .tiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion())
                 .precioVenta(productoDTO.getPrecioVenta())
-                .precioCosto(precioCosto)
                 .urlImagen(productoDTO.getUrlImagen())
                 .activo(productoDTO.isActivo())
-                .rubro(rubroProductoRepository.findById(productoDTO.getRubroId())
-                        .orElseThrow(() -> new RuntimeException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado")))
+                .rubro(rubro)
+                .detalleProductos(new ArrayList<>())
                 .build();
+
+        for (DetalleProductoDTO detalleProductoDTO : productoDTO.getDetalleProductos() ) {
+            DetalleProducto detalle = detalleProductoService.toEntity(detalleProductoDTO);
+            detalle.setProducto(producto);
+            producto.getDetalleProductos().add(detalle);
+        }
+        producto.setPrecioCosto(getPrecioCosto(producto.getDetalleProductos()));
+
+        return producto;
     }
 
     public ProductoResponseDTO toDTO(Producto producto) {
@@ -150,12 +158,12 @@ public class ProductoService {
                 .build();
     }
 
-    // METODOS AUXILIARES
-    private Double calcularPrecioCosto(List<DetalleProductoDTO> detalles) {
+    // Metodos adicionales
+    private Double getPrecioCosto(List<DetalleProducto> detalleProductos) {
         Double precioCosto = 0.0;
-        for (DetalleProductoDTO detalle : detalles) {
-            InsumoResponseDTO insumo = insumoService.getInsumoById(detalle.getInsumoId());
-            precioCosto += insumo.getPrecioCosto() * detalle.getCantidad();
+
+        for (DetalleProducto detalleProducto : detalleProductos) {
+            precioCosto += detalleProducto.getCantidad() * detalleProducto.getInsumo().getPrecioCosto();
         }
         return precioCosto;
     }
