@@ -2,7 +2,6 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.spdgrupo.elbuensaborapi.model.interfaces.Vendible;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-public class Producto implements Vendible {
+public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

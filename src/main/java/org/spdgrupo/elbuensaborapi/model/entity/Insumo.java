@@ -3,7 +3,6 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
-import org.spdgrupo.elbuensaborapi.model.interfaces.Vendible;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,7 +10,7 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.Vendible;
 @Setter
 @Builder
 @Entity
-public class Insumo implements Vendible {
+public class Insumo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
