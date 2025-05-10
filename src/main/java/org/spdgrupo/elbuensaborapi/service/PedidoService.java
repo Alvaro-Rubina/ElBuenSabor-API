@@ -106,10 +106,11 @@ public class PedidoService {
                 .orElseThrow(() -> new NotFoundException("Cliente con el id " + pedidoDTO.getClienteId() + " no encontrado"));
         Domicilio domicilio = domicilioRepository.findById(pedidoDTO.getDomicilioId())
                 .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado"));
+
         Pedido pedido = Pedido.builder()
                 .fecha(LocalDate.now())
                 .hora(LocalTime.now())
-                .codigoOrden(null) // TODO: ACA VER LO DEL TEMA DEL CODIGO
+                .codigoOrden(generateCodigoOrden())
                 .estado(Estado.SOLICITADO) // Estado por defecto al crear un nuevo pedido.
                 .tipoEnvio(pedidoDTO.getTipoEnvio())
                 .formaPago(pedidoDTO.getFormaPago())
@@ -195,5 +196,22 @@ public class PedidoService {
 
         return pedido.getHora().plusMinutes(tiempoAdicional);
     }
+
+    private String generateCodigoOrden() {
+        LocalDate hoy = LocalDate.now();
+        int anio = hoy.getYear();     // 2025
+        int mes = hoy.getMonthValue(); // 5
+
+        int pedidosEsteMes = pedidoRepository.countByYearAndMonth(anio, mes);
+        int nuevoNumero = pedidosEsteMes + 1;
+
+        String anioStr = String.valueOf(anio).substring(2);       // "25"
+        String mesStr = String.format("%02d", mes);               // "05"
+        String numeroStr = String.format("%05d", nuevoNumero);    // "00042"
+
+        return "PED-" + anioStr + mesStr + "-" + numeroStr;
+    }
+
+
 
 }
