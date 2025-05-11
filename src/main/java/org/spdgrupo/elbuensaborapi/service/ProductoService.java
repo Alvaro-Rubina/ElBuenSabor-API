@@ -3,7 +3,6 @@ package org.spdgrupo.elbuensaborapi.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
@@ -28,7 +27,6 @@ public class ProductoService {
     private final RubroProductoService rubroProductoService;
     private final RubroProductoRepository rubroProductoRepository;
     private final DetalleProductoService detalleProductoService;
-    private final InsumoService insumoService;
 
     @Transactional
     public void saveProducto(ProductoDTO productoDTO) {
