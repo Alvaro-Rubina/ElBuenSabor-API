@@ -7,7 +7,6 @@ import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetallePedido;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
-import org.spdgrupo.elbuensaborapi.model.entity.Pedido;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
