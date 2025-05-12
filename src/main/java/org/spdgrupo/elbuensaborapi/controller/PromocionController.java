@@ -2,7 +2,8 @@ package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.PromocionDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.PromocionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,18 +25,19 @@ public class PromocionController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<PromocionDTO> getPromocionById(@PathVariable Long id) {
+    public ResponseEntity<PromocionResponseDTO> getPromocionById(@PathVariable Long id) {
         return ResponseEntity.ok(promocionService.getPromocionById(id));
     }
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<PromocionDTO>> getPromociones() {
+    public ResponseEntity<List<PromocionResponseDTO>> getPromociones() {
         return ResponseEntity.ok(promocionService.getAllPromociones());
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updatePromocion(@PathVariable Long id,@Valid @RequestBody PromocionDTO promocionDTO) {
+    public ResponseEntity<String> updatePromocion(@PathVariable Long id,
+                                                  @Valid @RequestBody PromocionDTO promocionDTO) {
         promocionService.updatePromocion(id, promocionDTO);
         return ResponseEntity.ok("Promocion actualizada correctamente");
     }
