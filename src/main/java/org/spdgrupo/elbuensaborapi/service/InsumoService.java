@@ -126,7 +126,7 @@ public class InsumoService {
                 .stockActual(insumoDTO.getStockActual())
                 .stockMinimo(insumoDTO.getStockMinimo())
                 .esParaElaborar(insumoDTO.getEsParaElaborar())
-                .activo(insumoDTO.isActivo())
+                .activo(insumoDTO.getActivo())
                 .unidadMedida(insumoDTO.getUnidadMedida())
                 .rubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
                         .orElseThrow(() -> new NotFoundException("RubroInsumo con el id" + insumoDTO.getRubroId() + "no encontrado")))
