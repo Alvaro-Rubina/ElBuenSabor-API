@@ -23,6 +23,6 @@ public class Promocion {
     private LocalDate fechaHasta;
     private Double descuento;
 
-    @OneToMany(mappedBy = "promocion")
+    @OneToMany(mappedBy = "promocion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetallePromocion> detallePromociones;
 }

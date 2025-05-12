@@ -1,12 +1,13 @@
 package org.spdgrupo.elbuensaborapi.model.dto.promocion;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
+import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.detallepromocion.DetallePromocionDTO;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,4 +33,7 @@ public class PromocionDTO {
     @NotNull(message = "El campo descuento no puede ser nulo")
     @DecimalMin(value = "0.0", message = "El campo descuento no puede ser menor a 0")
     private Double descuento;
+
+    @Size(min = 1, message = "El campo detallePromociones debe contener por lo menos 1 elemento")
+    private List<DetallePromocionDTO> detallePromociones = new ArrayList<>();
 }
