@@ -19,7 +19,6 @@ public class Domicilio {
     private Integer numero;
     private String localidad;
     private Integer codigoPostal;
-    private String infoAdicional;
     private boolean activo;
 
 }

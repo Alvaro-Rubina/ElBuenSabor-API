@@ -23,9 +23,6 @@ public class DomicilioDTO {
     @NotNull(message = "El campo codigoPostal no puede ser nulo")
     private Integer codigoPostal;
 
-    // este campo es opcional
-    private String infoAdicional;
-
     // este campo es opcional, util para EDITAR un domicilio ya que al crearlo por defecto activo = true
     private boolean activo;
 

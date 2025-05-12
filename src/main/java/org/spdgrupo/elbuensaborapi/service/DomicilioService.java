@@ -63,9 +63,6 @@ public class DomicilioService {
         if (!domicilioDTO.getCodigoPostal().equals(domicilio.getCodigoPostal())) {
             domicilio.setCodigoPostal(domicilioDTO.getCodigoPostal());
         }
-        if (!domicilioDTO.getInfoAdicional().equals(domicilio.getInfoAdicional())) {
-            domicilio.setInfoAdicional(domicilioDTO.getInfoAdicional());
-        }
 
         if (!domicilioDTO.isActivo() == domicilio.isActivo()) {
             domicilio.setActivo(domicilioDTO.isActivo());
@@ -81,7 +78,6 @@ public class DomicilioService {
                 .numero(domicilioDTO.getNumero())
                 .localidad(domicilioDTO.getLocalidad())
                 .codigoPostal(domicilioDTO.getCodigoPostal())
-                .infoAdicional(domicilioDTO.getInfoAdicional() == null ? "Sin información adicional" : domicilioDTO.getInfoAdicional())
                 .activo(true) // cuando se GUARDA un domicilio, se le asigna el valor activo = true por defecto
                 .build();
     }
