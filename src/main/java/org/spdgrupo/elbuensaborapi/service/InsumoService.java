@@ -15,6 +15,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class InsumoService {
+    // TODO: Falta logica (aca y capaz en el DTO) para manejar que el stockActual no sea nunca menor que el stockMinimo
 
     // Dependencias
     private final InsumoRepository insumoRepository;
@@ -64,37 +65,47 @@ public class InsumoService {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
 
-        if (!insumo.getDenominacion().equals(insumoDTO.getDenominacion())) {
+        if (!insumoDTO.getDenominacion().isBlank() && !insumo.getDenominacion().equals(insumoDTO.getDenominacion())) {
             insumo.setDenominacion(insumoDTO.getDenominacion());
         }
-        if (!insumo.getUrlImagen().equals(insumoDTO.getUrlImagen())) {
+
+        if (!insumoDTO.getUrlImagen().isBlank() && !insumo.getUrlImagen().equals(insumoDTO.getUrlImagen())) {
             insumo.setUrlImagen(insumoDTO.getUrlImagen());
         }
-        if (!insumo.getPrecioCosto().equals(insumoDTO.getPrecioCosto())) {
+
+        if (insumoDTO.getPrecioCosto() != null && !insumoDTO.getPrecioCosto().equals(insumo.getPrecioCosto())) {
             insumo.setPrecioCosto(insumoDTO.getPrecioCosto());
         }
-        if (!insumo.getPrecioVenta().equals(insumoDTO.getPrecioVenta())) {
+
+        if (insumoDTO.getPrecioVenta() != null && !insumo.getPrecioVenta().equals(insumoDTO.getPrecioVenta())) {
             insumo.setPrecioVenta(insumoDTO.getPrecioVenta());
         }
-        if (!insumo.getStockActual().equals(insumoDTO.getStockActual())) {
+
+        if (insumoDTO.getStockActual() != null && !insumo.getStockActual().equals(insumoDTO.getStockActual())) {
             insumo.setStockActual(insumoDTO.getStockActual());
         }
-        if (!insumo.getStockMinimo().equals(insumoDTO.getStockMinimo())) {
+
+        if (insumoDTO.getStockMinimo() != null && !insumo.getStockMinimo().equals(insumoDTO.getStockMinimo())) {
             insumo.setStockMinimo(insumoDTO.getStockMinimo());
         }
-        if (!insumo.isEsParaElaborar() == insumoDTO.isEsParaElaborar()) {
-            insumo.setEsParaElaborar(insumoDTO.isEsParaElaborar());
+
+        if (insumoDTO.getEsParaElaborar() != null && insumo.isEsParaElaborar() != insumoDTO.getEsParaElaborar()) {
+            insumo.setEsParaElaborar(insumoDTO.getEsParaElaborar());
         }
-        if (!insumo.isActivo() == insumoDTO.isActivo()) {
-            insumo.setActivo(insumoDTO.isActivo());
+
+        if (insumoDTO.getActivo() != null && !insumo.isActivo() == insumoDTO.getActivo()) {
+            insumo.setActivo(insumoDTO.getActivo());
         }
-        if (!insumo.getUnidadMedida().equals(insumoDTO.getUnidadMedida())) {
+
+        if (insumoDTO.getUnidadMedida() != null && !insumo.getUnidadMedida().equals(insumoDTO.getUnidadMedida())) {
             insumo.setUnidadMedida(insumoDTO.getUnidadMedida());
         }
-        if (!insumo.getRubro().getId().equals(insumoDTO.getRubroId())) {
+
+        if (insumoDTO.getRubroId() != null && !insumo.getRubro().getId().equals(insumoDTO.getRubroId())) {
             insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
                     .orElseThrow(() -> new NotFoundException("RubroInsumo con el id" + insumoDTO.getRubroId() + "no encontrado")));
         }
+
         insumoRepository.save(insumo);
     }
 
@@ -114,7 +125,7 @@ public class InsumoService {
                 .precioVenta(insumoDTO.getPrecioVenta())
                 .stockActual(insumoDTO.getStockActual())
                 .stockMinimo(insumoDTO.getStockMinimo())
-                .esParaElaborar(insumoDTO.isEsParaElaborar())
+                .esParaElaborar(insumoDTO.getEsParaElaborar())
                 .activo(insumoDTO.isActivo())
                 .unidadMedida(insumoDTO.getUnidadMedida())
                 .rubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())

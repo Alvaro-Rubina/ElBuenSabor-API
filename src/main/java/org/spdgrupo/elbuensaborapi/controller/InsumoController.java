@@ -43,7 +43,7 @@ public class InsumoController {
     
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateInsumo(@PathVariable Long id,
-                                               @Valid @RequestBody InsumoDTO insumoDTO) {
+                                               @RequestBody InsumoDTO insumoDTO) {
         insumoService.updateInsumo(id, insumoDTO);
         return ResponseEntity.ok("Insumo actualizado correctamente");
     }

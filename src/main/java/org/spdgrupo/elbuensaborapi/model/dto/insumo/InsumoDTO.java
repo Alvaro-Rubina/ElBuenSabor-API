@@ -37,9 +37,9 @@ public class InsumoDTO {
     private Double stockMinimo;
 
     @NotNull(message = "El campo esParaElaborar no puede ser nulo")
-    private boolean esParaElaborar;
+    private Boolean esParaElaborar;
 
-    private boolean activo;
+    private Boolean activo;
 
     @NotNull(message = "El campo unidadMedida no puede ser nulo")
     private UnidadMedida unidadMedida;
