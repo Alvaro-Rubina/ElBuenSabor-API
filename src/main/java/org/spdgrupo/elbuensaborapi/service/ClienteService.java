@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.service;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClientePatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
@@ -46,18 +47,20 @@ public class ClienteService {
         return clientesDTO;
     }
 
-    public void updateCliente(Long id, ClienteDTO clienteDTO) {
+    public void updateCliente(Long id, ClientePatchDTO clienteDTO) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
 
-        if (!clienteDTO.getNombreCompleto().equals(cliente.getNombreCompleto())) {
+        if (clienteDTO != null) {
             cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
         }
-        if (!clienteDTO.getTelefono().equals(cliente.getTelefono())) {
+
+        if (clienteDTO != null) {
             cliente.setTelefono(clienteDTO.getTelefono());
         }
-        if (!cliente.isActivo() == clienteDTO.isActivo()) {
-            cliente.setActivo(clienteDTO.isActivo());
+
+        if (cliente.getActivo() != null) {
+            cliente.setActivo(clienteDTO.getActivo());
         }
 
         // actualizo el usuario del cliente
@@ -89,7 +92,7 @@ public class ClienteService {
                 .id(cliente.getId())
                 .nombreCompleto(cliente.getNombreCompleto())
                 .telefono(cliente.getTelefono())
-                .activo(cliente.isActivo())
+                .activo(cliente.getActivo())
                 .usuario(usuarioService.toDTO(cliente.getUsuario()))
                 .detalleDomicilios(cliente.getDetalleDomicilios().stream()
                         .map(detalleDomicilioService::toDTO)

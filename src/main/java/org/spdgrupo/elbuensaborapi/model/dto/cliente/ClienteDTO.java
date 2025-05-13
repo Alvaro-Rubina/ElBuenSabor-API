@@ -17,8 +17,5 @@ public class ClienteDTO {
     @NotBlank (message = "El campo telefono no puede estar vacío")
     private String telefono;
 
-    // este campo es opcional, util para EDITAR un cliente ya que al crearlo por defecto activo = true
-    private boolean activo;
-
     private UsuarioDTO usuario;
 }

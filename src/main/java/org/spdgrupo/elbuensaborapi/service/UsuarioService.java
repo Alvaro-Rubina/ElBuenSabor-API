@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.repository.UsuarioRepository;
@@ -45,16 +46,17 @@ public class UsuarioService {
          return usuarioDTOs;
     }
 
-    public void updateUsuario(Long id, UsuarioDTO usuarioDTO) {
+    public void updateUsuario(Long id, UsuarioPatchDTO usuarioDTO) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario con el id " + id + " no encontrado"));
 
         // saqué la opcion para editar el email ya que no debería poder editarse. La contraseña en cambio, si
         
-        if (!usuarioDTO.getContraseña().equals(usuario.getContraseña())) {
+        if (usuarioDTO.getContraseña() != null) {
             usuario.setContraseña(usuarioDTO.getContraseña());
         }
-        if (!usuarioDTO.getRol().equals(usuario.getRol())) {
+
+        if (usuarioDTO.getRol() != null) {
             usuario.setRol(usuarioDTO.getRol());
         }
 

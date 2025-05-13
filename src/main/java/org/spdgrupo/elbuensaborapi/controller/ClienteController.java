@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClientePatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.ClienteService;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +36,9 @@ public class ClienteController {
         return ResponseEntity.ok(clienteService.getAllClientes());
     }
 
-    @PutMapping("/update/{id}")
+    @PatchMapping("/update/{id}")
     public ResponseEntity<String> updateCliente(@PathVariable Long id,
-                                                @Valid @RequestBody ClienteDTO clienteDTO) {
+                                                @RequestBody ClientePatchDTO clienteDTO) {
         clienteService.updateCliente(id, clienteDTO);
         return ResponseEntity.ok("Cliente actualizado correctamente");
     }
