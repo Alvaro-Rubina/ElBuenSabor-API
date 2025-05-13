@@ -49,17 +49,17 @@ public class Pedido {
     private FormaPago formaPago;
 
     @ManyToOne
-    @JoinColumn(name = "id_cliente")
+    @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
     @ManyToOne
-    @JoinColumn(name = "id_domicilio")
+    @JoinColumn(name = "domicilio_id")
     private Domicilio domicilio;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetallePedido> detallePedidos = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private Factura factura;
 
 }

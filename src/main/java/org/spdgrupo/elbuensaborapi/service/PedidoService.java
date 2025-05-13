@@ -6,10 +6,7 @@ import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
-import org.spdgrupo.elbuensaborapi.model.entity.DetallePedido;
-import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
-import org.spdgrupo.elbuensaborapi.model.entity.Pedido;
+import org.spdgrupo.elbuensaborapi.model.entity.*;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
@@ -118,11 +115,14 @@ public class PedidoService {
                 .detallePedidos(new ArrayList<>())
                 .build();
 
+        // DetallePedidos
         for (DetallePedidoDTO detalleDTO : pedidoDTO.getDetallePedidos()) {
             DetallePedido detalle = detallePedidoService.toEntity(detalleDTO);
             detalle.setPedido(pedido);
             pedido.getDetallePedidos().add(detalle);
         }
+
+        // TotalVenta y TotalCosto
         pedido.setTotalVenta(getTotalVenta(pedido.getDetallePedidos()));
         pedido.setTotalCosto(getTotalCosto(pedido.getDetallePedidos()));
         pedido.setHoraEstimadaFin(getHoraEstimadaFin(pedido));
