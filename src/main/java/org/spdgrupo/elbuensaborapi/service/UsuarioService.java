@@ -49,8 +49,6 @@ public class UsuarioService {
     public void updateUsuario(Long id, UsuarioPatchDTO usuarioDTO) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario con el id " + id + " no encontrado"));
-
-        // saqué la opcion para editar el email ya que no debería poder editarse. La contraseña en cambio, si
         
         if (usuarioDTO.getContraseña() != null) {
             usuario.setContraseña(usuarioDTO.getContraseña());

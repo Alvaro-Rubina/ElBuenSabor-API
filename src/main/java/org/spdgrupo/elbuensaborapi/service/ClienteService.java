@@ -51,15 +51,15 @@ public class ClienteService {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
 
-        if (clienteDTO != null) {
+        if (clienteDTO.getNombreCompleto() != null) {
             cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
         }
 
-        if (clienteDTO != null) {
+        if (clienteDTO.getTelefono() != null) {
             cliente.setTelefono(clienteDTO.getTelefono());
         }
 
-        if (cliente.getActivo() != null) {
+        if (clienteDTO.getActivo() != null) {
             cliente.setActivo(clienteDTO.getActivo());
         }
 
