@@ -1,6 +1,5 @@
-package org.spdgrupo.elbuensaborapi.model.entity;
+package org.spdgrupo.elbuensaborapi.model.dto.domicilio;
 
-import jakarta.persistence.*;
 import lombok.*;
 
 @NoArgsConstructor
@@ -8,17 +7,11 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@Entity
-public class Domicilio {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class DomicilioPatchDTO {
 
     private String calle;
     private Integer numero;
     private String localidad;
     private Integer codigoPostal;
     private Boolean activo;
-
 }

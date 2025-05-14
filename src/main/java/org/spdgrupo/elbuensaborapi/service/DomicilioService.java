@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
@@ -47,25 +48,25 @@ public class DomicilioService {
         domicilioRepository.save(domicilio);
     }
 
-    public void updateDomicilio(Long id, DomicilioDTO domicilioDTO) {
+    public void updateDomicilio(Long id, DomicilioPatchDTO domicilioDTO) {
         Domicilio domicilio = domicilioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Domicilio no encontrado"));
 
-        if (!domicilioDTO.getCalle().equals(domicilio.getCalle())) {
+        if (domicilioDTO.getCalle() != null) {
             domicilio.setCalle(domicilioDTO.getCalle());
         }
-        if (!domicilioDTO.getLocalidad().equals(domicilio.getLocalidad())) {
+        if (domicilioDTO.getLocalidad() != null) {
             domicilio.setLocalidad(domicilioDTO.getLocalidad());
         }
-        if (!domicilioDTO.getNumero().equals(domicilio.getNumero())) {
+        if (domicilioDTO.getNumero() != null) {
             domicilio.setNumero(domicilioDTO.getNumero());
         }
-        if (!domicilioDTO.getCodigoPostal().equals(domicilio.getCodigoPostal())) {
+        if (domicilioDTO.getCodigoPostal() != null) {
             domicilio.setCodigoPostal(domicilioDTO.getCodigoPostal());
         }
 
-        if (!domicilioDTO.isActivo() == domicilio.isActivo()) {
-            domicilio.setActivo(domicilioDTO.isActivo());
+        if (domicilioDTO.getActivo() != null) {
+            domicilio.setActivo(domicilioDTO.getActivo());
         }
 
         domicilioRepository.save(domicilio);
@@ -88,7 +89,7 @@ public class DomicilioService {
                 .numero(domicilio.getNumero())
                 .localidad(domicilio.getLocalidad())
                 .codigoPostal(domicilio.getCodigoPostal())
-                .activo(domicilio.isActivo())
+                .activo(domicilio.getActivo())
                 .build();
     }
 }

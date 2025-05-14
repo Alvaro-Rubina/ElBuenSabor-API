@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.DomicilioService;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +36,9 @@ public class DomicilioController {
         return ResponseEntity.ok(domicilioService.getAllDomicilios());
     }
 
-    @PutMapping("/update/{id}")
+    @PatchMapping("/update/{id}")
     public ResponseEntity<String> updateDomicilio(@PathVariable Long id,
-                                                  @Valid @RequestBody DomicilioDTO domicilioDTO) {
+                                                  @RequestBody DomicilioPatchDTO domicilioDTO) {
         domicilioService.updateDomicilio(id, domicilioDTO);
         return ResponseEntity.ok("Domicilio actualizado correctamente");
     }
