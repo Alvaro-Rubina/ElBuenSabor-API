@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.InvalidRolException;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Empleado;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
@@ -46,18 +47,20 @@ public class EmpleadoService {
         return empleadosDTO;
     }
 
-    public void updateEmpleado(Long id, EmpleadoDTO empleadoDTO) {
+    public void updateEmpleado(Long id, EmpleadoPatchDTO empleadoDTO) {
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Empleado con el " +  id + " no encontrado"));
 
-        if (!empleado.getNombreCompleto().equals(empleadoDTO.getNombreCompleto())) {
+        if (empleadoDTO.getNombreCompleto() != null) {
             empleado.setNombreCompleto(empleadoDTO.getNombreCompleto());
         }
-        if (!empleado.getTelefono().equals(empleadoDTO.getTelefono())) {
+
+        if (empleadoDTO.getTelefono() != null) {
             empleado.setTelefono(empleadoDTO.getTelefono());
         }
-        if (!empleado.isActivo() == empleadoDTO.isActivo()) {
-            empleado.setActivo(empleadoDTO.isActivo());
+
+        if (empleadoDTO.getActivo() != null) {
+            empleado.setActivo(empleadoDTO.getActivo());
         }
 
         // actualizo el usuario del empleado
@@ -96,7 +99,7 @@ public class EmpleadoService {
                 .id(empleado.getId())
                 .nombreCompleto(empleado.getNombreCompleto())
                 .telefono(empleado.getTelefono())
-                .activo(empleado.isActivo())
+                .activo(empleado.getActivo())
                 .usuario(usuarioService.toDTO(empleado.getUsuario()))
                 .domicilio(domicilioService.toDTO(empleado.getDomicilio()))
                 .build();

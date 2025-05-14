@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.EmpleadoService;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +36,9 @@ public class EmpleadoController {
         return ResponseEntity.ok(empleadoService.getAllEmpleados());
     }
 
-    @PutMapping("/update/{id}")
+    @PatchMapping("/update/{id}")
     public ResponseEntity<String> updateEmpleado(@PathVariable Long id,
-                                                 @Valid @RequestBody EmpleadoDTO empleadoDTO) {
+                                                 @RequestBody EmpleadoPatchDTO empleadoDTO) {
         empleadoService.updateEmpleado(id, empleadoDTO);
         return ResponseEntity.ok("Empleado actualizado correctamente");
     }
