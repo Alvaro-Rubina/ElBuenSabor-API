@@ -9,18 +9,14 @@ import lombok.*;
 @Setter
 @Builder
 @Entity
-public class DetalleDomicilio {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class DetalleDomicilio extends Base {
 
     @ManyToOne
-    @JoinColumn(name="id_cliente")
+    @JoinColumn(name="cliente_id")
     private Cliente cliente;
 
     @ManyToOne
-    @JoinColumn(name="id_domicilio")
+    @JoinColumn(name="domicilio_id")
     private Domicilio domicilio;
 
 

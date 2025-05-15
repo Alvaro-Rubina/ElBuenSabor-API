@@ -9,12 +9,10 @@ import lombok.*;
 @Setter
 @Builder
 @Entity
-public class DetalleFactura {
+public class DetalleFactura extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private Integer cantidad;
+
     private Double subTotal;
 
     @ManyToOne

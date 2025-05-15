@@ -11,17 +11,22 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-public class Producto {
+public class Producto extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String denominacion;
+
+    @Column(length = 1500)
     private String descripcion;
+
     private Long tiempoEstimadoPreparacion;
+
     private Double precioVenta;
+
     private Double precioCosto;
+
+    @Column(length = 500)
     private String urlImagen;
+
     private boolean activo;
 
     @ManyToOne

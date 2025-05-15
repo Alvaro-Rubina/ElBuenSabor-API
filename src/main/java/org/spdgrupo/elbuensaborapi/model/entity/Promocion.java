@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,15 +13,19 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-public class Promocion {
+public class Promocion extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String denominacion;
+
+    @Column(length = 500)
     private String urlImagen;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaDesde;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaHasta;
+
     private Double descuento;
 
     @OneToMany(mappedBy = "promocion", cascade = CascadeType.ALL, orphanRemoval = true)

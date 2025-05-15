@@ -11,13 +11,12 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-public class Cliente {
+public class Cliente extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String nombreCompleto;
+
     private String telefono;
+
     private Boolean activo;
 
     @OneToOne

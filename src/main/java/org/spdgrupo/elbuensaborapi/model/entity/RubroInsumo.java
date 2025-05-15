@@ -12,12 +12,10 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-public class RubroInsumo {
+public class RubroInsumo extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String denominacion;
+
     private boolean activo;
 
     @ManyToOne

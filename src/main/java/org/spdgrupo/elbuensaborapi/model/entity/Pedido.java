@@ -18,12 +18,9 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-public class Pedido {
+public class Pedido extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fecha;
 
     @JsonFormat(pattern = "HH:mm:ss")

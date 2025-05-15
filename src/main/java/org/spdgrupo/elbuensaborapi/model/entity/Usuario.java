@@ -10,14 +10,16 @@ import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 @Setter
 @Builder
 @Entity
-public class Usuario {
+public class Usuario extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(unique = true)
     private String email;
-    private String contraseña;
+
+    private String contrasenia;
+
+    @Column(unique = true)
     private String auth0Id;
+
     @Enumerated(EnumType.STRING)
     private Rol rol;
 }

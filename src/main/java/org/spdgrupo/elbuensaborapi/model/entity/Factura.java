@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
@@ -14,18 +15,24 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-public class Factura {
+public class Factura extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaFacturacion;
+
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime horaFacturacion;
-    private Long numeroComprobante;
+
+    @Column(unique = true)
+    private String codigoComprobante;
+
     @Enumerated(EnumType.STRING)
     private FormaPago formaPago;
+
     private String totalVenta;
+
     private Double montoDescuento;
+
     private Double costoEnvio;
 
     @OneToOne

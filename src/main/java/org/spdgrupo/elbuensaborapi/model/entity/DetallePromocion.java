@@ -9,11 +9,8 @@ import lombok.*;
 @Setter
 @Builder
 @Entity
-public class DetallePromocion {
+public class DetallePromocion extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private Integer cantidad;
 
     @ManyToOne

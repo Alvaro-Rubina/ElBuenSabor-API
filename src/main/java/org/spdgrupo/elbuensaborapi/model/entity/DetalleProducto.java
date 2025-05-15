@@ -10,11 +10,8 @@ import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 @Setter
 @Builder
 @Entity
-public class DetalleProducto {
+public class DetalleProducto extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private Double cantidad;
 
     @ManyToOne

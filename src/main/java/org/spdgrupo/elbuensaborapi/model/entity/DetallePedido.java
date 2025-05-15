@@ -9,25 +9,24 @@ import lombok.*;
 @Setter
 @Builder
 @Entity
-public class DetallePedido {
+public class DetallePedido extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private Integer cantidad;
+
     private Double subTotal;
+
     private Double subTotalCosto;
 
     @ManyToOne
-    @JoinColumn(name = "id_pedido")
+    @JoinColumn(name = "pedido_id")
     private Pedido pedido;
 
     @ManyToOne
-    @JoinColumn(name = "id_producto")
+    @JoinColumn(name = "producto_id")
     private Producto producto;
 
     @ManyToOne
-    @JoinColumn(name = "id_insumo")
+    @JoinColumn(name = "insumo_id")
     private Insumo insumo;
 
 }

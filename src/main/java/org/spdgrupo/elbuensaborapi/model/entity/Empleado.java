@@ -9,13 +9,12 @@ import lombok.*;
 @Setter
 @Builder
 @Entity
-public class Empleado {
+public class Empleado extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String nombreCompleto;
+
     private String telefono;
+
     private Boolean activo;
 
     @OneToOne

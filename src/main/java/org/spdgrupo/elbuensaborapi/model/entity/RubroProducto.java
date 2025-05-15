@@ -9,11 +9,9 @@ import lombok.*;
 @Setter
 @Builder
 @Entity
-public class RubroProducto {
+public class RubroProducto extends Base {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String denominacion;
+
     private boolean activo;
 }
