@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.*;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
@@ -54,31 +55,15 @@ public class PedidoService {
         return pedidosDTO;
     }
 
-    public void updatePedido(Long id, PedidoDTO pedidoDTO) {
-        Pedido pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Pedido con el id " + id + " no encontrado"));
+    // NOTE: El metodo updatePedido no le veo sentido a estar. En ningun contexto es lógico editar cuando se
+    //  trata de algo como un PEDIDO (exceptuando el estado)
 
-        // TODO: en cada validacion verificar tambien que el valor no sea null o vacio
-        if (pedido.getEstado() != pedidoDTO.getEstado()) {
+    public void actualizarEstadoDelPedido(Long pedidoId, PedidoPatchDTO pedidoDTO) {
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
+
+        if (pedidoDTO.getEstado() != null) {
             pedido.setEstado(pedidoDTO.getEstado());
-        }
-
-        if (pedido.getTipoEnvio() != pedidoDTO.getTipoEnvio()) {
-            pedido.setTipoEnvio(pedidoDTO.getTipoEnvio());
-        }
-
-        if (pedido.getFormaPago() != pedidoDTO.getFormaPago()) {
-            pedido.setFormaPago(pedidoDTO.getFormaPago());
-        }
-
-        if (pedido.getCliente().getId() != pedidoDTO.getClienteId()) {
-            pedido.setCliente(clienteRepository.findById(pedidoDTO.getClienteId())
-                    .orElseThrow(() -> new NotFoundException("Cliente con el id " + pedidoDTO.getClienteId() + " no encontrado")));
-        }
-
-        if (pedido.getDomicilio().getId() != pedidoDTO.getDomicilioId()) {
-            pedido.setDomicilio(domicilioRepository.findById(pedidoDTO.getDomicilioId())
-                    .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado")));
         }
 
         pedidoRepository.save(pedido);

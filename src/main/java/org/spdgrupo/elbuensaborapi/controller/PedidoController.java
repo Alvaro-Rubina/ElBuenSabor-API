@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.PedidoService;
 import org.springframework.http.ResponseEntity;
@@ -36,14 +37,14 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoService.getAllPedidos());
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> updatePedido(@PathVariable Long id,
-                                               @Valid @RequestBody PedidoDTO pedidoDTO) {
-        pedidoService.updatePedido(id, pedidoDTO);
-        return ResponseEntity.ok("Pedido actualizado correctamente");
+    @PatchMapping("/actualizar-estado/{pedidoId}")
+    public ResponseEntity<String> actualizarEstadoPedido(@PathVariable Long pedidoId,
+                                                         @RequestBody PedidoPatchDTO pedidoDTO) {
+        pedidoService.actualizarEstadoDelPedido(pedidoId, pedidoDTO);
+        return ResponseEntity.ok("Estado del pedido actualizado correctamente");
     }
 
-    @PutMapping("/agregarMin/{pedidoId}")
+    @PatchMapping("/agregar-min/{pedidoId}")
     // El url quedaria algo asi: http//localhost:8080/agregarMin/1?minutos=10
     public ResponseEntity<String> agregarTiempoAlPedido(@PathVariable Long pedidoId,
                                                         @RequestParam Long minutos) {
