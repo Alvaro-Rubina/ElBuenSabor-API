@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.service;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
@@ -61,47 +62,47 @@ public class InsumoService {
         return insumosDTO;
     }
 
-    public void updateInsumo(Long id, InsumoDTO insumoDTO) {
+    public void updateInsumo(Long id, InsumoPatchDTO insumoDTO) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
 
-        if (!insumoDTO.getDenominacion().isBlank() && !insumo.getDenominacion().equals(insumoDTO.getDenominacion())) {
+        if (insumoDTO.getDenominacion() != null) {
             insumo.setDenominacion(insumoDTO.getDenominacion());
         }
 
-        if (!insumoDTO.getUrlImagen().isBlank() && !insumo.getUrlImagen().equals(insumoDTO.getUrlImagen())) {
+        if (insumoDTO.getUrlImagen() != null) {
             insumo.setUrlImagen(insumoDTO.getUrlImagen());
         }
 
-        if (insumoDTO.getPrecioCosto() != null && !insumoDTO.getPrecioCosto().equals(insumo.getPrecioCosto())) {
+        if (insumoDTO.getPrecioCosto() != null) {
             insumo.setPrecioCosto(insumoDTO.getPrecioCosto());
         }
 
-        if (insumoDTO.getPrecioVenta() != null && !insumo.getPrecioVenta().equals(insumoDTO.getPrecioVenta())) {
+        if (insumoDTO.getPrecioVenta() != null) {
             insumo.setPrecioVenta(insumoDTO.getPrecioVenta());
         }
 
-        if (insumoDTO.getStockActual() != null && !insumo.getStockActual().equals(insumoDTO.getStockActual())) {
+        if (insumoDTO.getStockActual() != null) {
             insumo.setStockActual(insumoDTO.getStockActual());
         }
 
-        if (insumoDTO.getStockMinimo() != null && !insumo.getStockMinimo().equals(insumoDTO.getStockMinimo())) {
+        if (insumoDTO.getStockMinimo() != null) {
             insumo.setStockMinimo(insumoDTO.getStockMinimo());
         }
 
-        if (insumoDTO.getEsParaElaborar() != null && insumo.isEsParaElaborar() != insumoDTO.getEsParaElaborar()) {
+        if (insumoDTO.getEsParaElaborar() != null) {
             insumo.setEsParaElaborar(insumoDTO.getEsParaElaborar());
         }
 
-        if (insumoDTO.getActivo() != null && !insumo.isActivo() == insumoDTO.getActivo()) {
+        if (insumoDTO.getActivo() != null) {
             insumo.setActivo(insumoDTO.getActivo());
         }
 
-        if (insumoDTO.getUnidadMedida() != null && !insumo.getUnidadMedida().equals(insumoDTO.getUnidadMedida())) {
+        if (insumoDTO.getUnidadMedida() != null) {
             insumo.setUnidadMedida(insumoDTO.getUnidadMedida());
         }
 
-        if (insumoDTO.getRubroId() != null && !insumo.getRubro().getId().equals(insumoDTO.getRubroId())) {
+        if (insumoDTO.getRubroId() != null) {
             insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
                     .orElseThrow(() -> new NotFoundException("RubroInsumo con el id" + insumoDTO.getRubroId() + "no encontrado")));
         }

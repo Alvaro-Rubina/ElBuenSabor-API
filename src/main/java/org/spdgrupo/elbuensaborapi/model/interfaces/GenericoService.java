@@ -1,4 +1,4 @@
-package org.spdgrupo.elbuensaborapi.service;
+package org.spdgrupo.elbuensaborapi.model.interfaces;
 
 import java.io.Serializable;
 import java.util.List;

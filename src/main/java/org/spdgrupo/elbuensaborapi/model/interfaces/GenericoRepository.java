@@ -1,4 +1,4 @@
-package org.spdgrupo.elbuensaborapi.repository;
+package org.spdgrupo.elbuensaborapi.model.interfaces;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;

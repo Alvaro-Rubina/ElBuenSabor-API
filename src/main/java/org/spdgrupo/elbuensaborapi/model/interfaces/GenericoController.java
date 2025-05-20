@@ -1,4 +1,4 @@
-package org.spdgrupo.elbuensaborapi.controller;
+package org.spdgrupo.elbuensaborapi.model.interfaces;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;

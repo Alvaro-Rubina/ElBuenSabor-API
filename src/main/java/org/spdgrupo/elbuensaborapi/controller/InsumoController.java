@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.InsumoService;
 import org.springframework.http.ResponseEntity;
@@ -41,11 +42,17 @@ public class InsumoController {
         return ResponseEntity.ok(insumoService.getAllInsumos(rubroId));
     }
     
-    @PutMapping("/update/{id}")
+    @PatchMapping("/update/{id}")
     public ResponseEntity<String> updateInsumo(@PathVariable Long id,
-                                               @RequestBody InsumoDTO insumoDTO) {
+                                               @RequestBody InsumoPatchDTO insumoDTO) {
         insumoService.updateInsumo(id, insumoDTO);
         return ResponseEntity.ok("Insumo actualizado correctamente");
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteInsumo(@PathVariable Long id) {
+        insumoService.deleteInsumo(id);
+        return ResponseEntity.ok("Insumo eliminado exitosamente");
     }
     
 }
