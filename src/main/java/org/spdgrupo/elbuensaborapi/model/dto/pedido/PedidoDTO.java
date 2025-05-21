@@ -19,9 +19,6 @@ import java.util.List;
 @Builder
 public class PedidoDTO {
 
-    // este campo es opcional, util para EDITAR un Pedido ya que al crearlo por defecto es estado = SOLICITADO
-    private Estado estado;
-
     @NotNull(message = "El campo tipoEnvio no puede ser nulo")
     private TipoEnvio tipoEnvio;
 
