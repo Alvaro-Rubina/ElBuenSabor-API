@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.ProductoService;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +42,9 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.getAllProductos(rubroId));
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateProducto(@PathVariable Long id,@Valid @RequestBody ProductoDTO productoDTO) {
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<String> updateProducto(@PathVariable Long id,
+                                                 @RequestBody ProductoPatchDTO productoDTO) {
         productoService.updateProducto(id, productoDTO);
         return ResponseEntity.ok("Producto actualizado correctamente");
     }
@@ -50,7 +52,7 @@ public class ProductoController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteProducto(@PathVariable Long id) {
         productoService.deleteProducto(id);
-        return ResponseEntity.ok("Producto eliminado exitosamente");
+        return ResponseEntity.ok("Producto eliminado correctamente");
     }
 
 

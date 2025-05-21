@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
@@ -68,32 +69,32 @@ public class ProductoService {
     }
 
     @Transactional
-    public void updateProducto(Long id, ProductoDTO productoDTO) {
+    public void updateProducto(Long id, ProductoPatchDTO productoDTO) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto con el id " + id + " no encontrado"));
 
-        if (!producto.getDenominacion().equals(productoDTO.getDenominacion())) {
+        if (productoDTO.getDenominacion() != null) {
             producto.setDenominacion(productoDTO.getDenominacion());
         }
 
-        if (!producto.getDescripcion().equals(productoDTO.getDescripcion())) {
+        if (productoDTO.getDescripcion() != null) {
             producto.setDescripcion(productoDTO.getDescripcion());
         }
 
-        if (!producto.getTiempoEstimadoPreparacion().equals(productoDTO.getTiempoEstimadoPreparacion())) {
+        if (productoDTO.getTiempoEstimadoPreparacion() != null) {
             producto.setTiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion());
         }
 
-        if (!producto.getPrecioVenta().equals(productoDTO.getPrecioVenta())) {
+        if (productoDTO.getPrecioVenta() != null) {
             producto.setPrecioVenta(productoDTO.getPrecioVenta());
         }
 
-        if (!producto.getUrlImagen().equals(productoDTO.getUrlImagen())) {
+        if (productoDTO.getUrlImagen() != null) {
             producto.setUrlImagen(productoDTO.getUrlImagen());
         }
 
-        if (!producto.isActivo() == productoDTO.isActivo()) {
-            producto.setActivo(productoDTO.isActivo());
+        if (productoDTO.getActivo() != null) {
+            producto.setActivo(productoDTO.getActivo());
         }
 
         if (!producto.getRubro().getId().equals(productoDTO.getRubroId())) {
@@ -101,7 +102,16 @@ public class ProductoService {
                     .orElseThrow(() -> new RuntimeException("RubroProducto con el id" + productoDTO.getRubroId() + " no encontrado")));
         }
 
-        // TODO: SOLO FALTA LA LOGICA PARA ACTUALIZAR DETALLEPRODUCTOS (cantidades, precio del producto, etc); ACA O EN DETALLEPRODUCTOSERVICE
+        // acá tambien se podria verificar si la lista no viene vacia
+        if (productoDTO.getDetalleProductos() != null) {
+            producto.setDetalleProductos(new ArrayList<>());
+            for (DetalleProductoDTO detalleProductoDTO : productoDTO.getDetalleProductos()) {
+                DetalleProducto detalle = detalleProductoService.toEntity(detalleProductoDTO);
+                detalle.setProducto(producto);
+                producto.getDetalleProductos().add(detalle);
+            }
+            producto.setPrecioCosto(getPrecioCosto(producto.getDetalleProductos()));
+        }
 
         productoRepository.save(producto);
     }
@@ -124,7 +134,7 @@ public class ProductoService {
                 .tiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion())
                 .precioVenta(productoDTO.getPrecioVenta())
                 .urlImagen(productoDTO.getUrlImagen())
-                .activo(productoDTO.isActivo())
+                .activo(productoDTO.getActivo())
                 .rubro(rubro)
                 .detalleProductos(new ArrayList<>())
                 .build();
@@ -148,7 +158,7 @@ public class ProductoService {
                 .precioVenta(producto.getPrecioVenta())
                 .precioCosto(producto.getPrecioCosto())
                 .urlImagen(producto.getUrlImagen())
-                .activo(producto.isActivo())
+                .activo(producto.getActivo())
                 .rubro(rubroProductoService.toDTO(producto.getRubro()))
                 .detalleProductos(producto.getDetalleProductos().stream()
                         .map(detalleProductoService::toDTO)

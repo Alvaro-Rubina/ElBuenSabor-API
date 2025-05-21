@@ -27,7 +27,7 @@ public class Producto extends Base {
     @Column(length = 500)
     private String urlImagen;
 
-    private boolean activo;
+    private Boolean activo;
 
     @ManyToOne
     private RubroProducto rubro;
