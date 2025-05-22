@@ -2,7 +2,6 @@ package org.spdgrupo.elbuensaborapi.model.dto.promocion;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepromocion.DetallePromocionDTO;
 
 import java.time.LocalDate;
