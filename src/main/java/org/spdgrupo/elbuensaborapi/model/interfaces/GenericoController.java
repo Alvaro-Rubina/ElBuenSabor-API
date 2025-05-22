@@ -6,11 +6,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 import java.io.Serializable;
+import java.util.List;
 
 
-public interface GenericoController <E, ID extends Serializable> {
-    public ResponseEntity<?> save(@RequestBody E entity);
-    public ResponseEntity<?> getById(@PathVariable ID id);
-    public ResponseEntity<?> getAll();
-    public ResponseEntity<?> update(@PathVariable ID id,@RequestBody E entity);
+public interface GenericoController <E, D, R, ID extends Serializable> {
+    public ResponseEntity<String> save(@RequestBody D entity);
+    public ResponseEntity<R> getById(@PathVariable ID id);
+    public ResponseEntity<List<R>> getAll();
+    public ResponseEntity<String> update(@PathVariable ID id,@RequestBody D entity);
 }
+

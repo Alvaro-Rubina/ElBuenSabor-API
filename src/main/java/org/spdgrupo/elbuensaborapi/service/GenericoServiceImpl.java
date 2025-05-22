@@ -1,12 +1,16 @@
+
+
+
 package org.spdgrupo.elbuensaborapi.service;
 
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoService;
 
+
 import java.io.Serializable;
 import java.util.List;
 
-public abstract class GenericoServiceImpl<E, ID extends Serializable> implements GenericoService<E, ID> {
+public abstract class GenericoServiceImpl<E, D, R, ID extends Serializable> implements GenericoService<E, D, R, ID> {
 
     protected GenericoRepository<E, ID> genericoRepository;
 
@@ -15,7 +19,8 @@ public abstract class GenericoServiceImpl<E, ID extends Serializable> implements
     }
 
     @Override
-    public E save(E entity) {
+    public String save(D entity) {
+
         return genericoRepository.save(entity);
     }
 
