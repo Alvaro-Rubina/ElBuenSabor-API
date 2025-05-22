@@ -16,7 +16,7 @@ public class RubroInsumo extends Base {
 
     private String denominacion;
 
-    private boolean activo;
+    private Boolean activo;
 
     @ManyToOne
     @JoinColumn(name = "rubro_padre_id")

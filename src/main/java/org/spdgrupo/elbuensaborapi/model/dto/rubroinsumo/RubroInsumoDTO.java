@@ -13,8 +13,7 @@ public class RubroInsumoDTO {
     @NotBlank(message = "El campo denominacion no puede estar vacio")
     private String denominacion;
 
-    // este campo es opcional, util para EDITAR un RubroInsumo ya que al crearlo por defecto activo = true
-    private boolean activo;
+    private Boolean activo;
 
     // este campo es opcional
     private Long rubroPadreId;

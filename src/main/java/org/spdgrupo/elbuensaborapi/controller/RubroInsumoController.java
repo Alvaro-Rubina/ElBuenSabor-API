@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.RubroInsumoService;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,8 @@ public class RubroInsumoController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateRubroInsumo(@PathVariable Long id,@Valid @RequestBody RubroInsumoDTO rubroInsumoDTO) {
+    public ResponseEntity<String> updateRubroInsumo(@PathVariable Long id,
+                                                    @RequestBody RubroInsumoPatchDTO rubroInsumoDTO) {
         rubroInsumoService.updateRubroInsumo(id, rubroInsumoDTO);
         return ResponseEntity.ok("RubroInsumo actualizado correctamente");
     }
