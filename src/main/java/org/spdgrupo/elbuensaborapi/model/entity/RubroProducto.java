@@ -12,6 +12,5 @@ import lombok.*;
 public class RubroProducto extends Base {
 
     private String denominacion;
-
-    private boolean activo;
+    private Boolean activo;
 }

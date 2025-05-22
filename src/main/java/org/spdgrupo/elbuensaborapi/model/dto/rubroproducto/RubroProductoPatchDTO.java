@@ -1,6 +1,5 @@
 package org.spdgrupo.elbuensaborapi.model.dto.rubroproducto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @AllArgsConstructor
@@ -8,8 +7,8 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class RubroProductoDTO {
+public class RubroProductoPatchDTO {
 
-    @NotBlank (message = "El campo denominacion no puede estar vacio")
     private String denominacion;
+    private Boolean activo;
 }

@@ -89,7 +89,7 @@ public class RubroInsumoService {
     public RubroInsumo toEntity(RubroInsumoDTO rubroInsumoDTO) {
         return RubroInsumo.builder()
                 .denominacion(rubroInsumoDTO.getDenominacion())
-                .activo(true) // cuando se guarda un rubro siempre es activo = true
+                .activo(true)
                 .rubroPadre(rubroInsumoDTO.getRubroPadreId() == null ? null :
                         rubroInsumoRepository.findById(rubroInsumoDTO.getRubroPadreId())
                                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + rubroInsumoDTO.getRubroPadreId() + " no encontrado")))
