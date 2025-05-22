@@ -17,7 +17,7 @@ public class FacturaService {
         return Factura.builder()
                 .fechaFacturacion(facturaDTO.getFechaFacturacion())
                 .horaFacturacion(facturaDTO.getHoraFacturacion()) // Esto será distinto a lo del Pedido
-                .numeroComprobante(facturaDTO.getNumeroComprobante()) // Esto será distinto a lo del Pedido
+                .codigoComprobante(facturaDTO.getCodigoComprobante()) // Esto será distinto a lo del Pedido
                 /*.totalVenta()
                 .montoDescuento()
                 .costoEnvio()*/

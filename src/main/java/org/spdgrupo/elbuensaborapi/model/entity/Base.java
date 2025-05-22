@@ -10,8 +10,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
-public abstract class Base implements Serializable {
+public class Base implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

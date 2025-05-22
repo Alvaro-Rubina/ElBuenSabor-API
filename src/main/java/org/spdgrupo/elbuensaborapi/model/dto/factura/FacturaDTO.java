@@ -14,7 +14,7 @@ public class FacturaDTO {
 
     private LocalDate fechaFacturacion;
     private LocalTime horaFacturacion;
-    private Long numeroComprobante;
+    private String codigoComprobante;
     private String totalVenta;
     private Double montoDescuento;
     private Double costoEnvio;
