@@ -1,6 +1,7 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import org.spdgrupo.elbuensaborapi.repository.GenericoRepository;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoService;
 
 import java.io.Serializable;
 import java.util.List;

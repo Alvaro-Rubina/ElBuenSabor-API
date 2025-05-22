@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoController;
 import org.spdgrupo.elbuensaborapi.service.GenericoServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

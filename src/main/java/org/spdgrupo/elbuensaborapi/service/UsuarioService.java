@@ -51,7 +51,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuario con el id " + id + " no encontrado"));
         
         if (usuarioDTO.getContraseña() != null) {
-            usuario.setContraseña(usuarioDTO.getContraseña());
+            usuario.setContrasenia(usuarioDTO.getContraseña());
         }
 
         if (usuarioDTO.getRol() != null) {
@@ -65,7 +65,7 @@ public class UsuarioService {
     private Usuario toEntity(UsuarioDTO usuarioDTO) {
         return Usuario.builder()
                 .email(usuarioDTO.getEmail())
-                .contraseña(usuarioDTO.getContraseña())
+                .contrasenia(usuarioDTO.getContraseña())
                 .rol(usuarioDTO.getRol())
                 .build();
     }
