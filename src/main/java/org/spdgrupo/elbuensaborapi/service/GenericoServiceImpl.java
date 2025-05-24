@@ -1,3 +1,6 @@
+
+
+
 package org.spdgrupo.elbuensaborapi.service;
 
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
@@ -17,7 +20,7 @@ public abstract class GenericoServiceImpl<E, D, R, ID extends Serializable> impl
 
     @Override
     public String save(D entity) {
-        
+
         return genericoRepository.save(entity);
     }
 
