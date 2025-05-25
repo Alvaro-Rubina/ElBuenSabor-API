@@ -2,12 +2,13 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Entity
 public class DetalleFactura extends Base {
 

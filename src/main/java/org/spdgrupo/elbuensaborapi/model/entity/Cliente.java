@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Entity
 public class Cliente extends Base {
 

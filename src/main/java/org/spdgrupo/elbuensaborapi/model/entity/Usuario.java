@@ -2,13 +2,14 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Entity
 public class Usuario extends Base {
 

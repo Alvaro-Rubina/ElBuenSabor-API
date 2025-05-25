@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Entity
 public class Promocion extends Base {
 

@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Entity
 public class Factura extends Base {
 
