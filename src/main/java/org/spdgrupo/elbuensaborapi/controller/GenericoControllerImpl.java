@@ -1,3 +1,4 @@
+/*
 
 package org.spdgrupo.elbuensaborapi.controller;
 
@@ -44,4 +45,4 @@ public abstract class GenericoControllerImpl<E,
         }
         return ResponseEntity.notFound().build();
     }
-}
+}*/

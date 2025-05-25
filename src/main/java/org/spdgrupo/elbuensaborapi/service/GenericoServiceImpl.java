@@ -1,3 +1,4 @@
+/*
 
 
 
@@ -42,3 +43,4 @@ public abstract class GenericoServiceImpl<E, D, R, ID extends Serializable> impl
         return null;
     }
 }
+*/
