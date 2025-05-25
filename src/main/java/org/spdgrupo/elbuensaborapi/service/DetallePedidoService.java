@@ -52,7 +52,7 @@ public class DetallePedidoService {
                 .subTotal(detallePedido.getSubTotal())
                 .subTotalCosto(detallePedido.getSubTotalCosto())
                 .producto(detallePedido.getProducto() == null ? null : productoService.toDTO(detallePedido.getProducto()))
-                .insumo(detallePedido.getInsumo() == null ? null : insumoService.toDTO(detallePedido.getInsumo()))
+                /*.insumo(detallePedido.getInsumo() == null ? null : insumoService.toDTO(detallePedido.getInsumo()))*/
                 .build();
     }
 }

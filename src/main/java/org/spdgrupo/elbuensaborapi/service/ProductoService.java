@@ -159,7 +159,7 @@ public class ProductoService {
                 .precioCosto(producto.getPrecioCosto())
                 .urlImagen(producto.getUrlImagen())
                 .activo(producto.getActivo())
-                .rubro(rubroProductoService.toDTO(producto.getRubro()))
+                /*.rubro(rubroProductoService.toDTO(producto.getRubro()))*/
                 .detalleProductos(producto.getDetalleProductos().stream()
                         .map(detalleProductoService::toDTO)
                         .collect(Collectors.toList()))

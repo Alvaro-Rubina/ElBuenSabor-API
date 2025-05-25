@@ -32,7 +32,7 @@ public class DetalleProductoService {
         return DetalleProductoResponseDTO.builder()
                 .id(detalleProducto.getId())
                 .cantidad(detalleProducto.getCantidad())
-                .insumo(insumoService.toDTO(detalleProducto.getInsumo()))
+                /*.insumo(insumoService.toDTO(detalleProducto.getInsumo()))*/
                 .build();
     }
 }

@@ -127,7 +127,7 @@ public class PedidoService {
                 .totalVenta(pedido.getTotalVenta())
                 .totalCosto(pedido.getTotalCosto())
                 .formaPago(pedido.getFormaPago())
-                .cliente(clienteService.toDTO(pedido.getCliente()))
+                /*.cliente(clienteService.toDTO(pedido.getCliente()))*/
                 .domicilio(domicilioService.toDTO(pedido.getDomicilio()))
                 .detallePedidos(pedido.getDetallePedidos().stream()
                         .map(detallePedidoService::toDTO)

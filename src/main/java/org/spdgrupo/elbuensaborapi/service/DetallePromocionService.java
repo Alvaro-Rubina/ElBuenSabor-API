@@ -44,7 +44,7 @@ public class DetallePromocionService {
                 .id(detallePromocion.getId())
                 .cantidad(detallePromocion.getCantidad())
                 .producto(detallePromocion.getProducto() != null ? productoService.toDTO(detallePromocion.getProducto()) : null)
-                .insumo(detallePromocion.getInsumo() != null ? insumoService.toDTO(detallePromocion.getInsumo()) : null)
+                /*.insumo(detallePromocion.getInsumo() != null ? insumoService.toDTO(detallePromocion.getInsumo()) : null)*/
                 .build();
     }
 }

@@ -2,15 +2,16 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.config.mappers.ClienteMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClientePatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
+import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,29 +23,29 @@ public class ClienteService {
     private final ClienteRepository clienteRepository;
     private final UsuarioService usuarioService;
     private final DetalleDomicilioService detalleDomicilioService;
+    private final ClienteMapper clienteMapper;
 
     public void saveCliente(ClienteDTO clienteDTO) {
-        Cliente cliente = toEntity(clienteDTO);
+        clienteDTO.getUsuario().setRol(Rol.CLIENTE);
+        Usuario usuario = usuarioService.saveUsuario(clienteDTO.getUsuario());
 
-        // Me aseguro que el rol sea siempre cliente.
-        cliente.getUsuario().setRol(Rol.CLIENTE);
+        Cliente cliente = clienteMapper.toEntity(clienteDTO);
+
+        cliente.setUsuario(usuario);
+
         clienteRepository.save(cliente);
     }
 
     public ClienteResponseDTO getClienteById(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el " +  id + " no encontrado"));
-        return toDTO(cliente);
+        return clienteMapper.toResponseDTO(cliente);
     }
 
     public List<ClienteResponseDTO> getAllClientes() {
-        List<Cliente> clientes = clienteRepository.findAll();
-        List<ClienteResponseDTO> clientesDTO = new ArrayList<>();
-
-        for (Cliente cliente : clientes) {
-            clientesDTO.add(toDTO(cliente));
-        }
-        return clientesDTO;
+        return clienteRepository.findAll().stream()
+                .map(clienteMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     public void updateCliente(Long id, ClientePatchDTO clienteDTO) {
@@ -76,27 +77,5 @@ public class ClienteService {
                 .orElseThrow(() -> new NotFoundException("Cliente con el id" + id  + " no encontrado"));
         cliente.setActivo(false);
         clienteRepository.save(cliente);
-    }
-
-    // MAPPERS
-    private Cliente toEntity(ClienteDTO clienteDTO) {
-        return Cliente.builder()
-                .nombreCompleto(clienteDTO.getNombreCompleto())
-                .telefono(clienteDTO.getTelefono())
-                .activo(true)
-                .usuario(usuarioService.saveUsuario(clienteDTO.getUsuario()))
-                .build();
-    }
-    public ClienteResponseDTO toDTO(Cliente cliente) {
-        return ClienteResponseDTO.builder()
-                .id(cliente.getId())
-                .nombreCompleto(cliente.getNombreCompleto())
-                .telefono(cliente.getTelefono())
-                .activo(cliente.getActivo())
-                .usuario(usuarioService.toDTO(cliente.getUsuario()))
-                .detalleDomicilios(cliente.getDetalleDomicilios().stream()
-                        .map(detalleDomicilioService::toDTO)
-                        .collect(Collectors.toList()))
-                .build();
     }
 }

@@ -15,6 +15,6 @@ public class RubroInsumoResponseDTO {
     private Long id;
     private String denominacion;
     private boolean activo;
-    private RubroInsumoResponseDTO rubroPadre;
+    private Long rubroPadreId;
     private List<RubroInsumoResponseDTO> subRubros = new ArrayList<>();
 }

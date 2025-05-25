@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.service;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.CyclicParentException;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.config.mappers.RubroInsumoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoResponseDTO;
@@ -20,26 +21,30 @@ public class RubroInsumoService {
 
     // Dependencias
     private final RubroInsumoRepository rubroInsumoRepository;
+    private final RubroInsumoMapper rubroInsumoMapper;
 
     public void saveRubroInsumo(RubroInsumoDTO rubroInsumoDTO) {
-        RubroInsumo rubroInsumo = toEntity(rubroInsumoDTO);
+        RubroInsumo rubroInsumo = rubroInsumoMapper.toEntity(rubroInsumoDTO);
+
+        if (rubroInsumoDTO.getRubroPadreId() != null) {
+            RubroInsumo rubroPadre = rubroInsumoRepository.findById(rubroInsumoDTO.getRubroPadreId())
+                    .orElseThrow(() -> new NotFoundException("RubroInsumo padre con el id " + rubroInsumoDTO.getRubroPadreId() + " no encontrado"));
+            rubroInsumo.setRubroPadre(rubroPadre);
+        }
+
         rubroInsumoRepository.save(rubroInsumo);
     }
 
     public RubroInsumoResponseDTO getRubroInsumoById(Long id) {
         RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
-        return toDTO(rubroInsumo);
+        return rubroInsumoMapper.toResponseDTO(rubroInsumo);
     }
 
     public List<RubroInsumoResponseDTO> getAllRubroInsumos() {
-        List<RubroInsumo> rubroInsumos = rubroInsumoRepository.findAll();
-        List<RubroInsumoResponseDTO> rubroInsumosDTO = new ArrayList<>();
-
-        for (RubroInsumo rubroInsumo : rubroInsumos) {
-            rubroInsumosDTO.add(toDTO(rubroInsumo));
-        }
-        return rubroInsumosDTO;
+        return rubroInsumoRepository.findAll().stream()
+                .map(rubroInsumoMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     public void updateRubroInsumo(Long id, RubroInsumoPatchDTO rubroInsumoDTO) {
@@ -83,28 +88,5 @@ public class RubroInsumoService {
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
         rubroInsumo.setActivo(false);
         rubroInsumoRepository.save(rubroInsumo);
-    }
-
-    // MAPPERS
-    public RubroInsumo toEntity(RubroInsumoDTO rubroInsumoDTO) {
-        return RubroInsumo.builder()
-                .denominacion(rubroInsumoDTO.getDenominacion())
-                .activo(true)
-                .rubroPadre(rubroInsumoDTO.getRubroPadreId() == null ? null :
-                        rubroInsumoRepository.findById(rubroInsumoDTO.getRubroPadreId())
-                                .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + rubroInsumoDTO.getRubroPadreId() + " no encontrado")))
-                .build();
-    }
-
-    public RubroInsumoResponseDTO toDTO(RubroInsumo rubroInsumo) {
-        return RubroInsumoResponseDTO.builder()
-                .id(rubroInsumo.getId())
-                .denominacion(rubroInsumo.getDenominacion())
-                .activo(rubroInsumo.getActivo())
-                .rubroPadre(rubroInsumo.getRubroPadre() == null ? null : toDTO(rubroInsumo.getRubroPadre()))
-                .subRubros(rubroInsumo.getSubRubros().stream()
-                        .map(this::toDTO)
-                        .collect(Collectors.toList()))
-                .build();
     }
 }

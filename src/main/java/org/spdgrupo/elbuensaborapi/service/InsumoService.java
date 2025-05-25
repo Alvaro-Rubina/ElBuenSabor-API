@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.config.mappers.InsumoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
@@ -21,45 +22,36 @@ public class InsumoService {
     // Dependencias
     private final InsumoRepository insumoRepository;
     private final RubroInsumoRepository rubroInsumoRepository;
-    private final RubroInsumoService rubroInsumoService;
+    private final InsumoMapper insumoMapper;
 
     public void saveInsumo(InsumoDTO insumoDTO) {
-        Insumo insumo = toEntity(insumoDTO);
+        Insumo insumo = insumoMapper.toEntity(insumoDTO);
+        insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
+                .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + insumoDTO.getRubroId() + " no encontrado")));
         insumoRepository.save(insumo);
     }
 
     public InsumoResponseDTO getInsumoById(Long id) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
-        return toDTO(insumo);
+        return insumoMapper.toResponseDTO(insumo);
     }
 
     public List<InsumoResponseDTO> getInsumosByDenominacion(String denominacion) {
-        List<Insumo> insumos = insumoRepository.findByDenominacionContainingIgnoreCase(denominacion);
-        List<InsumoResponseDTO> insumosDTO = new ArrayList<>();
-
-        for (Insumo insumo : insumos) {
-            insumosDTO.add(toDTO(insumo));
-        }
-        return insumosDTO;
+        return insumoRepository.findByDenominacionContainingIgnoreCase(denominacion).stream()
+                .map(insumoMapper::toResponseDTO)
+                .toList();
     }
 
     // Acá busca por rubro, y si no se le pasa parametro (o es 0), busca todos
     public List<InsumoResponseDTO> getAllInsumos(Long rubroId) {
-        List<Insumo> insumos;
+        List<Insumo> insumos = (rubroId == null || rubroId == 0L)
+                ? insumoRepository.findAll()
+                : insumoRepository.findByRubroId(rubroId);
 
-        if (rubroId == null || rubroId == 0L) {
-            insumos = insumoRepository.findAll();
-        } else {
-            insumos = insumoRepository.findByRubroId(rubroId);
-        }
-        List<InsumoResponseDTO> insumosDTO = new ArrayList<>();
-
-        for (Insumo insumo : insumos) {
-            insumosDTO.add(toDTO(insumo));
-        }
-
-        return insumosDTO;
+        return insumos.stream()
+                .map(insumoMapper::toResponseDTO)
+                .toList();
     }
 
     public void updateInsumo(Long id, InsumoPatchDTO insumoDTO) {
@@ -115,38 +107,5 @@ public class InsumoService {
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
         insumo.setActivo(false);
         insumoRepository.save(insumo);
-    }
-
-    // MAPPERS
-    public Insumo toEntity(InsumoDTO insumoDTO) {
-        return Insumo.builder()
-                .denominacion(insumoDTO.getDenominacion())
-                .urlImagen(insumoDTO.getUrlImagen())
-                .precioCosto(insumoDTO.getPrecioCosto())
-                .precioVenta(insumoDTO.getPrecioVenta())
-                .stockActual(insumoDTO.getStockActual())
-                .stockMinimo(insumoDTO.getStockMinimo())
-                .esParaElaborar(insumoDTO.getEsParaElaborar())
-                .activo(insumoDTO.getActivo())
-                .unidadMedida(insumoDTO.getUnidadMedida())
-                .rubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
-                        .orElseThrow(() -> new NotFoundException("RubroInsumo con el id" + insumoDTO.getRubroId() + "no encontrado")))
-                .build();
-    }
-
-    public InsumoResponseDTO toDTO(Insumo insumo) {
-        return InsumoResponseDTO.builder()
-                .id(insumo.getId())
-                .denominacion(insumo.getDenominacion())
-                .urlImagen(insumo.getUrlImagen())
-                .precioCosto(insumo.getPrecioCosto())
-                .precioVenta(insumo.getPrecioVenta())
-                .stockActual(insumo.getStockActual())
-                .stockMinimo(insumo.getStockMinimo())
-                .esParaElaborar(insumo.isEsParaElaborar())
-                .activo(insumo.isActivo())
-                .unidadMedida(insumo.getUnidadMedida())
-                .rubro(rubroInsumoService.toDTO(insumo.getRubro()))
-                .build();
     }
 }
