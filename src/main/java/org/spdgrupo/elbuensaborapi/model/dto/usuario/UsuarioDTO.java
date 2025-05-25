@@ -16,7 +16,7 @@ public class UsuarioDTO {
     private String email;
 
     @NotBlank(message = "El campo contraseña no puede estar vacio")
-    private String contraseña;
+    private String contrasenia;
 
     @NotNull(message = "el campo rol no puede estar vacio")
     private Rol rol;

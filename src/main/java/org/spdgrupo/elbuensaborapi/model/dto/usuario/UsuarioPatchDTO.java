@@ -10,6 +10,6 @@ import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 @Builder
 public class UsuarioPatchDTO {
 
-    private String contraseña;
+    private String contrasenia;
     private Rol rol;
 }
