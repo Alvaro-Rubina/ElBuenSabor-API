@@ -1,0 +1,30 @@
+package org.spdgrupo.elbuensaborapi.config.mappers;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.Pedido;
+
+@Mapper(componentModel = "spring", uses = {ClienteMapper.class, DomicilioMapper.class, DetallePedidoMapper.class})
+public interface PedidoMapper {
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "fecha", expression = "java(java.time.LocalDate.now())")
+    @Mapping(target = "hora", expression = "java(java.time.LocalTime.now())")
+    @Mapping(target = "codigo", ignore = true)
+    @Mapping(target = "estado", constant = "SOLICITADO")
+    @Mapping(target = "horaEstimadaFin", ignore = true)
+    @Mapping(target = "totalVenta", ignore = true)
+    @Mapping(target = "totalCosto", ignore = true)
+    @Mapping(target = "factura", ignore = true)
+    @Mapping(source = "clienteId", target = "cliente.id")
+    @Mapping(source = "domicilioId", target = "domicilio.id")
+    @Mapping(target = "detallePedidos", ignore = true)
+    Pedido toEntity(PedidoDTO pedidoDTO);
+
+    @Mapping(source = "cliente", target = "cliente")
+    @Mapping(source = "domicilio", target = "domicilio")
+    @Mapping(source = "detallePedidos", target = "detallePedidos")
+    PedidoResponseDTO toResponseDTO(Pedido pedido);
+}

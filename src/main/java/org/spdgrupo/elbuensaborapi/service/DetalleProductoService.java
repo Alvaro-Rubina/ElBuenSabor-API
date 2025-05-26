@@ -2,10 +2,10 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.spdgrupo.elbuensaborapi.config.mappers.DetalleProductoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
-import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,25 +14,18 @@ import org.springframework.stereotype.Service;
 public class DetalleProductoService {
 
     // Dependencias
-    private final InsumoService insumoService;
+    private final DetalleProductoMapper detalleProductoMapper;
     private final InsumoRepository insumoRepository;
 
-    // MAPPERS
     @Transactional
-    public DetalleProducto toEntity(DetalleProductoDTO detalleProductoDTO) {
-        Insumo insumo = insumoRepository.findById(detalleProductoDTO.getInsumoId())
-                .orElseThrow(() -> new IllegalArgumentException("Insumo con el id " + detalleProductoDTO.getInsumoId() + " no encontrado"));
-        return DetalleProducto.builder()
-                .cantidad(detalleProductoDTO.getCantidad())
-                .insumo(insumo)
-                .build();
+    public DetalleProducto createDetalleProducto(DetalleProductoDTO detalleProductoDTO) {
+        DetalleProducto detalleProducto = detalleProductoMapper.toEntity(detalleProductoDTO);
+        detalleProducto.setInsumo(insumoRepository.findById(detalleProductoDTO.getInsumoId())
+                .orElseThrow(() -> new IllegalArgumentException("Insumo con el id " + detalleProductoDTO.getInsumoId() + " no encontrado")));
+        return detalleProducto;
     }
 
-    public DetalleProductoResponseDTO toDTO(DetalleProducto detalleProducto) {
-        return DetalleProductoResponseDTO.builder()
-                .id(detalleProducto.getId())
-                .cantidad(detalleProducto.getCantidad())
-                /*.insumo(insumoService.toDTO(detalleProducto.getInsumo()))*/
-                .build();
+    public DetalleProductoResponseDTO getDetalleProducto(DetalleProducto detalleProducto) {
+        return detalleProductoMapper.toResponseDTO(detalleProducto);
     }
 }

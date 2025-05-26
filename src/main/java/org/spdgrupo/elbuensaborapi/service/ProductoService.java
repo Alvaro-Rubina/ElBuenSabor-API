@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.spdgrupo.elbuensaborapi.config.mappers.ProductoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoPatchDTO;
@@ -25,92 +26,69 @@ public class ProductoService {
 
     // Dependencias
     private final ProductoRepository productoRepository;
-    private final RubroProductoService rubroProductoService;
     private final RubroProductoRepository rubroProductoRepository;
     private final DetalleProductoService detalleProductoService;
+    private final ProductoMapper productoMapper;
 
     @Transactional
     public void saveProducto(ProductoDTO productoDTO) {
-        Producto producto = toEntity(productoDTO);
+        Producto producto = productoMapper.toEntity(productoDTO);
+        producto.setRubro(rubroProductoRepository.findById(productoDTO.getRubroId())
+                .orElseThrow(() -> new IllegalArgumentException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado")));
+
+        // Manejo de detalles
+        producto.setDetalleProductos(new ArrayList<>());
+        for (DetalleProductoDTO detalleDTO : productoDTO.getDetalleProductos()) {
+            DetalleProducto detalle = detalleProductoService.createDetalleProducto(detalleDTO);
+            detalle.setProducto(producto);
+            producto.getDetalleProductos().add(detalle);
+        }
+        producto.setPrecioCosto(getPrecioCosto(producto.getDetalleProductos()));
+
         productoRepository.save(producto);
     }
 
     public ProductoResponseDTO getProductoById(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto con el id " + id + " no encontrado"));
-        return toDTO(producto);
+        return productoMapper.toResponseDTO(producto);
     }
 
     // Acá busca por denominacion parcial. Ej para "Pizza Margarita" busca Pizza o margarita, etc
     public List<ProductoResponseDTO> getProductosByDenominacion(String denominacion) {
-        List<Producto> productos = productoRepository.findByDenominacionContainingIgnoreCase(denominacion);
-        List<ProductoResponseDTO> productosDTO = new ArrayList<>();
-
-        for (Producto producto : productos) {
-            productosDTO.add(toDTO(producto));
-        }
-        return productosDTO;
+        return productoRepository.findByDenominacionContainingIgnoreCase(denominacion).stream()
+                .map(productoMapper::toResponseDTO)
+                .toList();
     }
 
     // Acá busca por rubro, y si no se le pasa parametro (o es 0), busca todos
     public List<ProductoResponseDTO> getAllProductos(Long rubroId) {
-        List<Producto> productos;
-        if (rubroId == null || rubroId == 0L) {
-            productos = productoRepository.findAll();
-        } else {
-            productos = productoRepository.findByRubroId(rubroId);
-        }
-        List<ProductoResponseDTO> productosDTO = new ArrayList<>();
+        List<Producto> productos = (rubroId == null || rubroId == 0L)
+                ? productoRepository.findAll()
+                : productoRepository.findByRubroId(rubroId);
 
-        for (Producto producto : productos) {
-            productosDTO.add(toDTO(producto));
-        }
-        return productosDTO;
+        return productos.stream()
+                .map(productoMapper::toResponseDTO)
+                .toList();
     }
 
     @Transactional
     public void updateProducto(Long id, ProductoPatchDTO productoDTO) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto con el id " + id + " no encontrado"));
+                .orElseThrow(() -> new IllegalArgumentException("Producto con el id " + id + " no encontrado"));
 
-        if (productoDTO.getDenominacion() != null) {
-            producto.setDenominacion(productoDTO.getDenominacion());
-        }
+        // Actualizar campos básicos
+        updateProductoFields(producto, productoDTO);
 
-        if (productoDTO.getDescripcion() != null) {
-            producto.setDescripcion(productoDTO.getDescripcion());
-        }
-
-        if (productoDTO.getTiempoEstimadoPreparacion() != null) {
-            producto.setTiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion());
-        }
-
-        if (productoDTO.getPrecioVenta() != null) {
-            producto.setPrecioVenta(productoDTO.getPrecioVenta());
-        }
-
-        if (productoDTO.getUrlImagen() != null) {
-            producto.setUrlImagen(productoDTO.getUrlImagen());
-        }
-
-        if (productoDTO.getActivo() != null) {
-            producto.setActivo(productoDTO.getActivo());
-        }
-
-        if (!producto.getRubro().getId().equals(productoDTO.getRubroId())) {
+        // Actualizar rubro si es necesario
+        if (productoDTO.getRubroId() != null && !producto.getRubro().getId().equals(productoDTO.getRubroId())) {
             producto.setRubro(rubroProductoRepository.findById(productoDTO.getRubroId())
-                    .orElseThrow(() -> new RuntimeException("RubroProducto con el id" + productoDTO.getRubroId() + " no encontrado")));
+                    .orElseThrow(() -> new IllegalArgumentException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado")));
         }
 
-        // acá tambien se podria verificar si la lista no viene vacia
+        // Actualizar detalles si es necesario
         if (productoDTO.getDetalleProductos() != null) {
-            producto.setDetalleProductos(new ArrayList<>());
-            for (DetalleProductoDTO detalleProductoDTO : productoDTO.getDetalleProductos()) {
-                DetalleProducto detalle = detalleProductoService.toEntity(detalleProductoDTO);
-                detalle.setProducto(producto);
-                producto.getDetalleProductos().add(detalle);
-            }
-            producto.setPrecioCosto(getPrecioCosto(producto.getDetalleProductos()));
+            updateDetalleProductos(producto, productoDTO.getDetalleProductos());
         }
 
         productoRepository.save(producto);
@@ -123,50 +101,7 @@ public class ProductoService {
         productoRepository.save(producto);
     }
 
-    // MAPPERS
-    public Producto toEntity(ProductoDTO productoDTO) {
-        RubroProducto rubro = rubroProductoRepository.findById(productoDTO.getRubroId())
-                .orElseThrow(() -> new RuntimeException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado"));
-
-        Producto producto = Producto.builder()
-                .denominacion(productoDTO.getDenominacion())
-                .descripcion(productoDTO.getDescripcion())
-                .tiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion())
-                .precioVenta(productoDTO.getPrecioVenta())
-                .urlImagen(productoDTO.getUrlImagen())
-                .activo(productoDTO.getActivo())
-                .rubro(rubro)
-                .detalleProductos(new ArrayList<>())
-                .build();
-
-        for (DetalleProductoDTO detalleProductoDTO : productoDTO.getDetalleProductos() ) {
-            DetalleProducto detalle = detalleProductoService.toEntity(detalleProductoDTO);
-            detalle.setProducto(producto);
-            producto.getDetalleProductos().add(detalle);
-        }
-        producto.setPrecioCosto(getPrecioCosto(producto.getDetalleProductos()));
-
-        return producto;
-    }
-
-    public ProductoResponseDTO toDTO(Producto producto) {
-        return ProductoResponseDTO.builder()
-                .id(producto.getId())
-                .denominacion(producto.getDenominacion())
-                .descripcion(producto.getDescripcion())
-                .tiempoEstimadoPreparacion(producto.getTiempoEstimadoPreparacion())
-                .precioVenta(producto.getPrecioVenta())
-                .precioCosto(producto.getPrecioCosto())
-                .urlImagen(producto.getUrlImagen())
-                .activo(producto.getActivo())
-                /*.rubro(rubroProductoService.toDTO(producto.getRubro()))*/
-                .detalleProductos(producto.getDetalleProductos().stream()
-                        .map(detalleProductoService::toDTO)
-                        .collect(Collectors.toList()))
-                .build();
-    }
-
-    // Metodos adicionales
+    // Metodos auxiliares
     private Double getPrecioCosto(List<DetalleProducto> detalleProductos) {
         Double precioCosto = 0.0;
 
@@ -174,5 +109,25 @@ public class ProductoService {
             precioCosto += detalleProducto.getCantidad() * detalleProducto.getInsumo().getPrecioCosto();
         }
         return precioCosto;
+    }
+
+
+    private void updateProductoFields(Producto producto, ProductoPatchDTO productoDTO) {
+        if (productoDTO.getDenominacion() != null) producto.setDenominacion(productoDTO.getDenominacion());
+        if (productoDTO.getDescripcion() != null) producto.setDescripcion(productoDTO.getDescripcion());
+        if (productoDTO.getTiempoEstimadoPreparacion() != null) producto.setTiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion());
+        if (productoDTO.getPrecioVenta() != null) producto.setPrecioVenta(productoDTO.getPrecioVenta());
+        if (productoDTO.getUrlImagen() != null) producto.setUrlImagen(productoDTO.getUrlImagen());
+        if (productoDTO.getActivo() != null) producto.setActivo(productoDTO.getActivo());
+    }
+
+    private void updateDetalleProductos(Producto producto, List<DetalleProductoDTO> detallesDTO) {
+        producto.getDetalleProductos().clear();
+        for (DetalleProductoDTO detalleDTO : detallesDTO) {
+            DetalleProducto detalle = detalleProductoService.createDetalleProducto(detalleDTO);
+            detalle.setProducto(producto);
+            producto.getDetalleProductos().add(detalle);
+        }
+        producto.setPrecioCosto(getPrecioCosto(producto.getDetalleProductos()));
     }
 }

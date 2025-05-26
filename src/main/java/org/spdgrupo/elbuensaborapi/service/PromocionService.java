@@ -1,6 +1,9 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.config.mappers.PromocionMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepromocion.DetallePromocionDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionPatchDTO;
@@ -22,102 +25,75 @@ public class PromocionService {
     // Dependencias
     private final PromocionRepository promocionRepository;
     private final DetallePromocionService detallePromocionService;
+    private final PromocionMapper promocionMapper;
 
+    @Transactional
     public void savePromocion(PromocionDTO promocionDTO) {
-        Promocion promocion = toEntity(promocionDTO);
+        validarFechas(promocionDTO.getFechaDesde(), promocionDTO.getFechaHasta());
+
+        Promocion promocion = promocionMapper.toEntity(promocionDTO);
+
+        // Manejo de detalles
+        promocion.setDetallePromociones(new ArrayList<>());
+        for (DetallePromocionDTO detalleDTO : promocionDTO.getDetallePromociones()) {
+            DetallePromocion detalle = detallePromocionService.createDetallePromocion(detalleDTO);
+            detalle.setPromocion(promocion);
+            promocion.getDetallePromociones().add(detalle);
+        }
+
         promocionRepository.save(promocion);
     }
 
     public PromocionResponseDTO getPromocionById(Long id) {
         Promocion promocion = promocionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Promocion con el id " + id + " no encontrado"));
-        return toDTO(promocion);
+                .orElseThrow(() -> new NotFoundException("Promocion con el id " + id + " no encontrado"));
+        return promocionMapper.toResponseDTO(promocion);
     }
 
     public List<PromocionResponseDTO> getAllPromociones() {
-        List<Promocion> promociones = promocionRepository.findAll();
-        List<PromocionResponseDTO> promocionesDTO = new ArrayList<>();
-
-        for (Promocion promocion : promociones) {
-            promocionesDTO.add(toDTO(promocion));
-        }
-        return promocionesDTO;
+        return promocionRepository.findAll().stream()
+                .map(promocionMapper::toResponseDTO)
+                .toList();
     }
 
+    @Transactional
     public void updatePromocion(Long id, PromocionPatchDTO promocionDTO) {
         Promocion promocion = promocionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Promocion con el id " + id + " no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Promocion con el id " + id + " no encontrado"));
 
-        validarFechas(promocionDTO.getFechaDesde(), promocionDTO.getFechaHasta());
+        if (promocionDTO.getFechaDesde() != null && promocionDTO.getFechaHasta() != null) {
+            validarFechas(promocionDTO.getFechaDesde(), promocionDTO.getFechaHasta());
+        }
 
-        if (promocion.getDenominacion() != null) {
-            promocion.setDenominacion(promocionDTO.getDenominacion());
-        }
-        if (promocionDTO.getUrlImagen() != null) {
-            promocion.setUrlImagen(promocionDTO.getUrlImagen());
-        }
-        if (promocion.getFechaDesde() != null) {
-            promocion.setFechaDesde(promocionDTO.getFechaDesde());
-        }
-        if (promocion.getFechaHasta() != null) {
-            promocion.setFechaHasta(promocionDTO.getFechaHasta());
-        }
-        if (promocion.getDenominacion() != null) {
-            promocion.setDescuento(promocionDTO.getDescuento());
-        }
+        updatePromocionFields(promocion, promocionDTO);
 
         if (promocionDTO.getDetallePromociones() != null) {
-            promocion.setDetallePromociones(new ArrayList<>());
-            for (DetallePromocionDTO detalleDTO: promocionDTO.getDetallePromociones()) {
-                DetallePromocion detalle = detallePromocionService.toEntity(detalleDTO);
-                detalle.setPromocion(promocion);
-                promocion.getDetallePromociones().add(detalle);
-            }
+            updateDetallePromociones(promocion, promocionDTO.getDetallePromociones());
         }
 
         promocionRepository.save(promocion);
     }
 
-    // MAPPERS
-    private Promocion toEntity(PromocionDTO promocionDTO) {
-        validarFechas(promocionDTO.getFechaDesde(), promocionDTO.getFechaHasta());
-
-        Promocion promocion = Promocion.builder()
-                .denominacion(promocionDTO.getDenominacion())
-                .urlImagen(promocionDTO.getUrlImagen())
-                .fechaDesde(promocionDTO.getFechaDesde())
-                .fechaHasta(promocionDTO.getFechaHasta())
-                .descuento(promocionDTO.getDescuento())
-                .detallePromociones(new ArrayList<>())
-                .build();
-
-        for (DetallePromocionDTO detalleDTO: promocionDTO.getDetallePromociones()) {
-            DetallePromocion detalle = detallePromocionService.toEntity(detalleDTO);
-            detalle.setPromocion(promocion);
-            promocion.getDetallePromociones().add(detalle);
-        }
-
-        return promocion;
-    }
-
-    public PromocionResponseDTO toDTO(Promocion promocion) {
-        return PromocionResponseDTO.builder()
-                .id(promocion.getId())
-                .denominacion(promocion.getDenominacion())
-                .urlImagen(promocion.getUrlImagen())
-                .fechaDesde(promocion.getFechaDesde())
-                .fechaHasta(promocion.getFechaHasta())
-                .descuento(promocion.getDescuento())
-                .detallePromociones(promocion.getDetallePromociones().stream()
-                        .map(detallePromocionService::toDTO)
-                        .collect(Collectors.toList()))
-                .build();
-    }
-
-    // Metodos adicionales
     private void validarFechas(LocalDate fechaDesde, LocalDate fechaHasta) {
         if (fechaDesde.isAfter(fechaHasta)) {
             throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de finalización");
+        }
+    }
+
+    private void updatePromocionFields(Promocion promocion, PromocionPatchDTO promocionDTO) {
+        if (promocionDTO.getDenominacion() != null) promocion.setDenominacion(promocionDTO.getDenominacion());
+        if (promocionDTO.getUrlImagen() != null) promocion.setUrlImagen(promocionDTO.getUrlImagen());
+        if (promocionDTO.getFechaDesde() != null) promocion.setFechaDesde(promocionDTO.getFechaDesde());
+        if (promocionDTO.getFechaHasta() != null) promocion.setFechaHasta(promocionDTO.getFechaHasta());
+        if (promocionDTO.getDescuento() != null) promocion.setDescuento(promocionDTO.getDescuento());
+    }
+
+    private void updateDetallePromociones(Promocion promocion, List<DetallePromocionDTO> detallesDTO) {
+        promocion.getDetallePromociones().clear();
+        for (DetallePromocionDTO detalleDTO : detallesDTO) {
+            DetallePromocion detalle = detallePromocionService.createDetallePromocion(detalleDTO);
+            detalle.setPromocion(promocion);
+            promocion.getDetallePromociones().add(detalle);
         }
     }
 }

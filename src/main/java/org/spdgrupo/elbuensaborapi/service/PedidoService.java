@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.config.mappers.PedidoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoPatchDTO;
@@ -28,35 +29,47 @@ public class PedidoService {
     private final PedidoRepository pedidoRepository;
     private final ClienteRepository clienteRepository;
     private final DomicilioRepository domicilioRepository;
-    private final DomicilioService domicilioService;
-    private final ClienteService clienteService;
     private final DetallePedidoService detallePedidoService;
+    private final PedidoMapper pedidoMapper;
 
     @Transactional
     public void savePedido(PedidoDTO pedidoDTO) {
-        Pedido pedido = toEntity(pedidoDTO);
+        Pedido pedido = pedidoMapper.toEntity(pedidoDTO);
+
+        // Establecer cliente y domicilio
+        pedido.setCliente(clienteRepository.findById(pedidoDTO.getClienteId())
+                .orElseThrow(() -> new NotFoundException("Cliente con el id " + pedidoDTO.getClienteId() + " no encontrado")));
+        pedido.setDomicilio(domicilioRepository.findById(pedidoDTO.getDomicilioId())
+                .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado")));
+
+        // Manejo de detalles
+        pedido.setDetallePedidos(new ArrayList<>());
+        for (DetallePedidoDTO detalleDTO : pedidoDTO.getDetallePedidos()) {
+            DetallePedido detalle = detallePedidoService.createDetallePedido(detalleDTO);
+            detalle.setPedido(pedido);
+            pedido.getDetallePedidos().add(detalle);
+        }
+
+        // Calcular totales y hora estimada
+        pedido.setTotalVenta(getTotalVenta(pedido.getDetallePedidos()));
+        pedido.setTotalCosto(getTotalCosto(pedido.getDetallePedidos()));
+        pedido.setHoraEstimadaFin(getHoraEstimadaFin(pedido));
+        pedido.setCodigo(generateCodigo());
+
         pedidoRepository.save(pedido);
     }
 
     public PedidoResponseDTO getPedidoByCodigo(String codigo) {
         Pedido pedido = pedidoRepository.findByCodigo(codigo)
                 .orElseThrow(() -> new NotFoundException("Pedido con el código de orden " + codigo + " no encontrado"));
-        return toDTO(pedido);
+        return pedidoMapper.toResponseDTO(pedido);
     }
 
     public List<PedidoResponseDTO> getAllPedidos() {
-        List<Pedido> pedidos = pedidoRepository.findAll();
-        List<PedidoResponseDTO> pedidosDTO = new ArrayList<>();
-
-        for (Pedido pedido : pedidos) {
-            PedidoResponseDTO pedidoDTO = toDTO(pedido);
-            pedidosDTO.add(pedidoDTO);
-        }
-        return pedidosDTO;
+        return pedidoRepository.findAll().stream()
+                .map(pedidoMapper::toResponseDTO)
+                .toList();
     }
-
-    // NOTE: El metodo updatePedido no le veo sentido a estar. En ningun contexto es lógico editar cuando se
-    //  trata de algo como un PEDIDO (exceptuando el estado)
 
     public void actualizarEstadoDelPedido(Long pedidoId, PedidoPatchDTO pedidoDTO) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
@@ -79,60 +92,6 @@ public class PedidoService {
 
         pedido.setHoraEstimadaFin(pedido.getHoraEstimadaFin().plusMinutes(minutos));
         pedidoRepository.save(pedido);
-    }
-
-    // MAPPERS
-    public Pedido toEntity(PedidoDTO pedidoDTO) {
-        Cliente cliente = clienteRepository.findById(pedidoDTO.getClienteId())
-                .orElseThrow(() -> new NotFoundException("Cliente con el id " + pedidoDTO.getClienteId() + " no encontrado"));
-        Domicilio domicilio = domicilioRepository.findById(pedidoDTO.getDomicilioId())
-                .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado"));
-
-        Pedido pedido = Pedido.builder()
-                .fecha(LocalDate.now())
-                .hora(LocalTime.now())
-                .codigo(generateCodigo())
-                .estado(Estado.SOLICITADO) // Estado por defecto al crear un nuevo pedido.
-                .tipoEnvio(pedidoDTO.getTipoEnvio())
-                .formaPago(pedidoDTO.getFormaPago())
-                .cliente(cliente)
-                .domicilio(domicilio)
-                .detallePedidos(new ArrayList<>())
-                .build();
-
-        // DetallePedidos
-        for (DetallePedidoDTO detalleDTO : pedidoDTO.getDetallePedidos()) {
-            DetallePedido detalle = detallePedidoService.toEntity(detalleDTO);
-            detalle.setPedido(pedido);
-            pedido.getDetallePedidos().add(detalle);
-        }
-
-        // TotalVenta y TotalCosto
-        pedido.setTotalVenta(getTotalVenta(pedido.getDetallePedidos()));
-        pedido.setTotalCosto(getTotalCosto(pedido.getDetallePedidos()));
-        pedido.setHoraEstimadaFin(getHoraEstimadaFin(pedido));
-
-        return pedido;
-    }
-
-    public PedidoResponseDTO toDTO(Pedido pedido) {
-        return PedidoResponseDTO.builder()
-                .id(pedido.getId())
-                .fecha(pedido.getFecha())
-                .hora(pedido.getHora())
-                .codigo(pedido.getCodigo())
-                .estado(pedido.getEstado())
-                .horaEstimadaFin(pedido.getHoraEstimadaFin())
-                .tipoEnvio(pedido.getTipoEnvio())
-                .totalVenta(pedido.getTotalVenta())
-                .totalCosto(pedido.getTotalCosto())
-                .formaPago(pedido.getFormaPago())
-                /*.cliente(clienteService.toDTO(pedido.getCliente()))*/
-                .domicilio(domicilioService.toDTO(pedido.getDomicilio()))
-                .detallePedidos(pedido.getDetallePedidos().stream()
-                        .map(detallePedidoService::toDTO)
-                        .collect(Collectors.toList()))
-                .build();
     }
 
     // Metodos adicionales
