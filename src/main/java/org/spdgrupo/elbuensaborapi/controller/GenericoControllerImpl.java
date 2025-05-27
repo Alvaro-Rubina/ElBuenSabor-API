@@ -41,9 +41,16 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
         return ResponseEntity.ok(servicio.findAll());
     }
 
+    //TODO: hacer bien el update
     /*@PatchMapping("/update/{id}")
     public ResponseEntity<String> update(@PathVariable ID id, @RequestBody D dto) {
 
         return ResponseEntity.ok();
     }*/
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<String> update(@PathVariable ID id,@RequestBody D dto) {
+        // Implementación aquí
+        return null;
+    }
+
 }
