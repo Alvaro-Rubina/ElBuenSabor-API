@@ -34,7 +34,7 @@ public class EmpleadoService {
         }
 
         Usuario usuario = usuarioService.saveUsuario(empleadoDTO.getUsuario());
-        Domicilio domicilio = domicilioService.saveDomicilio(empleadoDTO.getDomicilio());
+        Domicilio domicilio = domicilioService.save(empleadoDTO.getDomicilio());
 
         Empleado empleado = empleadoMapper.toEntity(empleadoDTO);
         empleado.setUsuario(usuario);

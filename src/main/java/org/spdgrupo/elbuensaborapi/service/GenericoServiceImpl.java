@@ -1,46 +1,64 @@
-/*
-
-
-
 package org.spdgrupo.elbuensaborapi.service;
 
+import jakarta.transaction.Transactional;
+import org.spdgrupo.elbuensaborapi.model.entity.Base;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoService;
 
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public abstract class GenericoServiceImpl<E, D, R, ID extends Serializable> implements GenericoService<E, D, R, ID> {
+public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Serializable> implements GenericoService<E, D, R, ID> {
 
     protected GenericoRepository<E, ID> genericoRepository;
+    protected GenericoMapper<E, D, R> genericoMapper;
 
-    public GenericoServiceImpl(GenericoRepository< E , ID> genericoRepository) {
+    public GenericoServiceImpl(GenericoRepository<E, ID> genericoRepository, GenericoMapper<E, D, R> genericoMapper) {
         this.genericoRepository = genericoRepository;
+        this.genericoMapper = genericoMapper;
     }
 
     @Override
-    public String save(D entity) {
+    @Transactional
+    public E save(D dto){
+        E entity = genericoMapper.toEntity(dto);
+        genericoRepository.save(entity);
+        return entity;
+    }
 
-        return genericoRepository.save(entity);
+    public R findById(ID id){
+        E entity = genericoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("entidad con el id " + id + " no encontrado"));
+        return genericoMapper.toResponseDTO(entity);
     }
 
     @Override
-    public E findById(ID id) {
-        return genericoRepository.findById(id).orElse(null);
+    public List<R> findAll(){
+        return genericoRepository.findAll().stream()
+                .map(genericoMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+    /*
+    @Override
+    public String update(ID id, D dto) {
+
+        E entidadExistente = genericoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entidad con id " + id + " no encontrada"));
+        E entidadActualizada = M.toEntity(dto);
+        // Asegurarnos de mantener el ID de la entidad existente
+        // Este paso requiere que las entidades tengan un método setId
+        entidadActualizada.setId(id);
+
+        genericoRepository.save(entidadActualizada);
+        return "Entidad actualizada exitosamente";
+
+    }
+    */
+    public String update(ID id, D dto) {
+        return "";
     }
 
-    @Override
-    public List<E> findAll() {
-        return genericoRepository.findAll();
-    }
-
-    @Override
-    public E update(ID id, E entity) {
-        if (genericoRepository.existsById(id)) {
-            return genericoRepository.save(entity);
-        }
-        return null;
-    }
 }
-*/

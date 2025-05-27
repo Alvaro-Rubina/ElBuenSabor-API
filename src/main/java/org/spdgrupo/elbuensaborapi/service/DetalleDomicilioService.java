@@ -27,7 +27,7 @@ public class DetalleDomicilioService {
         DetalleDomicilio detalleDomicilio = DetalleDomicilio.builder()
                 .cliente(clienteRepository.findById(detalleDomicilioDTO.getClienteId())
                         .orElseThrow(() -> new NotFoundException("Cliente con el id " + detalleDomicilioDTO.getClienteId() + " no encontrado")))
-                .domicilio(domicilioService.saveDomicilio(detalleDomicilioDTO.getDomicilio()))
+                .domicilio(domicilioService.save(detalleDomicilioDTO.getDomicilio()))
                 .build();
         detalleDomicilioRepository.save(detalleDomicilio);
     }

@@ -1,42 +1,27 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.mappers.DomicilioMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-public class DomicilioService {
+public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDTO, DomicilioResponseDTO, Long> {
 
-    // Dependencias
-    private final DomicilioRepository domicilioRepository;
-    private final DomicilioMapper domicilioMapper;
+    @Autowired
+    private DomicilioRepository domicilioRepository;
 
-    public Domicilio saveDomicilio(DomicilioDTO domicilioDTO){
-        Domicilio domicilio = domicilioMapper.toEntity(domicilioDTO);
-        domicilioRepository.save(domicilio);
-        return domicilio;
-    }
+    @Autowired
+    private DomicilioMapper domicilioMapper;
 
-    public List<DomicilioResponseDTO> getAllDomicilios(){
-        return domicilioRepository.findAll().stream()
-                .map(domicilioMapper::toResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    public DomicilioResponseDTO getDomicilioById(Long id){
-        Domicilio domicilio = domicilioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Domicilio con el id " + id + " no encontrado"));
-        return domicilioMapper.toResponseDTO(domicilio);
+    public DomicilioService(GenericoRepository<Domicilio, Long> baseRepository, DomicilioMapper domicilioMapper) {
+        super(baseRepository, domicilioMapper);
     }
 
     public void deleteDomicilio(Long id){
@@ -68,15 +53,5 @@ public class DomicilioService {
         }
 
         domicilioRepository.save(domicilio);
-    }
-    public DomicilioResponseDTO toDTO(Domicilio domicilio) {
-        return DomicilioResponseDTO.builder()
-                .id(domicilio.getId())
-                .calle(domicilio.getCalle())
-                .numero(domicilio.getNumero())
-                .localidad(domicilio.getLocalidad())
-                .codigoPostal(domicilio.getCodigoPostal())
-                .activo(domicilio.getActivo())
-                .build();
     }
 }

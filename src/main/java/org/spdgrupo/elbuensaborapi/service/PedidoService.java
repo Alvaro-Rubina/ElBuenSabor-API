@@ -77,6 +77,11 @@ public class PedidoService {
 
         if (pedidoDTO.getEstado() != null) {
             pedido.setEstado(pedidoDTO.getEstado());
+
+            if (pedidoDTO.getEstado() == Estado.PENDIENTE) {
+                // una vez que se factura el pedido, se crea la factura
+                // TODO: Hacer el metodo para crear la factura
+            }
         }
 
         pedidoRepository.save(pedido);
