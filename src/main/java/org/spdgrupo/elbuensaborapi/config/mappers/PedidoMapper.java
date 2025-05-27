@@ -5,9 +5,10 @@ import org.mapstruct.Mapping;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Pedido;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 
 @Mapper(componentModel = "spring", uses = {ClienteMapper.class, DomicilioMapper.class, DetallePedidoMapper.class})
-public interface PedidoMapper {
+public interface PedidoMapper extends GenericoMapper<Pedido, PedidoDTO, PedidoResponseDTO> {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fecha", expression = "java(java.time.LocalDate.now())")

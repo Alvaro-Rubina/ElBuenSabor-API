@@ -8,11 +8,12 @@ import org.spdgrupo.elbuensaborapi.config.mappers.utils.DoIgnore;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroInsumo;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface RubroInsumoMapper {
+public interface RubroInsumoMapper extends GenericoMapper<RubroInsumo, RubroInsumoDTO, RubroInsumoResponseDTO> {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "subRubros", ignore = true)

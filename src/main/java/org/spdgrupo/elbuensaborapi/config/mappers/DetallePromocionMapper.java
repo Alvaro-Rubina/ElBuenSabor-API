@@ -5,9 +5,10 @@ import org.mapstruct.Mapping;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepromocion.DetallePromocionDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepromocion.DetallePromocionResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetallePromocion;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 
 @Mapper(componentModel = "spring", uses = {ProductoMapper.class, InsumoMapper.class})
-public interface DetallePromocionMapper {
+public interface DetallePromocionMapper extends GenericoMapper<DetallePromocion, DetallePromocionDTO, DetallePromocionResponseDTO> {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "productoId", target = "producto.id")

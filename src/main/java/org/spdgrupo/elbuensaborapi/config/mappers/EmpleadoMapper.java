@@ -5,9 +5,10 @@ import org.mapstruct.Mapping;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Empleado;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 
 @Mapper(componentModel = "spring", uses = {UsuarioMapper.class, DomicilioMapper.class})
-public interface EmpleadoMapper {
+public interface EmpleadoMapper extends GenericoMapper<Empleado, EmpleadoDTO, EmpleadoResponseDTO> {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "activo", constant = "true")
