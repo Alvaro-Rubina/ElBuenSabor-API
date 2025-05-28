@@ -11,5 +11,5 @@ public class RubroProductoResponseDTO {
 
     private Long id;
     private String denominacion;
-    private boolean activo;
+    private Boolean activo;
 }

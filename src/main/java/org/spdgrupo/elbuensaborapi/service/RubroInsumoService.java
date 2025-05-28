@@ -47,36 +47,32 @@ public class RubroInsumoService {
                 .collect(Collectors.toList());
     }
 
-    public void updateRubroInsumo(Long id, RubroInsumoPatchDTO rubroInsumoDTO) {
+    public void updateRubroInsumo(Long id, RubroInsumoDTO rubroInsumoDTO) {
         RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
 
-        List<RubroInsumo> subRubros = rubroInsumo.getSubRubros();
+        // Actualizamos todos los campos
+        rubroInsumo.setDenominacion(rubroInsumoDTO.getDenominacion());
+        rubroInsumo.setActivo(rubroInsumoDTO.getActivo());
 
-        if (rubroInsumoDTO.getDenominacion() != null) {
-            rubroInsumo.setDenominacion(rubroInsumoDTO.getDenominacion());
-        }
-
-        if (rubroInsumoDTO.getActivo() != null) {
-            rubroInsumo.setActivo(rubroInsumoDTO.getActivo());
-        }
-
-        if (rubroInsumoDTO.getRubroPadreId().isPresent()) {
-            Long padreId = rubroInsumoDTO.getRubroPadreId().get();
-
-            // validaciones contra ciclos
-            if (padreId.equals(id)) {
+        // Validación y actualización del rubro padre
+        if (rubroInsumoDTO.getRubroPadreId() != null) {
+            // Validación contra ciclos
+            if (rubroInsumoDTO.getRubroPadreId().equals(id)) {
                 throw new CyclicParentException("No se puede asignar el rubro a sí mismo como padre");
             }
 
-            boolean isChild = subRubros.stream().anyMatch(subRubro -> subRubro.getId().equals(padreId));
+            boolean isChild = rubroInsumo.getSubRubros().stream()
+                    .anyMatch(subRubro -> subRubro.getId().equals(rubroInsumoDTO.getRubroPadreId()));
             if (isChild) {
                 throw new CyclicParentException("No se puede asignar como padre de un rubro a uno de sus hijos");
             }
 
-            RubroInsumo rubroPadre = rubroInsumoRepository.findById(padreId)
+            RubroInsumo rubroPadre = rubroInsumoRepository.findById(rubroInsumoDTO.getRubroPadreId())
                     .orElseThrow(() -> new NotFoundException("Rubro padre no encontrado"));
             rubroInsumo.setRubroPadre(rubroPadre);
+        } else {
+            rubroInsumo.setRubroPadre(null);
         }
 
         rubroInsumoRepository.save(rubroInsumo);

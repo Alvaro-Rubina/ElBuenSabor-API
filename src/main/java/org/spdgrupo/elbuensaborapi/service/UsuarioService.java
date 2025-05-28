@@ -42,17 +42,13 @@ public class UsuarioService {
                 .toList();
     }
 
-    public void updateUsuario(Long id, UsuarioPatchDTO usuarioDTO) {
+    public void updateUsuario(Long id, UsuarioDTO usuarioDTO) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario con el id " + id + " no encontrado"));
-        
-        if (usuarioDTO.getContrasenia() != null) {
-            usuario.setContrasenia(usuarioDTO.getContrasenia());
-        }
 
-        if (usuarioDTO.getRol() != null) {
-            usuario.setRol(usuarioDTO.getRol());
-        }
+        usuario.setEmail(usuarioDTO.getEmail());
+        usuario.setContrasenia(usuarioDTO.getContrasenia());
+        usuario.setRol(usuarioDTO.getRol());
 
         usuarioRepository.save(usuario);
     }

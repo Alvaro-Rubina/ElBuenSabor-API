@@ -38,7 +38,7 @@ public class RubroInsumoController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateRubroInsumo(@PathVariable Long id,
-                                                    @RequestBody RubroInsumoPatchDTO rubroInsumoDTO) {
+                                                    @Valid @RequestBody RubroInsumoDTO rubroInsumoDTO) {
         rubroInsumoService.updateRubroInsumo(id, rubroInsumoDTO);
         return ResponseEntity.ok("RubroInsumo actualizado correctamente");
     }

@@ -13,5 +13,5 @@ public class RubroProductoDTO {
     @NotBlank (message = "El campo denominacion no puede estar vacio")
     private String denominacion;
 
-    private boolean activo;
+    private Boolean activo;
 }

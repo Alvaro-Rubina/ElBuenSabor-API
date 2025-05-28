@@ -3,7 +3,6 @@ package org.spdgrupo.elbuensaborapi.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.RubroProductoService;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +37,7 @@ public class RubroProductoController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateRubroProducto(@PathVariable Long id,
-                                                      @RequestBody RubroProductoPatchDTO rubroProductoDTO) {
+                                                      @Valid @RequestBody RubroProductoDTO rubroProductoDTO) {
         rubroProductoService.updateRubroProducto(id, rubroProductoDTO);
         return ResponseEntity.ok("RubroProducto actualizado correctamente");
     }

@@ -54,50 +54,23 @@ public class InsumoService {
                 .toList();
     }
 
-    public void updateInsumo(Long id, InsumoPatchDTO insumoDTO) {
+    public void updateInsumo(Long id, InsumoDTO insumoDTO) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
 
-        if (insumoDTO.getDenominacion() != null) {
-            insumo.setDenominacion(insumoDTO.getDenominacion());
-        }
 
-        if (insumoDTO.getUrlImagen() != null) {
-            insumo.setUrlImagen(insumoDTO.getUrlImagen());
-        }
+        insumo.setDenominacion(insumoDTO.getDenominacion());
+        insumo.setUrlImagen(insumoDTO.getUrlImagen());
+        insumo.setPrecioCosto(insumoDTO.getPrecioCosto());
+        insumo.setPrecioVenta(insumoDTO.getPrecioVenta());
+        insumo.setStockActual(insumoDTO.getStockActual());
+        insumo.setStockMinimo(insumoDTO.getStockMinimo());
+        insumo.setEsParaElaborar(insumoDTO.getEsParaElaborar());
+        insumo.setActivo(insumoDTO.getActivo());
+        insumo.setUnidadMedida(insumoDTO.getUnidadMedida());
 
-        if (insumoDTO.getPrecioCosto() != null) {
-            insumo.setPrecioCosto(insumoDTO.getPrecioCosto());
-        }
-
-        if (insumoDTO.getPrecioVenta() != null) {
-            insumo.setPrecioVenta(insumoDTO.getPrecioVenta());
-        }
-
-        if (insumoDTO.getStockActual() != null) {
-            insumo.setStockActual(insumoDTO.getStockActual());
-        }
-
-        if (insumoDTO.getStockMinimo() != null) {
-            insumo.setStockMinimo(insumoDTO.getStockMinimo());
-        }
-
-        if (insumoDTO.getEsParaElaborar() != null) {
-            insumo.setEsParaElaborar(insumoDTO.getEsParaElaborar());
-        }
-
-        if (insumoDTO.getActivo() != null) {
-            insumo.setActivo(insumoDTO.getActivo());
-        }
-
-        if (insumoDTO.getUnidadMedida() != null) {
-            insumo.setUnidadMedida(insumoDTO.getUnidadMedida());
-        }
-
-        if (insumoDTO.getRubroId() != null) {
-            insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
-                    .orElseThrow(() -> new NotFoundException("RubroInsumo con el id" + insumoDTO.getRubroId() + "no encontrado")));
-        }
+        insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
+                .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + insumoDTO.getRubroId() + " no encontrado")));
 
         insumoRepository.save(insumo);
     }
@@ -106,6 +79,17 @@ public class InsumoService {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
         insumo.setActivo(false);
+        insumoRepository.save(insumo);
+    }
+
+    public void actualizarEstadoInsumo(Long id) {
+        Insumo insumo = insumoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
+        if (insumo.isActivo()) {
+            insumo.setActivo(false);
+        } else {
+            insumo.setActivo(true);
+        }
         insumoRepository.save(insumo);
     }
 }

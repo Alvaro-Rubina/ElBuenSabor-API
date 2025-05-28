@@ -41,12 +41,18 @@ public class InsumoController {
     public ResponseEntity<List<InsumoResponseDTO>> getAllInsumos(@RequestParam(required = false) Long rubroId) {
         return ResponseEntity.ok(insumoService.getAllInsumos(rubroId));
     }
-    
-    @PatchMapping("/update/{id}")
+
+    @PutMapping("/update/{id}")
     public ResponseEntity<String> updateInsumo(@PathVariable Long id,
-                                               @RequestBody InsumoPatchDTO insumoDTO) {
+                                               @Valid @RequestBody InsumoDTO insumoDTO) {
         insumoService.updateInsumo(id, insumoDTO);
         return ResponseEntity.ok("Insumo actualizado correctamente");
+    }
+
+    @PutMapping("/actualizar-estado/{id}")
+    public ResponseEntity<String> actualizarEstadoInsumo(@PathVariable Long id) {
+        insumoService.actualizarEstadoInsumo(id);
+        return ResponseEntity.ok("Estado del insumo actualizado correctamente");
     }
 
     @DeleteMapping("/delete/{id}")

@@ -31,7 +31,7 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
 
     public R findById(ID id){
         E entity = genericoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("entidad con el id " + id + " no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Entidad con el id " + id + " no encontrado"));
         return genericoMapper.toResponseDTO(entity);
     }
 

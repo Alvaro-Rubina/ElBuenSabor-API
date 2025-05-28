@@ -55,35 +55,22 @@ public class EmpleadoService {
                 .collect(Collectors.toList());
     }
 
-    public void updateEmpleado(Long id, EmpleadoPatchDTO empleadoDTO) {
+    public void updateEmpleado(Long id, EmpleadoDTO empleadoDTO) {
         Empleado empleado = empleadoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Empleado con el " +  id + " no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Empleado con el " + id + " no encontrado"));
 
-        if (empleadoDTO.getNombreCompleto() != null) {
-            empleado.setNombreCompleto(empleadoDTO.getNombreCompleto());
-        }
-
-        if (empleadoDTO.getTelefono() != null) {
-            empleado.setTelefono(empleadoDTO.getTelefono());
-        }
-
-        if (empleadoDTO.getActivo() != null) {
-            empleado.setActivo(empleadoDTO.getActivo());
-        }
-
-        // actualizo el usuario del empleado
-        usuarioService.updateUsuario(empleado.getUsuario().getId(), empleadoDTO.getUsuario());
-
-        // actualizo el domicilio del empleado
-        domicilioService.updateDomicilio(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());
-
-        if (empleado.getUsuario().getRol() == Rol.CLIENTE) {
+        if (empleadoDTO.getUsuario().getRol() == Rol.CLIENTE) {
             throw new InvalidRolException("No se puede asignar el rol CLIENTE a un empleado");
         }
 
+        empleado.setNombreCompleto(empleadoDTO.getNombreCompleto());
+        empleado.setTelefono(empleadoDTO.getTelefono());
+
+        usuarioService.updateUsuario(empleado.getUsuario().getId(), empleadoDTO.getUsuario());
+        domicilioService.updateDomicilio(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());
+
         empleadoRepository.save(empleado);
     }
-
     public void deleteEmpleado(Long id) {
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Empleado con el id" + id  + " no encontrado"));

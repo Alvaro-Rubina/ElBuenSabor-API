@@ -36,9 +36,9 @@ public class EmpleadoController {
         return ResponseEntity.ok(empleadoService.getAllEmpleados());
     }
 
-    @PatchMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<String> updateEmpleado(@PathVariable Long id,
-                                                 @RequestBody EmpleadoPatchDTO empleadoDTO) {
+                                                 @Valid @RequestBody EmpleadoDTO empleadoDTO) {
         empleadoService.updateEmpleado(id, empleadoDTO);
         return ResponseEntity.ok("Empleado actualizado correctamente");
     }

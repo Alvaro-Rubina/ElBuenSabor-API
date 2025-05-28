@@ -31,26 +31,16 @@ public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDT
         domicilioRepository.save(domicilio);
     }
 
-    public void updateDomicilio(Long id, DomicilioPatchDTO domicilioDTO) {
+    public void updateDomicilio(Long id, DomicilioDTO domicilioDTO) {
         Domicilio domicilio = domicilioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Domicilio no encontrado"));
 
-        if (domicilioDTO.getCalle() != null) {
-            domicilio.setCalle(domicilioDTO.getCalle());
-        }
-        if (domicilioDTO.getLocalidad() != null) {
-            domicilio.setLocalidad(domicilioDTO.getLocalidad());
-        }
-        if (domicilioDTO.getNumero() != null) {
-            domicilio.setNumero(domicilioDTO.getNumero());
-        }
-        if (domicilioDTO.getCodigoPostal() != null) {
-            domicilio.setCodigoPostal(domicilioDTO.getCodigoPostal());
-        }
-
-        if (domicilioDTO.getActivo() != null) {
-            domicilio.setActivo(domicilioDTO.getActivo());
-        }
+        // Actualizamos todos los campos
+        domicilio.setCalle(domicilioDTO.getCalle());
+        domicilio.setLocalidad(domicilioDTO.getLocalidad());
+        domicilio.setNumero(domicilioDTO.getNumero());
+        domicilio.setCodigoPostal(domicilioDTO.getCodigoPostal());
+        domicilio.setActivo(true);
 
         domicilioRepository.save(domicilio);
     }

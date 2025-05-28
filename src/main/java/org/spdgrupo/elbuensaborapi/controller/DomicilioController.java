@@ -32,14 +32,13 @@ public class DomicilioController extends GenericoControllerImpl<
         this.domicilioService = domicilioService;
     }
 
-
-    /*@PatchMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<String> updateDomicilio(@PathVariable Long id,
-                                                  @RequestBody DomicilioPatchDTO domicilioDTO) {
+                                                  @Valid @RequestBody DomicilioDTO domicilioDTO) {
         domicilioService.updateDomicilio(id, domicilioDTO);
         return ResponseEntity.ok("Domicilio actualizado correctamente");
     }
-*/
+
     @PutMapping("/delete/{id}")
     public ResponseEntity<String> deleteDomicilio(@PathVariable Long id) {
         domicilioService.deleteDomicilio(id);

@@ -4,13 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.RubroProductoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroProducto;
 import org.spdgrupo.elbuensaborapi.repository.RubroProductoRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,17 +37,12 @@ public class RubroProductoService {
                 .collect(Collectors.toList());
     }
 
-    public void updateRubroProducto(Long id, RubroProductoPatchDTO rubroProductoDTO) {
+    public void updateRubroProducto(Long id, RubroProductoDTO rubroProductoDTO) {
         RubroProducto rubroProducto = rubroProductoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
 
-        if(rubroProductoDTO.getDenominacion() != null) {
-            rubroProducto.setDenominacion(rubroProductoDTO.getDenominacion());
-        }
-
-        if(rubroProductoDTO.getActivo() != null) {
-            rubroProducto.setActivo(rubroProductoDTO.getActivo());
-        }
+        rubroProducto.setDenominacion(rubroProductoDTO.getDenominacion());
+        rubroProducto.setActivo(rubroProductoDTO.getActivo());
 
         rubroProductoRepository.save(rubroProducto);
     }

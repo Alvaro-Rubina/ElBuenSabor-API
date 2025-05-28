@@ -36,9 +36,9 @@ public class ClienteController {
         return ResponseEntity.ok(clienteService.getAllClientes());
     }
 
-    @PatchMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<String> updateCliente(@PathVariable Long id,
-                                                @RequestBody ClientePatchDTO clienteDTO) {
+                                                @Valid @RequestBody ClienteDTO clienteDTO) {
         clienteService.updateCliente(id, clienteDTO);
         return ResponseEntity.ok("Cliente actualizado correctamente");
     }

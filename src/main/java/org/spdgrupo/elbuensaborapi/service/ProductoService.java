@@ -73,23 +73,30 @@ public class ProductoService {
     }
 
     @Transactional
-    public void updateProducto(Long id, ProductoPatchDTO productoDTO) {
+    public void updateProducto(Long id, ProductoDTO productoDTO) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Producto con el id " + id + " no encontrado"));
 
         // Actualizar campos básicos
-        updateProductoFields(producto, productoDTO);
+        producto.setDenominacion(productoDTO.getDenominacion());
+        producto.setDescripcion(productoDTO.getDescripcion());
+        producto.setTiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion());
+        producto.setPrecioVenta(productoDTO.getPrecioVenta());
+        producto.setUrlImagen(productoDTO.getUrlImagen());
+        producto.setActivo(productoDTO.getActivo());
 
-        // Actualizar rubro si es necesario
-        if (productoDTO.getRubroId() != null && !producto.getRubro().getId().equals(productoDTO.getRubroId())) {
-            producto.setRubro(rubroProductoRepository.findById(productoDTO.getRubroId())
-                    .orElseThrow(() -> new IllegalArgumentException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado")));
-        }
+        // Actualizar rubro
+        producto.setRubro(rubroProductoRepository.findById(productoDTO.getRubroId())
+                .orElseThrow(() -> new IllegalArgumentException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado")));
 
-        // Actualizar detalles si es necesario
-        if (productoDTO.getDetalleProductos() != null) {
-            updateDetalleProductos(producto, productoDTO.getDetalleProductos());
+        // Actualizar detalles
+        producto.getDetalleProductos().clear();
+        for (DetalleProductoDTO detalleDTO : productoDTO.getDetalleProductos()) {
+            DetalleProducto detalle = detalleProductoService.createDetalleProducto(detalleDTO);
+            detalle.setProducto(producto);
+            producto.getDetalleProductos().add(detalle);
         }
+        producto.setPrecioCosto(getPrecioCosto(producto.getDetalleProductos()));
 
         productoRepository.save(producto);
     }
@@ -109,25 +116,5 @@ public class ProductoService {
             precioCosto += detalleProducto.getCantidad() * detalleProducto.getInsumo().getPrecioCosto();
         }
         return precioCosto;
-    }
-
-
-    private void updateProductoFields(Producto producto, ProductoPatchDTO productoDTO) {
-        if (productoDTO.getDenominacion() != null) producto.setDenominacion(productoDTO.getDenominacion());
-        if (productoDTO.getDescripcion() != null) producto.setDescripcion(productoDTO.getDescripcion());
-        if (productoDTO.getTiempoEstimadoPreparacion() != null) producto.setTiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion());
-        if (productoDTO.getPrecioVenta() != null) producto.setPrecioVenta(productoDTO.getPrecioVenta());
-        if (productoDTO.getUrlImagen() != null) producto.setUrlImagen(productoDTO.getUrlImagen());
-        if (productoDTO.getActivo() != null) producto.setActivo(productoDTO.getActivo());
-    }
-
-    private void updateDetalleProductos(Producto producto, List<DetalleProductoDTO> detallesDTO) {
-        producto.getDetalleProductos().clear();
-        for (DetalleProductoDTO detalleDTO : detallesDTO) {
-            DetalleProducto detalle = detalleProductoService.createDetalleProducto(detalleDTO);
-            detalle.setProducto(producto);
-            producto.getDetalleProductos().add(detalle);
-        }
-        producto.setPrecioCosto(getPrecioCosto(producto.getDetalleProductos()));
     }
 }

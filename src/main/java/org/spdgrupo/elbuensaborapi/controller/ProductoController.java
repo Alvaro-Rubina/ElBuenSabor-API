@@ -42,9 +42,9 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.getAllProductos(rubroId));
     }
 
-    @PatchMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<String> updateProducto(@PathVariable Long id,
-                                                 @RequestBody ProductoPatchDTO productoDTO) {
+                                                 @Valid @RequestBody ProductoDTO productoDTO) {
         productoService.updateProducto(id, productoDTO);
         return ResponseEntity.ok("Producto actualizado correctamente");
     }
