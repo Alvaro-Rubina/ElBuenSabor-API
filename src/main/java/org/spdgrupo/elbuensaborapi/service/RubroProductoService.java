@@ -6,38 +6,30 @@ import org.spdgrupo.elbuensaborapi.config.mappers.RubroProductoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroProducto;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroProductoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-public class RubroProductoService {
+public class RubroProductoService extends GenericoServiceImpl<RubroProducto, RubroProductoDTO, RubroProductoResponseDTO, Long> {
 
     // Dependencias
-    private final RubroProductoRepository rubroProductoRepository;
-    private final RubroProductoMapper rubroProductoMapper;
+    @Autowired
+    private RubroProductoRepository rubroProductoRepository;
+    @Autowired
+    private RubroProductoMapper rubroProductoMapper;
 
-    public void saveRubroProducto(RubroProductoDTO rubroProductoDTO) {
-        RubroProducto rubroProducto = rubroProductoMapper.toEntity(rubroProductoDTO);
-        rubroProductoRepository.save(rubroProducto);
+    public RubroProductoService(GenericoRepository<RubroProducto,Long> genericoRepository, GenericoMapper<RubroProducto, RubroProductoDTO, RubroProductoResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
     }
 
-    public RubroProductoResponseDTO getRubroProductoById(Long id) {
-        RubroProducto rubroProducto = rubroProductoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
-        return rubroProductoMapper.toResponseDTO(rubroProducto);
-    }
-
-    public List<RubroProductoResponseDTO> getAllRubroProductos() {
-        return rubroProductoRepository.findAll().stream()
-                .map(rubroProductoMapper::toResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    public void updateRubroProducto(Long id, RubroProductoDTO rubroProductoDTO) {
+    @Override
+    public void update(Long id, RubroProductoDTO rubroProductoDTO) {
         RubroProducto rubroProducto = rubroProductoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
 
@@ -47,7 +39,7 @@ public class RubroProductoService {
         rubroProductoRepository.save(rubroProducto);
     }
 
-    public void deleteRubroProducto(Long id) {
+    public void delete(Long id) {
         RubroProducto rubroProducto = rubroProductoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
         rubroProducto.setActivo(false);

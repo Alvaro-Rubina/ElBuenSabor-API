@@ -9,7 +9,7 @@ public interface GenericoService <E extends Base, D, R, ID extends Serializable>
     public E save(D dto);
     public R findById(ID id);
     public List<R> findAll();
-    public String update(ID id, D entity);
+    public void update(ID id, D entity);
 
 
 }

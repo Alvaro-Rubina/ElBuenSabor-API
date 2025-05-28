@@ -59,8 +59,8 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
 
     }
     */
-    public String update(ID id, D dto) {
-        return "";
+    public void update(ID id, D dto) {
+
     }
 
 }
