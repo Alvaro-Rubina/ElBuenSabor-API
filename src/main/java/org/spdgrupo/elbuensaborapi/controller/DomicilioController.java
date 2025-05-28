@@ -31,7 +31,7 @@ public class DomicilioController extends GenericoControllerImpl<
         super(domicilioService);
         this.domicilioService = domicilioService;
     }
-
+    
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateDomicilio(@PathVariable Long id,
                                                   @Valid @RequestBody DomicilioDTO domicilioDTO) {

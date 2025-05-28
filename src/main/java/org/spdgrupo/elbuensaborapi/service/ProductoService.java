@@ -1,6 +1,7 @@
 package org.spdgrupo.elbuensaborapi.service;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.mappers.ProductoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
@@ -10,8 +11,11 @@ import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroProducto;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroProductoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,19 +23,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-public class ProductoService {
+public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, ProductoResponseDTO, Long> {
 
     //TODO: marcar productos que no tienen stock de insumos como “no disponibles”.
 
     // Dependencias
-    private final ProductoRepository productoRepository;
-    private final RubroProductoRepository rubroProductoRepository;
-    private final DetalleProductoService detalleProductoService;
-    private final ProductoMapper productoMapper;
+    @Autowired
+    private ProductoRepository productoRepository;
+    @Autowired
+    private RubroProductoRepository rubroProductoRepository;
+    @Autowired
+    private DetalleProductoService detalleProductoService;
+    @Autowired
+    private ProductoMapper productoMapper;
 
+    public ProductoService(GenericoRepository<Producto, Long> genericoRepository, GenericoMapper<Producto, ProductoDTO, ProductoResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
+    }
+
+    @Override
     @Transactional
-    public void saveProducto(ProductoDTO productoDTO) {
+    public Producto save(ProductoDTO productoDTO) {
         Producto producto = productoMapper.toEntity(productoDTO);
         producto.setRubro(rubroProductoRepository.findById(productoDTO.getRubroId())
                 .orElseThrow(() -> new IllegalArgumentException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado")));
@@ -45,13 +57,7 @@ public class ProductoService {
         }
         producto.setPrecioCosto(getPrecioCosto(producto.getDetalleProductos()));
 
-        productoRepository.save(producto);
-    }
-
-    public ProductoResponseDTO getProductoById(Long id) {
-        Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto con el id " + id + " no encontrado"));
-        return productoMapper.toResponseDTO(producto);
+        return (productoRepository.save(producto));
     }
 
     // Acá busca por denominacion parcial. Ej para "Pizza Margarita" busca Pizza o margarita, etc
@@ -61,19 +67,9 @@ public class ProductoService {
                 .toList();
     }
 
-    // Acá busca por rubro, y si no se le pasa parametro (o es 0), busca todos
-    public List<ProductoResponseDTO> getAllProductos(Long rubroId) {
-        List<Producto> productos = (rubroId == null || rubroId == 0L)
-                ? productoRepository.findAll()
-                : productoRepository.findByRubroId(rubroId);
-
-        return productos.stream()
-                .map(productoMapper::toResponseDTO)
-                .toList();
-    }
-
+    @Override
     @Transactional
-    public void updateProducto(Long id, ProductoDTO productoDTO) {
+    public void update(Long id, ProductoDTO productoDTO) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Producto con el id " + id + " no encontrado"));
 
@@ -101,7 +97,7 @@ public class ProductoService {
         productoRepository.save(producto);
     }
 
-    public void deleteProducto(Long id) {
+    public void delete(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto con el id " + id + " no encontrado"));
         producto.setActivo(false);

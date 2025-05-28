@@ -43,7 +43,7 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
     }
 
     //TODO: hacer bien el update
-    @PutMapping("/update/{id}")
+    @PutMapping("/generico/update/{id}")
     public ResponseEntity<String> update(@Valid @PathVariable ID id, @RequestBody D dto) {
 
         return ResponseEntity.ok("");
