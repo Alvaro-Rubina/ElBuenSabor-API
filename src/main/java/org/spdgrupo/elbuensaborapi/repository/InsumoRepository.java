@@ -11,5 +11,4 @@ import java.util.List;
 public interface InsumoRepository extends GenericoRepository<Insumo, Long> {
 
     List<Insumo> findByDenominacionContainingIgnoreCase(String denominacion);
-    List<Insumo> findByRubroId(Long rubroId);
 }

@@ -7,34 +7,38 @@ import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-public class InsumoService {
+public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, InsumoResponseDTO, Long> {
     // TODO: Falta logica (aca y capaz en el DTO) para manejar que el stockActual no sea nunca menor que el stockMinimo
 
     // Dependencias
-    private final InsumoRepository insumoRepository;
-    private final RubroInsumoRepository rubroInsumoRepository;
-    private final InsumoMapper insumoMapper;
+    @Autowired
+    private InsumoRepository insumoRepository;
+    @Autowired
+    private RubroInsumoRepository rubroInsumoRepository;
+    @Autowired
+    private InsumoMapper insumoMapper;
 
-    public void saveInsumo(InsumoDTO insumoDTO) {
+    public InsumoService(GenericoRepository<Insumo, Long> genericoRepository, GenericoMapper<Insumo, InsumoDTO, InsumoResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
+    }
+
+    @Override
+    public Insumo save(InsumoDTO insumoDTO) {
         Insumo insumo = insumoMapper.toEntity(insumoDTO);
         insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + insumoDTO.getRubroId() + " no encontrado")));
-        insumoRepository.save(insumo);
-    }
-
-    public InsumoResponseDTO getInsumoById(Long id) {
-        Insumo insumo = insumoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
-        return insumoMapper.toResponseDTO(insumo);
+        return(insumoRepository.save(insumo));
     }
 
     public List<InsumoResponseDTO> getInsumosByDenominacion(String denominacion) {
@@ -43,18 +47,8 @@ public class InsumoService {
                 .toList();
     }
 
-    // Acá busca por rubro, y si no se le pasa parametro (o es 0), busca todos
-    public List<InsumoResponseDTO> getAllInsumos(Long rubroId) {
-        List<Insumo> insumos = (rubroId == null || rubroId == 0L)
-                ? insumoRepository.findAll()
-                : insumoRepository.findByRubroId(rubroId);
-
-        return insumos.stream()
-                .map(insumoMapper::toResponseDTO)
-                .toList();
-    }
-
-    public void updateInsumo(Long id, InsumoDTO insumoDTO) {
+    @Override
+    public void update(Long id, InsumoDTO insumoDTO) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
 
@@ -75,7 +69,7 @@ public class InsumoService {
         insumoRepository.save(insumo);
     }
 
-    public void deleteInsumo(Long id) {
+    public void delete(Long id) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
         insumo.setActivo(false);

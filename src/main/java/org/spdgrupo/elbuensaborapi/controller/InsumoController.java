@@ -1,11 +1,12 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.service.InsumoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,22 +14,21 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/insumos")
-@RequiredArgsConstructor
-public class InsumoController {
+public class InsumoController extends GenericoControllerImpl<
+        Insumo,
+        InsumoDTO,
+        InsumoResponseDTO,
+        Long,
+        InsumoService> {
 
-    private final InsumoService insumoService;
+    @Autowired
+    private InsumoService insumoService;
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveInsumo(@Valid @RequestBody InsumoDTO insumoDTO) {
-        insumoService.saveInsumo(insumoDTO);
-        return ResponseEntity.ok("Insumo guardado correctamente");
+    public InsumoController(InsumoService insumoService) {
+        super(insumoService);
+        this.insumoService = insumoService;
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<InsumoResponseDTO> getInsumoById(@PathVariable Long id) {
-        return ResponseEntity.ok(insumoService.getInsumoById(id));
-    }
 
     @GetMapping("/buscar")
     @ResponseBody
@@ -36,16 +36,10 @@ public class InsumoController {
         return ResponseEntity.ok(insumoService.getInsumosByDenominacion(denominacion));
     }
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<InsumoResponseDTO>> getAllInsumos(@RequestParam(required = false) Long rubroId) {
-        return ResponseEntity.ok(insumoService.getAllInsumos(rubroId));
-    }
-
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateInsumo(@PathVariable Long id,
                                                @Valid @RequestBody InsumoDTO insumoDTO) {
-        insumoService.updateInsumo(id, insumoDTO);
+        insumoService.update(id, insumoDTO);
         return ResponseEntity.ok("Insumo actualizado correctamente");
     }
 
@@ -57,7 +51,7 @@ public class InsumoController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteInsumo(@PathVariable Long id) {
-        insumoService.deleteInsumo(id);
+        insumoService.delete(id);
         return ResponseEntity.ok("Insumo eliminado exitosamente");
     }
     
