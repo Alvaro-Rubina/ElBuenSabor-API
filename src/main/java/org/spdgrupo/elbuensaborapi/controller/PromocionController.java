@@ -38,7 +38,7 @@ public class PromocionController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updatePromocion(@PathVariable Long id,
-                                                  @RequestBody PromocionPatchDTO promocionDTO) {
+                                                  @Valid @RequestBody PromocionDTO promocionDTO) {
         promocionService.updatePromocion(id, promocionDTO);
         return ResponseEntity.ok("Promocion actualizada correctamente");
     }

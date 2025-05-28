@@ -57,18 +57,26 @@ public class PromocionService {
     }
 
     @Transactional
-    public void updatePromocion(Long id, PromocionPatchDTO promocionDTO) {
+    public void updatePromocion(Long id, PromocionDTO promocionDTO) {
         Promocion promocion = promocionRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Promocion con el id " + id + " no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Promocion con el id " + id + " no encontrada"));
 
-        if (promocionDTO.getFechaDesde() != null && promocionDTO.getFechaHasta() != null) {
-            validarFechas(promocionDTO.getFechaDesde(), promocionDTO.getFechaHasta());
-        }
+        // Validar fechas
+        validarFechas(promocionDTO.getFechaDesde(), promocionDTO.getFechaHasta());
 
-        updatePromocionFields(promocion, promocionDTO);
+        // Actualizar campos básicos
+        promocion.setDenominacion(promocionDTO.getDenominacion());
+        promocion.setFechaDesde(promocionDTO.getFechaDesde());
+        promocion.setFechaHasta(promocionDTO.getFechaHasta());
+        promocion.setDescuento(promocionDTO.getDescuento());
+        promocion.setActivo(promocionDTO.getActivo());
 
-        if (promocionDTO.getDetallePromociones() != null) {
-            updateDetallePromociones(promocion, promocionDTO.getDetallePromociones());
+        // Actualizar detalles
+        promocion.getDetallePromociones().clear();
+        for (DetallePromocionDTO detalleDTO : promocionDTO.getDetallePromociones()) {
+            DetallePromocion detalle = detallePromocionService.createDetallePromocion(detalleDTO);
+            detalle.setPromocion(promocion);
+            promocion.getDetallePromociones().add(detalle);
         }
 
         promocionRepository.save(promocion);
@@ -77,23 +85,6 @@ public class PromocionService {
     private void validarFechas(LocalDate fechaDesde, LocalDate fechaHasta) {
         if (fechaDesde.isAfter(fechaHasta)) {
             throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de finalización");
-        }
-    }
-
-    private void updatePromocionFields(Promocion promocion, PromocionPatchDTO promocionDTO) {
-        if (promocionDTO.getDenominacion() != null) promocion.setDenominacion(promocionDTO.getDenominacion());
-        if (promocionDTO.getUrlImagen() != null) promocion.setUrlImagen(promocionDTO.getUrlImagen());
-        if (promocionDTO.getFechaDesde() != null) promocion.setFechaDesde(promocionDTO.getFechaDesde());
-        if (promocionDTO.getFechaHasta() != null) promocion.setFechaHasta(promocionDTO.getFechaHasta());
-        if (promocionDTO.getDescuento() != null) promocion.setDescuento(promocionDTO.getDescuento());
-    }
-
-    private void updateDetallePromociones(Promocion promocion, List<DetallePromocionDTO> detallesDTO) {
-        promocion.getDetallePromociones().clear();
-        for (DetallePromocionDTO detalleDTO : detallesDTO) {
-            DetallePromocion detalle = detallePromocionService.createDetallePromocion(detalleDTO);
-            detalle.setPromocion(promocion);
-            promocion.getDetallePromociones().add(detalle);
         }
     }
 }

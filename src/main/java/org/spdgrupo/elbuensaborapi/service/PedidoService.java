@@ -71,6 +71,7 @@ public class PedidoService {
                 .toList();
     }
 
+    // TODO: Cambiar este metodo para que se reciba mediante RequestParam el nuevo estado
     public void actualizarEstadoDelPedido(Long pedidoId, PedidoPatchDTO pedidoDTO) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
