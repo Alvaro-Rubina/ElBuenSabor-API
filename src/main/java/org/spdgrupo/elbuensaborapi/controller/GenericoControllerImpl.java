@@ -2,6 +2,7 @@
 
 package org.spdgrupo.elbuensaborapi.controller;
 
+import jakarta.validation.Valid;
 import org.spdgrupo.elbuensaborapi.model.entity.Base;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoController;
 import org.spdgrupo.elbuensaborapi.service.GenericoServiceImpl;
@@ -42,15 +43,12 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
     }
 
     //TODO: hacer bien el update
-    /*@PatchMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable ID id, @RequestBody D dto) {
-
-        return ResponseEntity.ok();
-    }*/
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable ID id,@RequestBody D dto) {
-        // Implementación aquí
-        return null;
+    public ResponseEntity<String> update(@Valid @PathVariable ID id, @RequestBody D dto) {
+
+        return ResponseEntity.ok("");
     }
+
+
 
 }

@@ -5,6 +5,7 @@ import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDT
     @Autowired
     private DomicilioMapper domicilioMapper;
 
-    public DomicilioService(GenericoRepository<Domicilio, Long> baseRepository, DomicilioMapper domicilioMapper) {
-        super(baseRepository, domicilioMapper);
+    public DomicilioService(GenericoRepository<Domicilio, Long> genericoRepository, GenericoMapper<Domicilio,DomicilioDTO,DomicilioResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
     }
 
     public void deleteDomicilio(Long id){

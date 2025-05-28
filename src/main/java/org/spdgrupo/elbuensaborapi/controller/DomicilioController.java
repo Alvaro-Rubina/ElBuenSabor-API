@@ -24,7 +24,7 @@ public class DomicilioController extends GenericoControllerImpl<
         Long,
         DomicilioService> {
 
-
+    @Autowired
     private DomicilioService domicilioService;
 
     public DomicilioController(DomicilioService domicilioService) {
@@ -38,6 +38,7 @@ public class DomicilioController extends GenericoControllerImpl<
         domicilioService.updateDomicilio(id, domicilioDTO);
         return ResponseEntity.ok("Domicilio actualizado correctamente");
     }
+
 
     @PutMapping("/delete/{id}")
     public ResponseEntity<String> deleteDomicilio(@PathVariable Long id) {
