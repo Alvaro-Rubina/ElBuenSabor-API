@@ -8,7 +8,10 @@ import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroInsumo;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,13 +20,20 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class RubroInsumoService {
+public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroInsumoDTO, RubroInsumoResponseDTO, Long> {
 
     // Dependencias
-    private final RubroInsumoRepository rubroInsumoRepository;
-    private final RubroInsumoMapper rubroInsumoMapper;
+    @Autowired
+    private RubroInsumoRepository rubroInsumoRepository;
+    @Autowired
+    private RubroInsumoMapper rubroInsumoMapper;
 
-    public void saveRubroInsumo(RubroInsumoDTO rubroInsumoDTO) {
+    public RubroInsumoService(GenericoRepository<RubroInsumo,Long> rubroInsumoRepository, GenericoMapper<RubroInsumo,RubroInsumoDTO,RubroInsumoResponseDTO> rubroInsumoMapper) {
+        super(rubroInsumoRepository, rubroInsumoMapper);
+    }
+
+    @Override
+    public RubroInsumo save(RubroInsumoDTO rubroInsumoDTO) {
         RubroInsumo rubroInsumo = rubroInsumoMapper.toEntity(rubroInsumoDTO);
 
         if (rubroInsumoDTO.getRubroPadreId() != null) {
@@ -32,22 +42,11 @@ public class RubroInsumoService {
             rubroInsumo.setRubroPadre(rubroPadre);
         }
 
-        rubroInsumoRepository.save(rubroInsumo);
+        return (rubroInsumoRepository.save(rubroInsumo));
     }
 
-    public RubroInsumoResponseDTO getRubroInsumoById(Long id) {
-        RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
-        return rubroInsumoMapper.toResponseDTO(rubroInsumo);
-    }
-
-    public List<RubroInsumoResponseDTO> getAllRubroInsumos() {
-        return rubroInsumoRepository.findAll().stream()
-                .map(rubroInsumoMapper::toResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    public void updateRubroInsumo(Long id, RubroInsumoDTO rubroInsumoDTO) {
+    @Override
+    public void update(Long id, RubroInsumoDTO rubroInsumoDTO) {
         RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
 
@@ -79,7 +78,7 @@ public class RubroInsumoService {
     }
 
 
-    public void deleteRubroInsumo(Long id) {
+    public void delete(Long id) {
         RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
         rubroInsumo.setActivo(false);
