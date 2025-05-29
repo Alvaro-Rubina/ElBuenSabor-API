@@ -23,11 +23,13 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
         this.servicio = servicio;
     }
 
+    @Override
     @PostMapping("/save")
     public ResponseEntity<E> save(@RequestBody D dto) {
         return ResponseEntity.ok(servicio.save(dto));
     }
 
+    @Override
     @GetMapping("/{id}")
     public ResponseEntity<R> getById(@PathVariable ID id) {
         R response = servicio.findById(id);
@@ -37,16 +39,25 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
         return ResponseEntity.notFound().build();
     }
 
+    @Override
     @GetMapping
     public ResponseEntity<List<R>> getAll() {
         return ResponseEntity.ok(servicio.findAll());
     }
 
     //TODO: hacer bien el update
+    @Override
     @PutMapping("/generico/update/{id}")
     public ResponseEntity<String> update(@Valid @PathVariable ID id, @RequestBody D dto) {
 
         return ResponseEntity.ok("");
+    }
+
+    @Override
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable ID id) {
+        servicio.delete(id);
+        return ResponseEntity.ok("Entidad eliminada exitosamente");
     }
 
 

@@ -10,6 +10,7 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -25,14 +26,18 @@ public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDT
         super(genericoRepository, genericoMapper);
     }
 
-    public void deleteDomicilio(Long id){
+    @Override
+    @Transactional
+    public void delete(Long id){
         Domicilio domicilio = domicilioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Domicilio con el id " + id + " no encontrado"));
         domicilio.setActivo(false);
         domicilioRepository.save(domicilio);
     }
 
-    public void updateDomicilio(Long id, DomicilioDTO domicilioDTO) {
+    @Override
+    @Transactional
+    public void update(Long id, DomicilioDTO domicilioDTO) {
         Domicilio domicilio = domicilioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Domicilio no encontrado"));
 

@@ -15,5 +15,6 @@ public interface GenericoController <E extends Base, D, R, ID extends Serializab
     public ResponseEntity<R> getById(@PathVariable ID id);
     public ResponseEntity<List<R>> getAll();
     public ResponseEntity<String> update(@PathVariable ID id,@RequestBody D entity);
+    public ResponseEntity<String> delete(@PathVariable ID id);
 }
 

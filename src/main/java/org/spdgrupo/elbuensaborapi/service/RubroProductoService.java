@@ -11,6 +11,7 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ public class RubroProductoService extends GenericoServiceImpl<RubroProducto, Rub
     }
 
     @Override
+    @Transactional
     public void update(Long id, RubroProductoDTO rubroProductoDTO) {
         RubroProducto rubroProducto = rubroProductoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
@@ -39,6 +41,8 @@ public class RubroProductoService extends GenericoServiceImpl<RubroProducto, Rub
         rubroProductoRepository.save(rubroProducto);
     }
 
+    @Override
+    @Transactional
     public void delete(Long id) {
         RubroProducto rubroProducto = rubroProductoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));

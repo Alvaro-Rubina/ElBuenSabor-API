@@ -13,6 +13,7 @@ import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     }
 
     @Override
+    @Transactional
     public Insumo save(InsumoDTO insumoDTO) {
         Insumo insumo = insumoMapper.toEntity(insumoDTO);
         insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
@@ -48,6 +50,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     }
 
     @Override
+    @Transactional
     public void update(Long id, InsumoDTO insumoDTO) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
@@ -69,6 +72,8 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         insumoRepository.save(insumo);
     }
 
+    @Override
+    @Transactional
     public void delete(Long id) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
@@ -76,6 +81,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         insumoRepository.save(insumo);
     }
 
+    @Transactional
     public void actualizarEstadoInsumo(Long id) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
