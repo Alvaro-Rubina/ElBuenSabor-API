@@ -22,8 +22,8 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
 
     @Override
     @PostMapping("/save")
-    public ResponseEntity<E> save(@RequestBody D dto) {
-        return ResponseEntity.ok(servicio.save(dto));
+    public ResponseEntity<String> save(@RequestBody D dto) {
+        return ResponseEntity.ok("Registro exitoso");
     }
 
     @Override
