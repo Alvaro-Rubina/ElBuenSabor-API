@@ -67,7 +67,7 @@ public class EmpleadoService {
         empleado.setTelefono(empleadoDTO.getTelefono());
 
         usuarioService.updateUsuario(empleado.getUsuario().getId(), empleadoDTO.getUsuario());
-        domicilioService.updateDomicilio(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());
+        domicilioService.update(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());
 
         empleadoRepository.save(empleado);
     }

@@ -31,5 +31,18 @@ public class PromocionController extends GenericoControllerImpl<
         this.promocionService = promocionService;
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteProducto(@PathVariable Long id) {
+        promocionService.delete(id);
+        return ResponseEntity.ok("promocion eliminada correctamente");
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updatePromocion(@PathVariable Long id,
+                                                  @Valid @RequestBody PromocionDTO promocionDTO) {
+        promocionService.update(id, promocionDTO);
+        return ResponseEntity.ok("Promocion actualizada correctamente");
+    }
+
 
 }
