@@ -1,24 +1,31 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.DetalleFacturaMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleFactura;
-import org.spdgrupo.elbuensaborapi.model.entity.DetallePedido;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
-public class DetalleFacturaService {
+public class DetalleFacturaService extends GenericoServiceImpl<DetalleFactura, DetalleFacturaDTO, DetalleFacturaResponseDTO, Long> {
 
-    private final ProductoRepository productoRepository;
-    private final InsumoRepository insumoRepository;
-    private final DetalleFacturaMapper detalleFacturaMapper;
+    @Autowired
+    private ProductoRepository productoRepository;
+    @Autowired
+    private InsumoRepository insumoRepository;
+    @Autowired
+    private DetalleFacturaMapper detalleFacturaMapper;
+
+    public DetalleFacturaService(GenericoRepository<DetalleFactura, Long> genericoRepository, GenericoMapper<DetalleFactura, DetalleFacturaDTO, DetalleFacturaResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
+    }
 
     @Transactional
     public DetalleFactura createDetalleFactura(DetalleFacturaDTO detalleFacturaDTO) {
