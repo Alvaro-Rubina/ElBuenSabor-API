@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.Empleado;
 import org.spdgrupo.elbuensaborapi.service.EmpleadoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,39 +14,31 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/empleados")
-@RequiredArgsConstructor
-public class EmpleadoController {
 
-    private final EmpleadoService empleadoService;
+public class EmpleadoController extends GenericoControllerImpl<
+        Empleado,
+        EmpleadoDTO,
+        EmpleadoResponseDTO,
+        Long,
+        EmpleadoService> {
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveEmpleado(@Valid @RequestBody EmpleadoDTO empleadoDTO) {
-        empleadoService.saveEmpleado(empleadoDTO);
-        return ResponseEntity.ok("Empleado guardado correctamente");
-    }
+    @Autowired
+    private EmpleadoService empleadoService;
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<EmpleadoResponseDTO> getEmpleadoById(@PathVariable Long id) {
-        return ResponseEntity.ok(empleadoService.getEmpleadoById(id));
-    }
-
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<EmpleadoResponseDTO>> getAllEmpleados () {
-        return ResponseEntity.ok(empleadoService.getAllEmpleados());
+    public EmpleadoController(EmpleadoService empleadoService) {
+        super(empleadoService);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateEmpleado(@PathVariable Long id,
                                                  @Valid @RequestBody EmpleadoDTO empleadoDTO) {
-        empleadoService.updateEmpleado(id, empleadoDTO);
+        empleadoService.update(id, empleadoDTO);
         return ResponseEntity.ok("Empleado actualizado correctamente");
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteEmpleado(@PathVariable Long id) {
-        empleadoService.deleteEmpleado(id);
+        empleadoService.delete(id);
         return ResponseEntity.ok("Empleado eliminado correctamente");
     }
 }

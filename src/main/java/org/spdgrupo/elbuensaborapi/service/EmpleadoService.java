@@ -10,23 +10,36 @@ import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
 import org.spdgrupo.elbuensaborapi.model.entity.Empleado;
 import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.EmpleadoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-public class EmpleadoService {
+public class EmpleadoService extends GenericoServiceImpl<Empleado, EmpleadoDTO, EmpleadoResponseDTO, Long> {
 
     // Dependencias
-    private final EmpleadoRepository empleadoRepository;
-    private final UsuarioService usuarioService;
-    private final DomicilioService domicilioService;
-    private final EmpleadoMapper empleadoMapper;
+    @Autowired
+    private EmpleadoRepository empleadoRepository;
+    @Autowired
+    private UsuarioService usuarioService;
+    @Autowired
+    private DomicilioService domicilioService;
+    @Autowired
+    private EmpleadoMapper empleadoMapper;
 
-    public void saveEmpleado(EmpleadoDTO empleadoDTO) {
+    public EmpleadoService(GenericoRepository<Empleado, Long> genericoRepository, GenericoMapper<Empleado, EmpleadoDTO, EmpleadoResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
+    }
+
+    @Override
+    @Transactional
+    public Empleado save(EmpleadoDTO empleadoDTO) {
         if (empleadoDTO.getUsuario().getRol() == Rol.CLIENTE) {
             throw new InvalidRolException("No se puede asignar el rol CLIENTE a un empleado");
         }
@@ -38,22 +51,12 @@ public class EmpleadoService {
         empleado.setUsuario(usuario);
         empleado.setDomicilio(domicilio);
 
-        empleadoRepository.save(empleado);
+        return (empleadoRepository.save(empleado));
     }
 
-    public EmpleadoResponseDTO getEmpleadoById(Long id) {
-        Empleado empleado = empleadoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Empleado con el " +  id + " no encontrado"));
-        return empleadoMapper.toResponseDTO(empleado);
-    }
-
-    public List<EmpleadoResponseDTO> getAllEmpleados() {
-        return empleadoRepository.findAll().stream()
-                .map(empleadoMapper::toResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    public void updateEmpleado(Long id, EmpleadoDTO empleadoDTO) {
+    @Override
+    @Transactional
+    public void update(Long id, EmpleadoDTO empleadoDTO) {
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Empleado con el " + id + " no encontrado"));
 
@@ -69,7 +72,10 @@ public class EmpleadoService {
 
         empleadoRepository.save(empleado);
     }
-    public void deleteEmpleado(Long id) {
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Empleado con el id" + id  + " no encontrado"));
         empleado.setActivo(false);
