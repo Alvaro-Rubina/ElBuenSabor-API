@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/rubroinsumo")
+@RequestMapping("/api/rubroinsumos")
 public class RubroInsumoController extends GenericoControllerImpl<
         RubroInsumo,
         RubroInsumoDTO,

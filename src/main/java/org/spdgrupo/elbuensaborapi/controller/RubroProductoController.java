@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/rubroProducto")
+@RequestMapping("/api/rubroproductos")
 public class RubroProductoController extends GenericoControllerImpl<RubroProducto,RubroProductoDTO, RubroProductoResponseDTO, Long, RubroProductoService> {
     @Autowired
     private RubroProductoService rubroProductoService;
