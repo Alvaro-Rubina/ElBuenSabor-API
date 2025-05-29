@@ -5,27 +5,32 @@ import org.spdgrupo.elbuensaborapi.config.mappers.UsuarioMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-public class UsuarioService {
+public class UsuarioService extends GenericoServiceImpl<Usuario, UsuarioDTO, UsuarioResponseDTO, Long> {
 
-    private final UsuarioRepository usuarioRepository;
-    private final UsuarioMapper usuarioMapper;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
+    private UsuarioMapper usuarioMapper;
 
-    public Usuario saveUsuario(UsuarioDTO usuarioDTO){
-        Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
-        return usuarioRepository.save(usuario);
+    public UsuarioService(GenericoRepository<Usuario, Long> genericoRepository, GenericoMapper<Usuario, UsuarioDTO, UsuarioResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
     }
 
-    public UsuarioResponseDTO getUsuarioById(Long id) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario con el id " + id + " no encontrado"));
-        return usuarioMapper.toResponseDTO(usuario);
+    @Override
+    @Transactional
+    public Usuario save(UsuarioDTO usuarioDTO){
+        Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
+        return usuarioRepository.save(usuario);
     }
 
     public UsuarioResponseDTO getUsuarioByEmail(String email) {
@@ -34,13 +39,9 @@ public class UsuarioService {
         return usuarioMapper.toResponseDTO(usuario);
     }
 
-    public List<UsuarioResponseDTO> getAllUsuarios() {
-        return usuarioRepository.findAll().stream()
-                .map(usuarioMapper::toResponseDTO)
-                .toList();
-    }
-
-    public void updateUsuario(Long id, UsuarioDTO usuarioDTO) {
+    @Override
+    @Transactional
+    public void update(Long id, UsuarioDTO usuarioDTO) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario con el id " + id + " no encontrado"));
 

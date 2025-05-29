@@ -40,7 +40,7 @@ public class EmpleadoService extends GenericoServiceImpl<Empleado, EmpleadoDTO, 
             throw new InvalidRolException("No se puede asignar el rol CLIENTE a un empleado");
         }
 
-        Usuario usuario = usuarioService.saveUsuario(empleadoDTO.getUsuario());
+        Usuario usuario = usuarioService.save(empleadoDTO.getUsuario());
         Domicilio domicilio = domicilioService.save(empleadoDTO.getDomicilio());
 
         Empleado empleado = empleadoMapper.toEntity(empleadoDTO);
@@ -63,7 +63,7 @@ public class EmpleadoService extends GenericoServiceImpl<Empleado, EmpleadoDTO, 
         empleado.setNombreCompleto(empleadoDTO.getNombreCompleto());
         empleado.setTelefono(empleadoDTO.getTelefono());
 
-        usuarioService.updateUsuario(empleado.getUsuario().getId(), empleadoDTO.getUsuario());
+        usuarioService.update(empleado.getUsuario().getId(), empleadoDTO.getUsuario());
         domicilioService.update(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());
 
         empleadoRepository.save(empleado);

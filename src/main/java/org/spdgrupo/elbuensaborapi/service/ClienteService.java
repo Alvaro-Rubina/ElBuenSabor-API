@@ -40,7 +40,7 @@ public class ClienteService extends GenericoServiceImpl<Cliente, ClienteDTO, Cli
     @Transactional
     public Cliente save(ClienteDTO clienteDTO) {
         clienteDTO.getUsuario().setRol(Rol.CLIENTE);
-        Usuario usuario = usuarioService.saveUsuario(clienteDTO.getUsuario());
+        Usuario usuario = usuarioService.save(clienteDTO.getUsuario());
 
         Cliente cliente = clienteMapper.toEntity(clienteDTO);
 
@@ -60,7 +60,7 @@ public class ClienteService extends GenericoServiceImpl<Cliente, ClienteDTO, Cli
         cliente.setActivo(clienteDTO.getActivo());
 
         clienteDTO.getUsuario().setRol(Rol.CLIENTE);
-        usuarioService.updateUsuario(cliente.getUsuario().getId(), clienteDTO.getUsuario());
+        usuarioService.update(cliente.getUsuario().getId(), clienteDTO.getUsuario());
 
         clienteRepository.save(cliente);
     }
