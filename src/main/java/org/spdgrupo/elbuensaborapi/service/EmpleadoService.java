@@ -5,7 +5,6 @@ import org.spdgrupo.elbuensaborapi.config.exception.InvalidRolException;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.EmpleadoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
 import org.spdgrupo.elbuensaborapi.model.entity.Empleado;
@@ -14,7 +13,6 @@ import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 import org.spdgrupo.elbuensaborapi.repository.EmpleadoRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

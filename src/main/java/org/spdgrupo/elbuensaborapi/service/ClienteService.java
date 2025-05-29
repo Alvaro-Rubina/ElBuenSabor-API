@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.ClienteMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClientePatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
 import org.spdgrupo.elbuensaborapi.model.entity.Usuario;

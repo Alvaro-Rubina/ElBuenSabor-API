@@ -3,7 +3,6 @@ package org.spdgrupo.elbuensaborapi.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoResponseDTO;
 import org.spdgrupo.elbuensaborapi.service.EmpleadoService;
 import org.springframework.http.ResponseEntity;

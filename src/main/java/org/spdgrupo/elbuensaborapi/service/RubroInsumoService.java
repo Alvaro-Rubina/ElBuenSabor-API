@@ -1,11 +1,9 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.CyclicParentException;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.RubroInsumoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroInsumo;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
@@ -13,10 +11,6 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroInsumoDTO, RubroInsumoResponseDTO, Long> {

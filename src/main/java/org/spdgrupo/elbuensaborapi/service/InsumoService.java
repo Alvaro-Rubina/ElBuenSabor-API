@@ -1,10 +1,8 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.InsumoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
@@ -14,7 +12,6 @@ import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

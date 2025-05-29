@@ -2,7 +2,6 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import org.spdgrupo.elbuensaborapi.config.mappers.DomicilioMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;

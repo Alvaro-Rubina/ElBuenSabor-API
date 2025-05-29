@@ -3,13 +3,11 @@ package org.spdgrupo.elbuensaborapi.service;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.mappers.UsuarioMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

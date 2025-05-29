@@ -1,9 +1,7 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.service.ProductoService;

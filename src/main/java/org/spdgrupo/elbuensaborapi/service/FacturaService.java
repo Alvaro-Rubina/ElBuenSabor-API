@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.FacturaMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.factura.FacturaResponseDTO;
@@ -53,7 +54,9 @@ public class FacturaService {
         return facturaRepository.save(factura);
     }
 
-    public FacturaResponseDTO getFactura(Factura factura) {
+    public FacturaResponseDTO getFacturaById(Long id) {
+        Factura factura = facturaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Factura con el id " + id + " no encontrada"));
         return facturaMapper.toResponseDTO(factura);
     }
 

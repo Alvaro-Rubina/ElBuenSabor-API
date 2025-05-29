@@ -6,7 +6,6 @@ import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.PromocionMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepromocion.DetallePromocionDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetallePromocion;
 import org.spdgrupo.elbuensaborapi.model.entity.Promocion;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

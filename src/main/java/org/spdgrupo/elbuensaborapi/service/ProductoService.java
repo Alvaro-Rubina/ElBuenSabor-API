@@ -1,18 +1,13 @@
 package org.spdgrupo.elbuensaborapi.service;
 
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.ProductoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
-import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
-import org.spdgrupo.elbuensaborapi.model.entity.RubroProducto;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
@@ -22,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, ProductoResponseDTO, Long> {

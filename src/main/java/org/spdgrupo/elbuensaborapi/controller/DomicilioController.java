@@ -1,18 +1,13 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
 import org.spdgrupo.elbuensaborapi.service.DomicilioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/domicilios")
