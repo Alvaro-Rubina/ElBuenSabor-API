@@ -31,9 +31,9 @@ public class DomicilioController extends GenericoControllerImpl<
         super(domicilioService);
         this.domicilioService = domicilioService;
     }
-    
+
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateDomicilio(@PathVariable Long id,
+    public ResponseEntity<String> update(@PathVariable Long id,
                                                   @Valid @RequestBody DomicilioDTO domicilioDTO) {
         domicilioService.update(id, domicilioDTO);
         return ResponseEntity.ok("Domicilio actualizado correctamente");

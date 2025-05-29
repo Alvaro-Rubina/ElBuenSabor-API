@@ -1,11 +1,14 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.Promocion;
 import org.spdgrupo.elbuensaborapi.service.PromocionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,34 +16,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/promociones")
-@RequiredArgsConstructor
-public class PromocionController {
+public class PromocionController extends GenericoControllerImpl<
+        Promocion,
+        PromocionDTO,
+        PromocionResponseDTO,
+        Long,
+        PromocionService> {
 
-    private final PromocionService promocionService;
+    @Autowired
+    private PromocionService promocionService;
 
-    @PostMapping("/save")
-    public ResponseEntity<String> savePromocion(@Valid @RequestBody PromocionDTO promocionDTO) {
-        promocionService.savePromocion(promocionDTO);
-        return ResponseEntity.ok("Promocion guardada correctamente");
+    public PromocionController(PromocionService promocionService) {
+        super(promocionService);
+        this.promocionService = promocionService;
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<PromocionResponseDTO> getPromocionById(@PathVariable Long id) {
-        return ResponseEntity.ok(promocionService.getPromocionById(id));
-    }
-
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<PromocionResponseDTO>> getPromociones() {
-        return ResponseEntity.ok(promocionService.getAllPromociones());
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> updatePromocion(@PathVariable Long id,
-                                                  @Valid @RequestBody PromocionDTO promocionDTO) {
-        promocionService.updatePromocion(id, promocionDTO);
-        return ResponseEntity.ok("Promocion actualizada correctamente");
-    }
 
 }

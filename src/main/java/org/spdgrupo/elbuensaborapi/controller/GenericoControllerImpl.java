@@ -3,6 +3,7 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
+import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Base;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoController;
 import org.spdgrupo.elbuensaborapi.service.GenericoServiceImpl;
@@ -47,10 +48,11 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
 
     //TODO: hacer bien el update
     @Override
-    @PutMapping("/generico/update/{id}")
-    public ResponseEntity<String> update(@Valid @PathVariable ID id, @RequestBody D dto) {
-
-        return ResponseEntity.ok("");
+    @PutMapping("/generico/{id}")
+    public ResponseEntity<String> update(@PathVariable ID id,
+                                         @Valid @RequestBody D dto) {
+        servicio.update(id, dto);
+        return ResponseEntity.ok("Domicilio actualizado correctamente");
     }
 
     @Override

@@ -10,7 +10,10 @@ import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetallePromocion;
 import org.spdgrupo.elbuensaborapi.model.entity.Promocion;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.PromocionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,16 +22,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-public class PromocionService {
+public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDTO, PromocionResponseDTO, Long> {
 
     // Dependencias
-    private final PromocionRepository promocionRepository;
-    private final DetallePromocionService detallePromocionService;
-    private final PromocionMapper promocionMapper;
+    @Autowired
+    private PromocionRepository promocionRepository;
+    @Autowired
+    private DetallePromocionService detallePromocionService;
+    @Autowired
+    private PromocionMapper promocionMapper;
 
+    public PromocionService(GenericoRepository<Promocion, Long> genericoRepository, GenericoMapper<Promocion, PromocionDTO, PromocionResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
+    }
+
+    @Override
     @Transactional
-    public void savePromocion(PromocionDTO promocionDTO) {
+    public Promocion save(PromocionDTO promocionDTO) {
         validarFechas(promocionDTO.getFechaDesde(), promocionDTO.getFechaHasta());
 
         Promocion promocion = promocionMapper.toEntity(promocionDTO);
@@ -41,23 +51,12 @@ public class PromocionService {
             promocion.getDetallePromociones().add(detalle);
         }
 
-        promocionRepository.save(promocion);
+        return (promocionRepository.save(promocion));
     }
 
-    public PromocionResponseDTO getPromocionById(Long id) {
-        Promocion promocion = promocionRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Promocion con el id " + id + " no encontrado"));
-        return promocionMapper.toResponseDTO(promocion);
-    }
-
-    public List<PromocionResponseDTO> getAllPromociones() {
-        return promocionRepository.findAll().stream()
-                .map(promocionMapper::toResponseDTO)
-                .toList();
-    }
-
+    @Override
     @Transactional
-    public void updatePromocion(Long id, PromocionDTO promocionDTO) {
+    public void update(Long id, PromocionDTO promocionDTO) {
         Promocion promocion = promocionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Promocion con el id " + id + " no encontrada"));
 
