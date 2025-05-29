@@ -61,6 +61,7 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
     }
     */
     @Override
+    @Transactional
     public void update(ID id, D dto) {
 
     }
