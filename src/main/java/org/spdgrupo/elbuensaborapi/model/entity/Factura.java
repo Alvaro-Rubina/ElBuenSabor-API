@@ -47,15 +47,4 @@ public class Factura extends Base {
     @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleFactura> detalleFacturas = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "id_producto")
-    private Producto producto;
-
-    @ManyToOne
-    @JoinColumn(name = "id_insumo")
-    private Insumo insumo;
-
-    // TODO: Después ver el temita de MercadoPagoDatos
-
-
 }

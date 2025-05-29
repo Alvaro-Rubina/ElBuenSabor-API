@@ -18,6 +18,8 @@ public class FacturaDTO {
     private String totalVenta;
     private Double montoDescuento;
     private Double costoEnvio;
+    private Double pedidoId;
+    private Double clienteId;
 
     // TODO: Luego ver el tema de MercadoPagoDatos
 

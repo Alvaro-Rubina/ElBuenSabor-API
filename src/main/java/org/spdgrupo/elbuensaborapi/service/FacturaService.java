@@ -1,35 +1,65 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.model.dto.factura.FacturaDTO;
+import org.spdgrupo.elbuensaborapi.config.mappers.FacturaMapper;
+import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.factura.FacturaResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.DetalleFactura;
 import org.spdgrupo.elbuensaborapi.model.entity.Factura;
 import org.spdgrupo.elbuensaborapi.model.entity.Pedido;
+import org.spdgrupo.elbuensaborapi.repository.FacturaRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class FacturaService {
 
-    // Dependencias
+    private final FacturaRepository facturaRepository;
+    private final DetalleFacturaService detalleFacturaService;
+    private final FacturaMapper facturaMapper;
 
-    // MAPPERS
-    /*public Factura toEntity(FacturaDTO facturaDTO) {
-        return Factura.builder()
-                .fechaFacturacion(facturaDTO.getFechaFacturacion())
-                .horaFacturacion(facturaDTO.getHoraFacturacion()) // Esto será distinto a lo del Pedido
-                .codigoComprobante(facturaDTO.getCodigoComprobante()) // Esto será distinto a lo del Pedido
-                *//*.totalVenta()
-                .montoDescuento()
-                .costoEnvio()*//*
+    @Transactional
+    public Factura createFacturaFromPedido(Pedido pedido) {
+        Factura factura = Factura.builder()
+                .fechaFacturacion(java.time.LocalDate.now())
+                .horaFacturacion(java.time.LocalTime.now())
+                .codigoComprobante(pedido.getCodigo())
+                .formaPago(pedido.getFormaPago())
+                .totalVenta(pedido.getTotalVenta().toString())
+                .montoDescuento(0.0)
+                .costoEnvio(0.0)
+                .pedido(pedido)
+                .cliente(pedido.getCliente())
+                .detalleFacturas(new ArrayList<>())
                 .build();
-    }*/
 
-    // TODO: Hacer el metodo para crear la factura
+        // Crear detalles de factura a partir de detalles de pedido
+        pedido.getDetallePedidos().forEach(detallePedido -> {
+            DetalleFacturaDTO detalleFacturaDTO = DetalleFacturaDTO.builder()
+                    .cantidad(detallePedido.getCantidad())
+                    .productoId(detallePedido.getProducto() != null ? detallePedido.getProducto().getId() : null)
+                    .insumoId(detallePedido.getInsumo() != null ? detallePedido.getInsumo().getId() : null)
+                    .build();
 
-    public FacturaResponseDTO toDTO(Factura factura) {
-        return FacturaResponseDTO.builder()
-                .build();
+            DetalleFactura detalleFactura = detalleFacturaService.createDetalleFactura(detalleFacturaDTO);
+            detalleFactura.setFactura(factura);
+            factura.getDetalleFacturas().add(detalleFactura);
+        });
+
+        return facturaRepository.save(factura);
     }
 
+    public FacturaResponseDTO getFactura(Factura factura) {
+        return facturaMapper.toResponseDTO(factura);
+    }
+
+    public List<FacturaResponseDTO> getAllFacturas() {
+        return facturaRepository.findAll().stream()
+                .map(facturaMapper::toResponseDTO)
+                .toList();
+    }
 }
