@@ -1,21 +1,35 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.mappers.DetalleProductoMapper;
+import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.DetallePedido;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
-public class DetalleProductoService {
+public class DetalleProductoService extends GenericoServiceImpl<DetalleProducto, DetalleProductoDTO, DetalleProductoResponseDTO, Long> {
 
     // Dependencias
-    private final DetalleProductoMapper detalleProductoMapper;
-    private final InsumoRepository insumoRepository;
+    @Autowired
+    private DetalleProductoMapper detalleProductoMapper;
+    @Autowired
+    private InsumoRepository insumoRepository;
+
+    public DetalleProductoService(
+        GenericoRepository<DetalleProducto, Long> genericoRepository,
+        GenericoMapper<DetalleProducto, DetalleProductoDTO, DetalleProductoResponseDTO> genericoMapper
+    ) {
+        super(genericoRepository, genericoMapper);
+    }
 
     @Transactional
     public DetalleProducto createDetalleProducto(DetalleProductoDTO detalleProductoDTO) {
