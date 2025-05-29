@@ -9,23 +9,37 @@ import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
 import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-public class ClienteService {
+
+public class ClienteService extends GenericoServiceImpl<Cliente, ClienteDTO, ClienteResponseDTO, Long> {
 
     // Dependencias
-    private final ClienteRepository clienteRepository;
-    private final UsuarioService usuarioService;
-    private final DetalleDomicilioService detalleDomicilioService;
-    private final ClienteMapper clienteMapper;
+    @Autowired
+    private ClienteRepository clienteRepository;
+    @Autowired
+    private UsuarioService usuarioService;
+    @Autowired
+    private DetalleDomicilioService detalleDomicilioService;
+    @Autowired
+    private ClienteMapper clienteMapper;
 
-    public void saveCliente(ClienteDTO clienteDTO) {
+    public ClienteService(GenericoRepository<Cliente, Long> genericoRepository, GenericoMapper<Cliente, ClienteDTO, ClienteResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
+    }
+
+    @Override
+    @Transactional
+    public Cliente save(ClienteDTO clienteDTO) {
         clienteDTO.getUsuario().setRol(Rol.CLIENTE);
         Usuario usuario = usuarioService.saveUsuario(clienteDTO.getUsuario());
 
@@ -33,22 +47,12 @@ public class ClienteService {
 
         cliente.setUsuario(usuario);
 
-        clienteRepository.save(cliente);
+        return (clienteRepository.save(cliente));
     }
 
-    public ClienteResponseDTO getClienteById(Long id) {
-        Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Cliente con el " +  id + " no encontrado"));
-        return clienteMapper.toResponseDTO(cliente);
-    }
-
-    public List<ClienteResponseDTO> getAllClientes() {
-        return clienteRepository.findAll().stream()
-                .map(clienteMapper::toResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    public void updateCliente(Long id, ClienteDTO clienteDTO) {
+    @Override
+    @Transactional
+    public void update(Long id, ClienteDTO clienteDTO) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
 
@@ -62,7 +66,9 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
-    public void deleteCliente(Long id) {
+    @Override
+    @Transactional
+    public void delete(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el id" + id  + " no encontrado"));
         cliente.setActivo(false);
