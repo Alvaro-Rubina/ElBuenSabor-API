@@ -7,18 +7,27 @@ import org.spdgrupo.elbuensaborapi.config.mappers.DetallePedidoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetallePedido;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
-public class DetallePedidoService {
+public class DetallePedidoService extends GenericoServiceImpl<DetallePedido, DetallePedidoDTO, DetallePedidoResponseDTO,Long> {
 
     // Dependencias
-    private final ProductoRepository productoRepository;
-    private final InsumoRepository insumoRepository;
-    private final DetallePedidoMapper detallePedidoMapper;
+    @Autowired
+    private ProductoRepository productoRepository;
+    @Autowired
+    private InsumoRepository insumoRepository;
+    @Autowired
+    private DetallePedidoMapper detallePedidoMapper;
+
+    public DetallePedidoService(GenericoRepository<DetallePedido, Long> genericoRepository, GenericoMapper<DetallePedido, DetallePedidoDTO, DetallePedidoResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
+    }
 
     // MAPPERS
     @Transactional
