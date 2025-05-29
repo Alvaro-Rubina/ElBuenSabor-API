@@ -9,9 +9,12 @@ import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.*;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
 import org.spdgrupo.elbuensaborapi.repository.PedidoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,16 +23,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-public class PedidoService {
+public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, PedidoResponseDTO, Long>{
 
     // Dependencias
-    private final PedidoRepository pedidoRepository;
-    private final ClienteRepository clienteRepository;
-    private final DomicilioRepository domicilioRepository;
-    private final DetallePedidoService detallePedidoService;
-    private final FacturaService facturaService;
-    private final PedidoMapper pedidoMapper;
+    @Autowired
+    private PedidoRepository pedidoRepository;
+    @Autowired
+    private ClienteRepository clienteRepository;
+    @Autowired
+    private DomicilioRepository domicilioRepository;
+    @Autowired
+    private DetallePedidoService detallePedidoService;
+    @Autowired
+    private FacturaService facturaService;
+    @Autowired
+    private PedidoMapper pedidoMapper;
+    @Autowired
+    private InsumoService insumoService;
+
+    public PedidoService(GenericoRepository<Pedido, Long> genericoRepository, GenericoMapper<Pedido, PedidoDTO, PedidoResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
+    }
 
     @Transactional
     public void savePedido(PedidoDTO pedidoDTO) {
@@ -41,7 +55,7 @@ public class PedidoService {
         pedido.setDomicilio(domicilioRepository.findById(pedidoDTO.getDomicilioId())
                 .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado")));
 
-        // Manejo de detalles
+        // manejo de detalles
         pedido.setDetallePedidos(new ArrayList<>());
         for (DetallePedidoDTO detalleDTO : pedidoDTO.getDetallePedidos()) {
             DetallePedido detalle = detallePedidoService.createDetallePedido(detalleDTO);
@@ -49,11 +63,28 @@ public class PedidoService {
             pedido.getDetallePedidos().add(detalle);
         }
 
-        // Calcular totales y hora estimada
+        // calculo totales y hora estimada
         pedido.setTotalVenta(getTotalVenta(pedido.getDetallePedidos()));
         pedido.setTotalCosto(getTotalCosto(pedido.getDetallePedidos()));
         pedido.setHoraEstimadaFin(getHoraEstimadaFin(pedido));
         pedido.setCodigo(generateCodigo());
+
+        // Acá se descuentan los insumos antes de guardar el pedido
+        for (DetallePedido detallePedido : pedido.getDetallePedidos()) {
+            if (detallePedido.getProducto() != null) {
+                Producto producto = detallePedido.getProducto();
+                List<DetalleProducto> detallesProducto = producto.getDetalleProductos();
+                for (DetalleProducto detalleProducto : detallesProducto) {
+                    Insumo insumo = detalleProducto.getInsumo();
+                    double cantidaADescontar = detalleProducto.getCantidad() * detallePedido.getCantidad();
+                    insumoService.actualizarStock(insumo.getId(), -cantidaADescontar);
+                }
+            } else if (detallePedido.getInsumo() != null) {
+                Insumo insumo = detallePedido.getInsumo();
+                double cantidadADescontar = detallePedido.getCantidad();
+                insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
+            }
+        }
 
         pedidoRepository.save(pedido);
     }
@@ -146,15 +177,15 @@ public class PedidoService {
 
     private String generateCodigo() {
         LocalDate hoy = LocalDate.now();
-        int anio = hoy.getYear();     // 2025
-        int mes = hoy.getMonthValue(); // 5
+        int anio = hoy.getYear();
+        int mes = hoy.getMonthValue();
 
         int pedidosEsteMes = pedidoRepository.countByYearAndMonth(anio, mes);
         int nuevoNumero = pedidosEsteMes + 1;
 
-        String anioStr = String.valueOf(anio).substring(2);       // "25"
-        String mesStr = String.format("%02d", mes);               // "05"
-        String numeroStr = String.format("%05d", nuevoNumero);    // "00042"
+        String anioStr = String.valueOf(anio).substring(2);
+        String mesStr = String.format("%02d", mes);
+        String numeroStr = String.format("%05d", nuevoNumero);
 
         return "PED-" + anioStr + mesStr + "-" + numeroStr;
     }
