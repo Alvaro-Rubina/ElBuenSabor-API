@@ -3,12 +3,14 @@ package org.spdgrupo.elbuensaborapi.service;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.ProductoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
+import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroProducto;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
@@ -112,5 +114,16 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
             precioCosto += detalleProducto.getCantidad() * detalleProducto.getInsumo().getPrecioCosto();
         }
         return precioCosto;
+    }
+
+    public void actualizarEstadoProducto(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Producto con el id " + id + " no encontrado"));
+        if (producto.getActivo()) {
+            producto.setActivo(false);
+        } else {
+            producto.setActivo(true);
+        }
+        productoRepository.save(producto);
     }
 }
