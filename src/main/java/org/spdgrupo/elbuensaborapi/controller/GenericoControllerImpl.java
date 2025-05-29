@@ -30,10 +30,7 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
     @GetMapping("/{id}")
     public ResponseEntity<R> getById(@PathVariable ID id) {
         R response = servicio.findById(id);
-        if (response != null) {
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(response);
     }
 
     @Override
