@@ -1,8 +1,5 @@
-
-
 package org.spdgrupo.elbuensaborapi.controller;
 
-import jakarta.validation.Valid;
 import org.spdgrupo.elbuensaborapi.model.entity.Base;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoController;
 import org.spdgrupo.elbuensaborapi.service.GenericoServiceImpl;
@@ -23,32 +20,23 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
         this.servicio = servicio;
     }
 
+    @Override
     @PostMapping("/save")
     public ResponseEntity<E> save(@RequestBody D dto) {
         return ResponseEntity.ok(servicio.save(dto));
     }
 
+    @Override
     @GetMapping("/{id}")
     public ResponseEntity<R> getById(@PathVariable ID id) {
         R response = servicio.findById(id);
-        if (response != null) {
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(response);
     }
 
+    @Override
     @GetMapping
     public ResponseEntity<List<R>> getAll() {
         return ResponseEntity.ok(servicio.findAll());
     }
-
-    //TODO: hacer bien el update
-    @PutMapping("/generico/update/{id}")
-    public ResponseEntity<String> update(@Valid @PathVariable ID id, @RequestBody D dto) {
-
-        return ResponseEntity.ok("");
-    }
-
-
 
 }

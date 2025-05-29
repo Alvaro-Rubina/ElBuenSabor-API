@@ -11,6 +11,7 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroInsumoDTO, RubroInsumoResponseDTO, Long> {
@@ -26,6 +27,7 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
     }
 
     @Override
+    @Transactional
     public RubroInsumo save(RubroInsumoDTO rubroInsumoDTO) {
         RubroInsumo rubroInsumo = rubroInsumoMapper.toEntity(rubroInsumoDTO);
 
@@ -39,6 +41,7 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
     }
 
     @Override
+    @Transactional
     public void update(Long id, RubroInsumoDTO rubroInsumoDTO) {
         RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
@@ -71,6 +74,8 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
     }
 
 
+    @Override
+    @Transactional
     public void delete(Long id) {
         RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));

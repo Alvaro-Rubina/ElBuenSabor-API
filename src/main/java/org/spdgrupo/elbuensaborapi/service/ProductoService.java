@@ -1,13 +1,17 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.ProductoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoDTO;
+
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
+
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
+
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, ProductoResponseDTO, Long> {
@@ -93,6 +98,8 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         productoRepository.save(producto);
     }
 
+    @Override
+    @Transactional
     public void delete(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto con el id " + id + " no encontrado"));
@@ -110,6 +117,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         return precioCosto;
     }
 
+    @Transactional
     public void actualizarEstadoProducto(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Producto con el id " + id + " no encontrado"));
