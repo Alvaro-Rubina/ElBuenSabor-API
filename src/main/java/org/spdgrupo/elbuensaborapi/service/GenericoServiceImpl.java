@@ -44,26 +44,9 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
     }
 
     //TODO: hacer bien el metodo update
-    /*
-    @Override
-    public String update(ID id, D dto) {
-
-        E entidadExistente = genericoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Entidad con id " + id + " no encontrada"));
-        E entidadActualizada = M.toEntity(dto);
-        // Asegurarnos de mantener el ID de la entidad existente
-        // Este paso requiere que las entidades tengan un método setId
-        entidadActualizada.setId(id);
-
-        genericoRepository.save(entidadActualizada);
-        return "Entidad actualizada exitosamente";
-
-    }
-    */
     @Override
     @Transactional
     public void update(ID id, D dto) {
-
     }
 
     @Override

@@ -1,6 +1,5 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.InvalidRolException;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.EmpleadoMapper;
@@ -16,9 +15,6 @@ import org.spdgrupo.elbuensaborapi.repository.EmpleadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class EmpleadoService extends GenericoServiceImpl<Empleado, EmpleadoDTO, EmpleadoResponseDTO, Long> {

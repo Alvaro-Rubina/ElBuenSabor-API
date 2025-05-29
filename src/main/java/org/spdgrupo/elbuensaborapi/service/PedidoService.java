@@ -45,8 +45,9 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         super(genericoRepository, genericoMapper);
     }
 
+    @Override
     @Transactional
-    public void savePedido(PedidoDTO pedidoDTO) {
+    public Pedido save(PedidoDTO pedidoDTO) {
         Pedido pedido = pedidoMapper.toEntity(pedidoDTO);
 
         // Establecer cliente y domicilio
@@ -86,19 +87,13 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
             }
         }
 
-        pedidoRepository.save(pedido);
+        return pedidoRepository.save(pedido);
     }
 
     public PedidoResponseDTO getPedidoByCodigo(String codigo) {
         Pedido pedido = pedidoRepository.findByCodigo(codigo)
                 .orElseThrow(() -> new NotFoundException("Pedido con el código de orden " + codigo + " no encontrado"));
         return pedidoMapper.toResponseDTO(pedido);
-    }
-
-    public List<PedidoResponseDTO> getAllPedidos() {
-        return pedidoRepository.findAll().stream()
-                .map(pedidoMapper::toResponseDTO)
-                .toList();
     }
 
     @Transactional
@@ -110,7 +105,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
             pedido.setEstado(estado);
 
             if (estado == Estado.SOLICITADO) {
-                facturaService.createFacturaFromPedido(pedido);
+                pedido.setFactura(facturaService.createFacturaFromPedido(pedido));
             }
         }
 

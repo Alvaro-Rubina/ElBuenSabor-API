@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import jakarta.validation.Valid;
 import org.spdgrupo.elbuensaborapi.model.entity.Base;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoController;
 import org.spdgrupo.elbuensaborapi.service.GenericoServiceImpl;
@@ -22,7 +23,7 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
 
     @Override
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody D dto) {
+    public ResponseEntity<String> save(@Valid @RequestBody D dto) {
         return ResponseEntity.ok("Registro exitoso");
     }
 

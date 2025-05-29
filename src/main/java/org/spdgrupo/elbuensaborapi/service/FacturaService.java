@@ -1,27 +1,34 @@
 package org.spdgrupo.elbuensaborapi.service;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.FacturaMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.factura.FacturaDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.factura.FacturaResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleFactura;
 import org.spdgrupo.elbuensaborapi.model.entity.Factura;
 import org.spdgrupo.elbuensaborapi.model.entity.Pedido;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.FacturaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-public class FacturaService {
+public class FacturaService extends GenericoServiceImpl<Factura, FacturaDTO, FacturaResponseDTO, Long>{
 
-    private final FacturaRepository facturaRepository;
-    private final DetalleFacturaService detalleFacturaService;
-    private final FacturaMapper facturaMapper;
+    @Autowired
+    private FacturaRepository facturaRepository;
+    @Autowired
+    private DetalleFacturaService detalleFacturaService;
+    @Autowired
+    private FacturaMapper facturaMapper;
+
+    public FacturaService(GenericoRepository<Factura, Long> facturaRepository, GenericoMapper<Factura, FacturaDTO, FacturaResponseDTO> genericoMapper) {
+        super(facturaRepository, genericoMapper);
+    }
 
     @Transactional
     public Factura createFacturaFromPedido(Pedido pedido) {
@@ -52,17 +59,5 @@ public class FacturaService {
         });
 
         return facturaRepository.save(factura);
-    }
-
-    public FacturaResponseDTO getFacturaById(Long id) {
-        Factura factura = facturaRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Factura con el id " + id + " no encontrada"));
-        return facturaMapper.toResponseDTO(factura);
-    }
-
-    public List<FacturaResponseDTO> getAllFacturas() {
-        return facturaRepository.findAll().stream()
-                .map(facturaMapper::toResponseDTO)
-                .toList();
     }
 }

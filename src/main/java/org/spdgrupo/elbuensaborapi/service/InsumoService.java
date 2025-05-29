@@ -17,7 +17,6 @@ import java.util.List;
 
 @Service
 public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, InsumoResponseDTO, Long> {
-    // TODO: Falta logica (aca y capaz en el DTO) para manejar que el stockActual no sea nunca menor que el stockMinimo
 
     // Dependencias
     @Autowired
