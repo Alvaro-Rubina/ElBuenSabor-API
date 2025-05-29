@@ -36,5 +36,4 @@ public class PedidoResponseDTO {
     private ClienteResponseDTO cliente;
     private DomicilioResponseDTO domicilio;
     private List<DetallePedidoResponseDTO> detallePedidos;
-    private Factura factura;
 }

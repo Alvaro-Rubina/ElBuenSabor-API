@@ -30,6 +30,7 @@ public class PedidoService {
     private final ClienteRepository clienteRepository;
     private final DomicilioRepository domicilioRepository;
     private final DetallePedidoService detallePedidoService;
+    private final FacturaService facturaService;
     private final PedidoMapper pedidoMapper;
 
     @Transactional
@@ -71,17 +72,16 @@ public class PedidoService {
                 .toList();
     }
 
-    // TODO: Cambiar este metodo para que se reciba mediante RequestParam el nuevo estado
-    public void actualizarEstadoDelPedido(Long pedidoId, PedidoPatchDTO pedidoDTO) {
+    @Transactional
+    public void actualizarEstadoDelPedido(Long pedidoId, Estado estado) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
 
-        if (pedidoDTO.getEstado() != null) {
-            pedido.setEstado(pedidoDTO.getEstado());
+        if (estado != null) {
+            pedido.setEstado(estado);
 
-            if (pedidoDTO.getEstado() == Estado.PENDIENTE) {
-                // una vez que se factura el pedido, se crea la factura
-                // TODO: Hacer el metodo para crear la factura
+            if (estado == Estado.SOLICITADO) {
+                facturaService.createFacturaFromPedido(pedido);
             }
         }
 

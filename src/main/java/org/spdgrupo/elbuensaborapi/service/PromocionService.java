@@ -61,17 +61,14 @@ public class PromocionService {
         Promocion promocion = promocionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Promocion con el id " + id + " no encontrada"));
 
-        // Validar fechas
         validarFechas(promocionDTO.getFechaDesde(), promocionDTO.getFechaHasta());
 
-        // Actualizar campos básicos
         promocion.setDenominacion(promocionDTO.getDenominacion());
         promocion.setFechaDesde(promocionDTO.getFechaDesde());
         promocion.setFechaHasta(promocionDTO.getFechaHasta());
         promocion.setDescuento(promocionDTO.getDescuento());
         promocion.setActivo(promocionDTO.getActivo());
 
-        // Actualizar detalles
         promocion.getDetallePromociones().clear();
         for (DetallePromocionDTO detalleDTO : promocionDTO.getDetallePromociones()) {
             DetallePromocion detalle = detallePromocionService.createDetallePromocion(detalleDTO);

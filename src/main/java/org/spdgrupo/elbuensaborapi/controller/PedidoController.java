@@ -37,13 +37,6 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoService.getAllPedidos());
     }
 
-    @PatchMapping("/actualizar-estado/{pedidoId}")
-    public ResponseEntity<String> actualizarEstadoPedido(@PathVariable Long pedidoId,
-                                                         @RequestBody PedidoPatchDTO pedidoDTO) {
-        pedidoService.actualizarEstadoDelPedido(pedidoId, pedidoDTO);
-        return ResponseEntity.ok("Estado del pedido actualizado correctamente");
-    }
-
     @PatchMapping("/agregar-min/{pedidoId}")
     // El url quedaria algo asi: http//localhost:8080/agregarMin/1?minutos=10
     public ResponseEntity<String> agregarTiempoAlPedido(@PathVariable Long pedidoId,
