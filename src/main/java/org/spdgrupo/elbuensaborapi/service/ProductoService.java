@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
@@ -112,7 +113,14 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         Double precioCosto = 0.0;
 
         for (DetalleProducto detalleProducto : detalleProductos) {
-            precioCosto += detalleProducto.getCantidad() * detalleProducto.getInsumo().getPrecioCosto();
+            Double cantidad = detalleProducto.getCantidad();
+            UnidadMedida unidad = detalleProducto.getInsumo().getUnidadMedida();
+
+            if (unidad == UnidadMedida.GRAMOS || unidad == UnidadMedida.MILILITROS) {
+                cantidad /= 100.0;
+            }
+
+            precioCosto += cantidad * detalleProducto.getInsumo().getPrecioCosto();
         }
         return precioCosto;
     }
