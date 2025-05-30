@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -75,19 +76,35 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Producto con el id " + id + " no encontrado"));
 
-        // Actualizar campos básicos
-        producto.setDenominacion(productoDTO.getDenominacion());
-        producto.setDescripcion(productoDTO.getDescripcion());
-        producto.setTiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion());
-        producto.setPrecioVenta(productoDTO.getPrecioVenta());
-        producto.setUrlImagen(productoDTO.getUrlImagen());
-        producto.setActivo(productoDTO.getActivo());
+        if (!producto.getDenominacion().equals(productoDTO.getDenominacion())) {
+            producto.setDenominacion(productoDTO.getDenominacion());
+        }
 
-        // Actualizar rubro
-        producto.setRubro(rubroProductoRepository.findById(productoDTO.getRubroId())
-                .orElseThrow(() -> new IllegalArgumentException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado")));
+        if (!producto.getDescripcion().equals(productoDTO.getDescripcion())) {
+            producto.setDescripcion(productoDTO.getDescripcion());
+        }
 
-        // Actualizar detalles
+        if (!producto.getTiempoEstimadoPreparacion().equals(productoDTO.getTiempoEstimadoPreparacion())) {
+            producto.setTiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion());
+        }
+
+        if (!producto.getPrecioVenta().equals(productoDTO.getPrecioVenta())) {
+            producto.setPrecioVenta(productoDTO.getPrecioVenta());
+        }
+
+        if (!producto.getUrlImagen().equals(productoDTO.getUrlImagen())) {
+            producto.setUrlImagen(productoDTO.getUrlImagen());
+        }
+
+        if (!Objects.equals(producto.getActivo(), productoDTO.getActivo())) {
+            producto.setActivo(productoDTO.getActivo());
+        }
+
+        if (!producto.getRubro().getId().equals(productoDTO.getRubroId())) {
+            producto.setRubro(rubroProductoRepository.findById(productoDTO.getRubroId())
+                    .orElseThrow(() -> new IllegalArgumentException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado")));
+        }
+
         producto.getDetalleProductos().clear();
         for (DetalleProductoDTO detalleDTO : productoDTO.getDetalleProductos()) {
             DetalleProducto detalle = detalleProductoService.createDetalleProducto(detalleDTO);

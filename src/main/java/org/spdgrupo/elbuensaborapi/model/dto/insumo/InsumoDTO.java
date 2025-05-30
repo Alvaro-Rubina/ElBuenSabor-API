@@ -37,6 +37,7 @@ public class InsumoDTO {
     @NotNull(message = "El campo esParaElaborar no puede ser nulo")
     private Boolean esParaElaborar;
 
+    @NotNull(message = "El campo activo no puede ser nulo")
     private Boolean activo;
 
     @NotNull(message = "El campo unidadMedida no puede ser nulo")

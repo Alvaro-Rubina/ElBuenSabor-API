@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, InsumoResponseDTO, Long> {
@@ -52,18 +53,46 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
 
 
-        insumo.setDenominacion(insumoDTO.getDenominacion());
-        insumo.setUrlImagen(insumoDTO.getUrlImagen());
-        insumo.setPrecioCosto(insumoDTO.getPrecioCosto());
-        insumo.setPrecioVenta(insumoDTO.getPrecioVenta());
-        insumo.setStockActual(insumoDTO.getStockActual());
-        insumo.setStockMinimo(insumoDTO.getStockMinimo());
-        insumo.setEsParaElaborar(insumoDTO.getEsParaElaborar());
-        insumo.setActivo(insumoDTO.getActivo());
-        insumo.setUnidadMedida(insumoDTO.getUnidadMedida());
+        if (!insumo.getDenominacion().equals(insumoDTO.getDenominacion())) {
+            insumo.setDenominacion(insumoDTO.getDenominacion());
+        }
 
-        insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
-                .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + insumoDTO.getRubroId() + " no encontrado")));
+        if (!insumo.getUrlImagen().equals(insumoDTO.getUrlImagen())) {
+            insumo.setUrlImagen(insumoDTO.getUrlImagen());
+        }
+
+        if (!insumo.getPrecioCosto().equals(insumoDTO.getPrecioCosto())) {
+            insumo.setPrecioCosto(insumoDTO.getPrecioCosto());
+        }
+
+        if (!Objects.equals(insumo.getPrecioVenta(), (insumoDTO.getPrecioVenta()))) {
+            insumo.setPrecioVenta(insumoDTO.getPrecioVenta());
+        }
+
+        if (!insumo.getStockActual().equals(insumoDTO.getStockActual())) {
+            insumo.setStockActual(insumoDTO.getStockActual());
+        }
+
+        if (!insumo.getStockMinimo().equals(insumoDTO.getStockMinimo())) {
+            insumo.setStockMinimo(insumoDTO.getStockMinimo());
+        }
+
+        if (!insumo.getEsParaElaborar().equals(insumoDTO.getEsParaElaborar())) {
+            insumo.setEsParaElaborar(insumoDTO.getEsParaElaborar());
+        }
+
+        if (!Objects.equals(insumo.getActivo(), (insumoDTO.getActivo()))) {
+            insumo.setActivo(insumoDTO.getActivo());
+        }
+
+        if (!insumo.getUnidadMedida().equals(insumoDTO.getUnidadMedida())) {
+            insumo.setUnidadMedida(insumoDTO.getUnidadMedida());
+        }
+
+        if (!insumo.getRubro().getId().equals(insumoDTO.getRubroId())) {
+            insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
+                    .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + insumoDTO.getRubroId() + " no encontrado")));
+        }
 
         insumoRepository.save(insumo);
     }
@@ -81,7 +110,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     public void actualizarEstadoInsumo(Long id) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
-        if (insumo.isActivo()) {
+        if (insumo.getActivo()) {
             insumo.setActivo(false);
         } else {
             insumo.setActivo(true);

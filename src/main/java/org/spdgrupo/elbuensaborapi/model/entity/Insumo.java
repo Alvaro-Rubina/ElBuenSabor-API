@@ -26,9 +26,9 @@ public class Insumo extends Base {
 
     private Double stockMinimo;
 
-    private boolean esParaElaborar;
+    private Boolean esParaElaborar;
 
-    private boolean activo;
+    private Boolean activo;
 
     @Enumerated(EnumType.STRING)
     private UnidadMedida unidadMedida;
