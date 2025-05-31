@@ -30,6 +30,7 @@ public class ProductoDTO {
     @NotBlank(message = "El campo urlImagen no puede estar vacio")
     private String urlImagen;
 
+    @NotNull(message = "El campo activo no puede ser nulo")
     private Boolean activo;
 
     @NotNull(message = "El campo rubroId no puede ser nulo")

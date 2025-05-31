@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Entity
 public class Factura extends Base {
 
@@ -45,16 +46,5 @@ public class Factura extends Base {
 
     @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleFactura> detalleFacturas = new ArrayList<>();
-
-    @ManyToOne
-    @JoinColumn(name = "id_producto")
-    private Producto producto;
-
-    @ManyToOne
-    @JoinColumn(name = "id_insumo")
-    private Insumo insumo;
-
-    // TODO: Después ver el temita de MercadoPagoDatos
-
 
 }

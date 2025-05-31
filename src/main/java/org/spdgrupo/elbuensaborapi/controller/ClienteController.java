@@ -1,51 +1,41 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClientePatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
 import org.spdgrupo.elbuensaborapi.service.ClienteService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/clientes")
-@RequiredArgsConstructor
-public class ClienteController {
+public class ClienteController extends GenericoControllerImpl<
+        Cliente,
+        ClienteDTO,
+        ClienteResponseDTO,
+        Long,
+        ClienteService> {
 
-    private final ClienteService clienteService;
+    @Autowired
+    private ClienteService clienteService;
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveCliente(@Valid @RequestBody ClienteDTO clienteDTO) {
-        clienteService.saveCliente(clienteDTO);
-        return ResponseEntity.ok("Cliente guardado correctamente");
+    public ClienteController(ClienteService clienteService) {
+        super(clienteService);
+        this.clienteService = clienteService;
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<ClienteResponseDTO> getClienteById(@PathVariable Long id) {
-        return ResponseEntity.ok(clienteService.getClienteById(id));
-    }
-
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<ClienteResponseDTO>> getClientes() {
-        return ResponseEntity.ok(clienteService.getAllClientes());
-    }
-
-    @PatchMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<String> updateCliente(@PathVariable Long id,
-                                                @RequestBody ClientePatchDTO clienteDTO) {
-        clienteService.updateCliente(id, clienteDTO);
+                                                @Valid @RequestBody ClienteDTO clienteDTO) {
+        clienteService.update(id, clienteDTO);
         return ResponseEntity.ok("Cliente actualizado correctamente");
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteCliente(@PathVariable Long id) {
-        clienteService.deleteCliente(id);
+        clienteService.delete(id);
         return ResponseEntity.ok("Cliente eliminado exitosamente");
     }
 

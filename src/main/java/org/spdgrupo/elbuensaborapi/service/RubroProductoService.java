@@ -1,80 +1,48 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.config.mappers.RubroProductoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroProducto;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroProductoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
-public class RubroProductoService {
+public class RubroProductoService extends GenericoServiceImpl<RubroProducto, RubroProductoDTO, RubroProductoResponseDTO, Long> {
 
     // Dependencias
-    private final RubroProductoRepository rubroProductoRepository;
+    @Autowired
+    private RubroProductoRepository rubroProductoRepository;
+    @Autowired
+    private RubroProductoMapper rubroProductoMapper;
 
-    public void saveRubroProducto(RubroProductoDTO rubroProductoDTO) {
-        RubroProducto rubroProducto = toEntity(rubroProductoDTO);
-        rubroProductoRepository.save(rubroProducto);
+    public RubroProductoService(GenericoRepository<RubroProducto,Long> genericoRepository, GenericoMapper<RubroProducto, RubroProductoDTO, RubroProductoResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
     }
 
-    public RubroProductoResponseDTO getRubroProductoById(Long id) {
-        RubroProducto rubroProducto = rubroProductoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
-        return toDTO(rubroProducto);
-    }
-
-    public List<RubroProductoResponseDTO> getAllRubroProductos() {
-        List<RubroProducto> rubroProductos = rubroProductoRepository.findAll();
-        List<RubroProductoResponseDTO> rubroProductosDTO = new ArrayList<>();
-
-        for (RubroProducto rubroProducto : rubroProductos) {
-            rubroProductosDTO.add(toDTO(rubroProducto));
-        }
-        return rubroProductosDTO;
-    }
-
-    public void updateRubroProducto(Long id, RubroProductoPatchDTO rubroProductoDTO) {
+    @Override
+    @Transactional
+    public void update(Long id, RubroProductoDTO rubroProductoDTO) {
         RubroProducto rubroProducto = rubroProductoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
 
-        if(rubroProductoDTO.getDenominacion() != null) {
-            rubroProducto.setDenominacion(rubroProductoDTO.getDenominacion());
-        }
-
-        if(rubroProductoDTO.getActivo() != null) {
-            rubroProducto.setActivo(rubroProductoDTO.getActivo());
-        }
+        rubroProducto.setDenominacion(rubroProductoDTO.getDenominacion());
+        rubroProducto.setActivo(rubroProductoDTO.getActivo());
 
         rubroProductoRepository.save(rubroProducto);
     }
 
-    public void deleteRubroProducto(Long id) {
+    @Override
+    @Transactional
+    public void delete(Long id) {
         RubroProducto rubroProducto = rubroProductoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
         rubroProducto.setActivo(false);
         rubroProductoRepository.save(rubroProducto);
-    }
-
-    // MAPPERS
-    public RubroProducto toEntity(RubroProductoDTO rubroProductoDTO) {
-        return RubroProducto.builder()
-                .denominacion(rubroProductoDTO.getDenominacion())
-                .activo(true) // cuando se guarda un rubro siempre es activo = true
-                .build();
-    };
-
-    public RubroProductoResponseDTO toDTO(RubroProducto rubroProducto) {
-        return RubroProductoResponseDTO.builder()
-                .id(rubroProducto.getId())
-                .denominacion(rubroProducto.getDenominacion())
-                .activo(rubroProducto.getActivo())
-                .build();
     }
 }

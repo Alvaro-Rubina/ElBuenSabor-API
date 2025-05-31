@@ -6,5 +6,5 @@ import org.springframework.data.repository.NoRepositoryBean;
 import java.io.Serializable;
 
 @NoRepositoryBean
-public interface GenericoRepository< E , ID extends Serializable>extends JpaRepository<E,ID> {
+public interface GenericoRepository<E , ID extends Serializable>extends JpaRepository<E,ID> {
 }

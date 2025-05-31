@@ -1,74 +1,54 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.config.mappers.DetalleDomicilioMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detalledomicilio.DetalleDomicilioDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detalledomicilio.DetalleDomicilioResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleDomicilio;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.spdgrupo.elbuensaborapi.repository.DetalleDomicilioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-public class DetalleDomicilioService {
+public class DetalleDomicilioService extends GenericoServiceImpl<DetalleDomicilio, DetalleDomicilioDTO, DetalleDomicilioResponseDTO, Long> {
 
     // Dependencias
-    private final DetalleDomicilioRepository detalleDomicilioRepository;
-    private final ClienteRepository clienteRepository;
-    private final DomicilioService domicilioService;
+    @Autowired
+    private DetalleDomicilioRepository detalleDomicilioRepository;
+    @Autowired
+    private ClienteRepository clienteRepository;
+    @Autowired
+    private DomicilioService domicilioService;
+    @Autowired
+    private DetalleDomicilioMapper detalleDomicilioMapper;
 
-    public void saveDetalleDomicilio(DetalleDomicilioDTO detalleDomicilioDTO) {
-        DetalleDomicilio detalleDomicilio = toEntity(detalleDomicilioDTO);
-        detalleDomicilioRepository.save(detalleDomicilio);
+    public DetalleDomicilioService(GenericoRepository<DetalleDomicilio, Long> genericoRepository, GenericoMapper<DetalleDomicilio, DetalleDomicilioDTO, DetalleDomicilioResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
     }
 
-    public DetalleDomicilioResponseDTO getDetalleDomicilioById(Long id) {
-        DetalleDomicilio detalleDomicilio = detalleDomicilioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DetalleDomicilio con el id " + id + " no encontrado"));
-        return toDTO(detalleDomicilio);
-    }
-
-    public List<DetalleDomicilioResponseDTO> getAllDetallesDomicilio() {
-        List<DetalleDomicilio> detallesDomicilio = detalleDomicilioRepository.findAll();
-        List<DetalleDomicilioResponseDTO> detallesDomicilioDTOs = new ArrayList<>();
-        
-        for (DetalleDomicilio detalleDomicilio : detallesDomicilio) {
-            detallesDomicilioDTOs.add(toDTO(detalleDomicilio));
-        }
-        return detallesDomicilioDTOs;
-    }
-
-    // TODO: Ver si este metodo se queda o hacer uno que cumpla la misma funcion en ClienteService
-    public List<DetalleDomicilioResponseDTO> getDetallesDomicilioByClienteId(Long clienteId) {
-        List<DetalleDomicilio> detallesDomicilio = detalleDomicilioRepository.findByClienteId(clienteId);
-        List<DetalleDomicilioResponseDTO> detallesDomicilioDTOs = new ArrayList<>();
-        
-        for (DetalleDomicilio detalleDomicilio : detallesDomicilio) {
-            detallesDomicilioDTOs.add(toDTO(detalleDomicilio));
-        }
-        return detallesDomicilioDTOs;
-    }
-
-    // NOTE: No hay metodo updateDetalleDomicilio ya que lo que se edita/actualiza es el domicilio o cliente en sí
-
-    // MAPPERS
-    private DetalleDomicilio toEntity(DetalleDomicilioDTO detalleDomicilioDTO) {
-        return DetalleDomicilio.builder()
+    @Override
+    @Transactional
+    public DetalleDomicilio save(DetalleDomicilioDTO detalleDomicilioDTO) {
+        DetalleDomicilio detalleDomicilio = DetalleDomicilio.builder()
                 .cliente(clienteRepository.findById(detalleDomicilioDTO.getClienteId())
                         .orElseThrow(() -> new NotFoundException("Cliente con el id " + detalleDomicilioDTO.getClienteId() + " no encontrado")))
-                .domicilio(domicilioService.saveDomicilio(detalleDomicilioDTO.getDomicilio()))
+                .domicilio(domicilioService.save(detalleDomicilioDTO.getDomicilio()))
                 .build();
+        return (detalleDomicilioRepository.save(detalleDomicilio));
+    }
+    // TODO: Ver si este metodo se queda o hacer uno que cumpla la misma funcion en ClienteService
+    public List<DetalleDomicilioResponseDTO> getDetallesDomicilioByClienteId(Long clienteId) {
+        return detalleDomicilioRepository.findByClienteId(clienteId).stream()
+                .map(detalleDomicilioMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    public DetalleDomicilioResponseDTO toDTO(DetalleDomicilio detalleDomicilio) {
-        return DetalleDomicilioResponseDTO.builder()
-                .id(detalleDomicilio.getId())
-                .domicilio(domicilioService.toDTO(detalleDomicilio.getDomicilio()))
-                .build();
-    }
 }
 

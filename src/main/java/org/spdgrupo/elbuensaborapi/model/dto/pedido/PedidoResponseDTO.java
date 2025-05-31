@@ -5,7 +5,6 @@ import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.entity.Factura;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
 import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
 import org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio;
@@ -36,5 +35,4 @@ public class PedidoResponseDTO {
     private ClienteResponseDTO cliente;
     private DomicilioResponseDTO domicilio;
     private List<DetallePedidoResponseDTO> detallePedidos;
-    private Factura factura;
 }

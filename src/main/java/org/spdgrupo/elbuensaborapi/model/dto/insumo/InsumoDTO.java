@@ -24,8 +24,6 @@ public class InsumoDTO {
     @DecimalMin(value = "0.0", message = "El campo precioCompra no puede ser menor a 0")
     private Double precioCosto;
 
-    @NotNull(message = "El campo precioVenta no puede ser nulo")
-    @DecimalMin(value = "0.0", message = "El campo precioVenta no puede ser menor a 0")
     private Double precioVenta;
 
     @NotNull(message = "El campo stockActual no puede ser nulo")
@@ -39,6 +37,7 @@ public class InsumoDTO {
     @NotNull(message = "El campo esParaElaborar no puede ser nulo")
     private Boolean esParaElaborar;
 
+    @NotNull(message = "El campo activo no puede ser nulo")
     private Boolean activo;
 
     @NotNull(message = "El campo unidadMedida no puede ser nulo")

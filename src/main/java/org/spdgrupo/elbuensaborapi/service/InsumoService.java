@@ -1,152 +1,139 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.config.mappers.InsumoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
-@RequiredArgsConstructor
-public class InsumoService {
-    // TODO: Falta logica (aca y capaz en el DTO) para manejar que el stockActual no sea nunca menor que el stockMinimo
+public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, InsumoResponseDTO, Long> {
 
     // Dependencias
-    private final InsumoRepository insumoRepository;
-    private final RubroInsumoRepository rubroInsumoRepository;
-    private final RubroInsumoService rubroInsumoService;
+    @Autowired
+    private InsumoRepository insumoRepository;
+    @Autowired
+    private RubroInsumoRepository rubroInsumoRepository;
+    @Autowired
+    private InsumoMapper insumoMapper;
 
-    public void saveInsumo(InsumoDTO insumoDTO) {
-        Insumo insumo = toEntity(insumoDTO);
-        insumoRepository.save(insumo);
+    public InsumoService(GenericoRepository<Insumo, Long> genericoRepository, GenericoMapper<Insumo, InsumoDTO, InsumoResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
     }
 
-    public InsumoResponseDTO getInsumoById(Long id) {
-        Insumo insumo = insumoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
-        return toDTO(insumo);
+    @Override
+    @Transactional
+    public Insumo save(InsumoDTO insumoDTO) {
+        Insumo insumo = insumoMapper.toEntity(insumoDTO);
+        insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
+                .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + insumoDTO.getRubroId() + " no encontrado")));
+        return(insumoRepository.save(insumo));
     }
 
     public List<InsumoResponseDTO> getInsumosByDenominacion(String denominacion) {
-        List<Insumo> insumos = insumoRepository.findByDenominacionContainingIgnoreCase(denominacion);
-        List<InsumoResponseDTO> insumosDTO = new ArrayList<>();
-
-        for (Insumo insumo : insumos) {
-            insumosDTO.add(toDTO(insumo));
-        }
-        return insumosDTO;
+        return insumoRepository.findByDenominacionContainingIgnoreCase(denominacion).stream()
+                .map(insumoMapper::toResponseDTO)
+                .toList();
     }
 
-    // Acá busca por rubro, y si no se le pasa parametro (o es 0), busca todos
-    public List<InsumoResponseDTO> getAllInsumos(Long rubroId) {
-        List<Insumo> insumos;
-
-        if (rubroId == null || rubroId == 0L) {
-            insumos = insumoRepository.findAll();
-        } else {
-            insumos = insumoRepository.findByRubroId(rubroId);
-        }
-        List<InsumoResponseDTO> insumosDTO = new ArrayList<>();
-
-        for (Insumo insumo : insumos) {
-            insumosDTO.add(toDTO(insumo));
-        }
-
-        return insumosDTO;
-    }
-
-    public void updateInsumo(Long id, InsumoPatchDTO insumoDTO) {
+    @Override
+    @Transactional
+    public void update(Long id, InsumoDTO insumoDTO) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
 
-        if (insumoDTO.getDenominacion() != null) {
+
+        if (!insumo.getDenominacion().equals(insumoDTO.getDenominacion())) {
             insumo.setDenominacion(insumoDTO.getDenominacion());
         }
 
-        if (insumoDTO.getUrlImagen() != null) {
+        if (!insumo.getUrlImagen().equals(insumoDTO.getUrlImagen())) {
             insumo.setUrlImagen(insumoDTO.getUrlImagen());
         }
 
-        if (insumoDTO.getPrecioCosto() != null) {
+        if (!insumo.getPrecioCosto().equals(insumoDTO.getPrecioCosto())) {
             insumo.setPrecioCosto(insumoDTO.getPrecioCosto());
         }
 
-        if (insumoDTO.getPrecioVenta() != null) {
+        if (!Objects.equals(insumo.getPrecioVenta(), (insumoDTO.getPrecioVenta()))) {
             insumo.setPrecioVenta(insumoDTO.getPrecioVenta());
         }
 
-        if (insumoDTO.getStockActual() != null) {
+        if (!insumo.getStockActual().equals(insumoDTO.getStockActual())) {
             insumo.setStockActual(insumoDTO.getStockActual());
         }
 
-        if (insumoDTO.getStockMinimo() != null) {
+        if (!insumo.getStockMinimo().equals(insumoDTO.getStockMinimo())) {
             insumo.setStockMinimo(insumoDTO.getStockMinimo());
         }
 
-        if (insumoDTO.getEsParaElaborar() != null) {
+        if (!insumo.getEsParaElaborar().equals(insumoDTO.getEsParaElaborar())) {
             insumo.setEsParaElaborar(insumoDTO.getEsParaElaborar());
         }
 
-        if (insumoDTO.getActivo() != null) {
+        if (!Objects.equals(insumo.getActivo(), (insumoDTO.getActivo()))) {
             insumo.setActivo(insumoDTO.getActivo());
         }
 
-        if (insumoDTO.getUnidadMedida() != null) {
+        if (!insumo.getUnidadMedida().equals(insumoDTO.getUnidadMedida())) {
             insumo.setUnidadMedida(insumoDTO.getUnidadMedida());
         }
 
-        if (insumoDTO.getRubroId() != null) {
+        if (!insumo.getRubro().getId().equals(insumoDTO.getRubroId())) {
             insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
-                    .orElseThrow(() -> new NotFoundException("RubroInsumo con el id" + insumoDTO.getRubroId() + "no encontrado")));
+                    .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + insumoDTO.getRubroId() + " no encontrado")));
         }
 
         insumoRepository.save(insumo);
     }
 
-    public void deleteInsumo(Long id) {
+    @Override
+    @Transactional
+    public void delete(Long id) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
         insumo.setActivo(false);
         insumoRepository.save(insumo);
     }
 
-    // MAPPERS
-    public Insumo toEntity(InsumoDTO insumoDTO) {
-        return Insumo.builder()
-                .denominacion(insumoDTO.getDenominacion())
-                .urlImagen(insumoDTO.getUrlImagen())
-                .precioCosto(insumoDTO.getPrecioCosto())
-                .precioVenta(insumoDTO.getPrecioVenta())
-                .stockActual(insumoDTO.getStockActual())
-                .stockMinimo(insumoDTO.getStockMinimo())
-                .esParaElaborar(insumoDTO.getEsParaElaborar())
-                .activo(insumoDTO.getActivo())
-                .unidadMedida(insumoDTO.getUnidadMedida())
-                .rubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
-                        .orElseThrow(() -> new NotFoundException("RubroInsumo con el id" + insumoDTO.getRubroId() + "no encontrado")))
-                .build();
+    @Transactional
+    public void actualizarEstadoInsumo(Long id) {
+        Insumo insumo = insumoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
+        if (insumo.getActivo()) {
+            insumo.setActivo(false);
+        } else {
+            insumo.setActivo(true);
+        }
+        insumoRepository.save(insumo);
     }
 
-    public InsumoResponseDTO toDTO(Insumo insumo) {
-        return InsumoResponseDTO.builder()
-                .id(insumo.getId())
-                .denominacion(insumo.getDenominacion())
-                .urlImagen(insumo.getUrlImagen())
-                .precioCosto(insumo.getPrecioCosto())
-                .precioVenta(insumo.getPrecioVenta())
-                .stockActual(insumo.getStockActual())
-                .stockMinimo(insumo.getStockMinimo())
-                .esParaElaborar(insumo.isEsParaElaborar())
-                .activo(insumo.isActivo())
-                .unidadMedida(insumo.getUnidadMedida())
-                .rubro(rubroInsumoService.toDTO(insumo.getRubro()))
-                .build();
+    @Transactional
+    public void actualizarStock(Long id, Double cantidad) {
+        Insumo insumo = insumoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
+        double nuevoStock = insumo.getStockActual() + cantidad;
+        if (nuevoStock < 0) { // NOTE: Esto en caso de que se reste una cantidad al realizar un pedido y el stock quede menor a 0
+            throw new IllegalArgumentException("No hay suficiente stock para realizar la operación.");
+        }
+        insumo.setStockActual(nuevoStock);
+
+        if (nuevoStock < insumo.getStockMinimo()) {
+            insumo.setActivo(false);
+        } else {
+            insumo.setActivo(true);
+        }
+
+        insumoRepository.save(insumo);
     }
 }

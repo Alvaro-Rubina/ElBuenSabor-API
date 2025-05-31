@@ -13,6 +13,8 @@ public class RubroInsumoDTO {
     @NotBlank(message = "El campo denominacion no puede estar vacio")
     private String denominacion;
 
+    private Boolean activo;
+
     // este campo es opcional
     private Long rubroPadreId;
 }

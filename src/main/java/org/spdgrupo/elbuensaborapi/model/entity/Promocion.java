@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,14 +12,11 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Entity
 public class Promocion extends Base {
 
     private String denominacion;
-
-    @Column(length = 500)
-    private String urlImagen;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaDesde;
@@ -27,6 +25,8 @@ public class Promocion extends Base {
     private LocalDate fechaHasta;
 
     private Double descuento;
+
+    private Boolean activo;
 
     @OneToMany(mappedBy = "promocion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetallePromocion> detallePromociones;

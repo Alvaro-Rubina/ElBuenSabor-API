@@ -1,38 +1,41 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import org.spdgrupo.elbuensaborapi.config.mappers.DetalleProductoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
-import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
-public class DetalleProductoService {
+public class DetalleProductoService extends GenericoServiceImpl<DetalleProducto, DetalleProductoDTO, DetalleProductoResponseDTO, Long> {
 
     // Dependencias
-    private final InsumoService insumoService;
-    private final InsumoRepository insumoRepository;
+    @Autowired
+    private DetalleProductoMapper detalleProductoMapper;
+    @Autowired
+    private InsumoRepository insumoRepository;
 
-    // MAPPERS
-    @Transactional
-    public DetalleProducto toEntity(DetalleProductoDTO detalleProductoDTO) {
-        Insumo insumo = insumoRepository.findById(detalleProductoDTO.getInsumoId())
-                .orElseThrow(() -> new IllegalArgumentException("Insumo con el id " + detalleProductoDTO.getInsumoId() + " no encontrado"));
-        return DetalleProducto.builder()
-                .cantidad(detalleProductoDTO.getCantidad())
-                .insumo(insumo)
-                .build();
+    public DetalleProductoService(
+        GenericoRepository<DetalleProducto, Long> genericoRepository,
+        GenericoMapper<DetalleProducto, DetalleProductoDTO, DetalleProductoResponseDTO> genericoMapper
+    ) {
+        super(genericoRepository, genericoMapper);
     }
 
-    public DetalleProductoResponseDTO toDTO(DetalleProducto detalleProducto) {
-        return DetalleProductoResponseDTO.builder()
-                .id(detalleProducto.getId())
-                .cantidad(detalleProducto.getCantidad())
-                .insumo(insumoService.toDTO(detalleProducto.getInsumo()))
-                .build();
+    @Transactional
+    public DetalleProducto createDetalleProducto(DetalleProductoDTO detalleProductoDTO) {
+        DetalleProducto detalleProducto = detalleProductoMapper.toEntity(detalleProductoDTO);
+        detalleProducto.setInsumo(insumoRepository.findById(detalleProductoDTO.getInsumoId())
+                .orElseThrow(() -> new IllegalArgumentException("Insumo con el id " + detalleProductoDTO.getInsumoId() + " no encontrado")));
+        return detalleProducto;
+    }
+
+    public DetalleProductoResponseDTO getDetalleProducto(DetalleProducto detalleProducto) {
+        return detalleProductoMapper.toResponseDTO(detalleProducto);
     }
 }

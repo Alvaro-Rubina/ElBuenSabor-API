@@ -1,69 +1,111 @@
 package org.spdgrupo.elbuensaborapi.service;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.config.mappers.PedidoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.*;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
 import org.spdgrupo.elbuensaborapi.repository.PedidoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-public class PedidoService {
+public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, PedidoResponseDTO, Long>{
 
     // Dependencias
-    private final PedidoRepository pedidoRepository;
-    private final ClienteRepository clienteRepository;
-    private final DomicilioRepository domicilioRepository;
-    private final DomicilioService domicilioService;
-    private final ClienteService clienteService;
-    private final DetallePedidoService detallePedidoService;
+    @Autowired
+    private PedidoRepository pedidoRepository;
+    @Autowired
+    private ClienteRepository clienteRepository;
+    @Autowired
+    private DomicilioRepository domicilioRepository;
+    @Autowired
+    private DetallePedidoService detallePedidoService;
+    @Autowired
+    private FacturaService facturaService;
+    @Autowired
+    private PedidoMapper pedidoMapper;
+    @Autowired
+    private InsumoService insumoService;
 
+    public PedidoService(GenericoRepository<Pedido, Long> genericoRepository, GenericoMapper<Pedido, PedidoDTO, PedidoResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
+    }
+
+    @Override
     @Transactional
-    public void savePedido(PedidoDTO pedidoDTO) {
-        Pedido pedido = toEntity(pedidoDTO);
-        pedidoRepository.save(pedido);
+    public Pedido save(PedidoDTO pedidoDTO) {
+        Pedido pedido = pedidoMapper.toEntity(pedidoDTO);
+
+        // Establecer cliente y domicilio
+        pedido.setCliente(clienteRepository.findById(pedidoDTO.getClienteId())
+                .orElseThrow(() -> new NotFoundException("Cliente con el id " + pedidoDTO.getClienteId() + " no encontrado")));
+        pedido.setDomicilio(domicilioRepository.findById(pedidoDTO.getDomicilioId())
+                .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado")));
+
+        // manejo de detalles
+        pedido.setDetallePedidos(new ArrayList<>());
+        for (DetallePedidoDTO detalleDTO : pedidoDTO.getDetallePedidos()) {
+            DetallePedido detalle = detallePedidoService.createDetallePedido(detalleDTO);
+            detalle.setPedido(pedido);
+            pedido.getDetallePedidos().add(detalle);
+        }
+
+        // calculo totales y hora estimada
+        pedido.setTotalVenta(getTotalVenta(pedido.getDetallePedidos()));
+        pedido.setTotalCosto(getTotalCosto(pedido.getDetallePedidos()));
+        pedido.setHoraEstimadaFin(getHoraEstimadaFin(pedido));
+        pedido.setCodigo(generateCodigo());
+
+        // Acá se descuentan los insumos antes de guardar el pedido
+        for (DetallePedido detallePedido : pedido.getDetallePedidos()) {
+            if (detallePedido.getProducto() != null) {
+                Producto producto = detallePedido.getProducto();
+                List<DetalleProducto> detallesProducto = producto.getDetalleProductos();
+                for (DetalleProducto detalleProducto : detallesProducto) {
+                    Insumo insumo = detalleProducto.getInsumo();
+                    double cantidaADescontar = detalleProducto.getCantidad() * detallePedido.getCantidad();
+                    insumoService.actualizarStock(insumo.getId(), -cantidaADescontar);
+                }
+            } else if (detallePedido.getInsumo() != null) {
+                Insumo insumo = detallePedido.getInsumo();
+                double cantidadADescontar = detallePedido.getCantidad();
+                insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
+            }
+        }
+
+        return pedidoRepository.save(pedido);
     }
 
     public PedidoResponseDTO getPedidoByCodigo(String codigo) {
         Pedido pedido = pedidoRepository.findByCodigo(codigo)
                 .orElseThrow(() -> new NotFoundException("Pedido con el código de orden " + codigo + " no encontrado"));
-        return toDTO(pedido);
+        return pedidoMapper.toResponseDTO(pedido);
     }
 
-    public List<PedidoResponseDTO> getAllPedidos() {
-        List<Pedido> pedidos = pedidoRepository.findAll();
-        List<PedidoResponseDTO> pedidosDTO = new ArrayList<>();
-
-        for (Pedido pedido : pedidos) {
-            PedidoResponseDTO pedidoDTO = toDTO(pedido);
-            pedidosDTO.add(pedidoDTO);
-        }
-        return pedidosDTO;
-    }
-
-    // NOTE: El metodo updatePedido no le veo sentido a estar. En ningun contexto es lógico editar cuando se
-    //  trata de algo como un PEDIDO (exceptuando el estado)
-
-    public void actualizarEstadoDelPedido(Long pedidoId, PedidoPatchDTO pedidoDTO) {
+    @Transactional
+    public void actualizarEstadoDelPedido(Long pedidoId, Estado estado) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
 
-        if (pedidoDTO.getEstado() != null) {
-            pedido.setEstado(pedidoDTO.getEstado());
+        if (estado != null) {
+            pedido.setEstado(estado);
+
+            if (estado == Estado.SOLICITADO) {
+                pedido.setFactura(facturaService.createFacturaFromPedido(pedido));
+            }
         }
 
         pedidoRepository.save(pedido);
@@ -79,60 +121,6 @@ public class PedidoService {
 
         pedido.setHoraEstimadaFin(pedido.getHoraEstimadaFin().plusMinutes(minutos));
         pedidoRepository.save(pedido);
-    }
-
-    // MAPPERS
-    public Pedido toEntity(PedidoDTO pedidoDTO) {
-        Cliente cliente = clienteRepository.findById(pedidoDTO.getClienteId())
-                .orElseThrow(() -> new NotFoundException("Cliente con el id " + pedidoDTO.getClienteId() + " no encontrado"));
-        Domicilio domicilio = domicilioRepository.findById(pedidoDTO.getDomicilioId())
-                .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado"));
-
-        Pedido pedido = Pedido.builder()
-                .fecha(LocalDate.now())
-                .hora(LocalTime.now())
-                .codigo(generateCodigo())
-                .estado(Estado.SOLICITADO) // Estado por defecto al crear un nuevo pedido.
-                .tipoEnvio(pedidoDTO.getTipoEnvio())
-                .formaPago(pedidoDTO.getFormaPago())
-                .cliente(cliente)
-                .domicilio(domicilio)
-                .detallePedidos(new ArrayList<>())
-                .build();
-
-        // DetallePedidos
-        for (DetallePedidoDTO detalleDTO : pedidoDTO.getDetallePedidos()) {
-            DetallePedido detalle = detallePedidoService.toEntity(detalleDTO);
-            detalle.setPedido(pedido);
-            pedido.getDetallePedidos().add(detalle);
-        }
-
-        // TotalVenta y TotalCosto
-        pedido.setTotalVenta(getTotalVenta(pedido.getDetallePedidos()));
-        pedido.setTotalCosto(getTotalCosto(pedido.getDetallePedidos()));
-        pedido.setHoraEstimadaFin(getHoraEstimadaFin(pedido));
-
-        return pedido;
-    }
-
-    public PedidoResponseDTO toDTO(Pedido pedido) {
-        return PedidoResponseDTO.builder()
-                .id(pedido.getId())
-                .fecha(pedido.getFecha())
-                .hora(pedido.getHora())
-                .codigo(pedido.getCodigo())
-                .estado(pedido.getEstado())
-                .horaEstimadaFin(pedido.getHoraEstimadaFin())
-                .tipoEnvio(pedido.getTipoEnvio())
-                .totalVenta(pedido.getTotalVenta())
-                .totalCosto(pedido.getTotalCosto())
-                .formaPago(pedido.getFormaPago())
-                .cliente(clienteService.toDTO(pedido.getCliente()))
-                .domicilio(domicilioService.toDTO(pedido.getDomicilio()))
-                .detallePedidos(pedido.getDetallePedidos().stream()
-                        .map(detallePedidoService::toDTO)
-                        .collect(Collectors.toList()))
-                .build();
     }
 
     // Metodos adicionales
@@ -183,15 +171,15 @@ public class PedidoService {
 
     private String generateCodigo() {
         LocalDate hoy = LocalDate.now();
-        int anio = hoy.getYear();     // 2025
-        int mes = hoy.getMonthValue(); // 5
+        int anio = hoy.getYear();
+        int mes = hoy.getMonthValue();
 
         int pedidosEsteMes = pedidoRepository.countByYearAndMonth(anio, mes);
         int nuevoNumero = pedidosEsteMes + 1;
 
-        String anioStr = String.valueOf(anio).substring(2);       // "25"
-        String mesStr = String.format("%02d", mes);               // "05"
-        String numeroStr = String.format("%05d", nuevoNumero);    // "00042"
+        String anioStr = String.valueOf(anio).substring(2);
+        String mesStr = String.format("%02d", mes);
+        String numeroStr = String.format("%05d", nuevoNumero);
 
         return "PED-" + anioStr + mesStr + "-" + numeroStr;
     }

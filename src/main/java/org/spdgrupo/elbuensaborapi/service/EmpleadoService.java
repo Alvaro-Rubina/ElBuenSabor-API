@@ -1,108 +1,80 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.InvalidRolException;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.config.mappers.EmpleadoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
 import org.spdgrupo.elbuensaborapi.model.entity.Empleado;
+import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
+import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.EmpleadoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
-public class EmpleadoService {
+public class EmpleadoService extends GenericoServiceImpl<Empleado, EmpleadoDTO, EmpleadoResponseDTO, Long> {
 
     // Dependencias
-    private final EmpleadoRepository empleadoRepository;
-    private final UsuarioService usuarioService;
-    private final DomicilioService domicilioService;
+    @Autowired
+    private EmpleadoRepository empleadoRepository;
+    @Autowired
+    private UsuarioService usuarioService;
+    @Autowired
+    private DomicilioService domicilioService;
+    @Autowired
+    private EmpleadoMapper empleadoMapper;
 
-    public void saveEmpleado(EmpleadoDTO empleadoDTO) {
-        Empleado empleado = toEntity(empleadoDTO);
+    public EmpleadoService(GenericoRepository<Empleado, Long> genericoRepository, GenericoMapper<Empleado, EmpleadoDTO, EmpleadoResponseDTO> genericoMapper) {
+        super(genericoRepository, genericoMapper);
+    }
 
-        if (empleado.getUsuario().getRol() == Rol.CLIENTE) {
+    @Override
+    @Transactional
+    public Empleado save(EmpleadoDTO empleadoDTO) {
+        if (empleadoDTO.getUsuario().getRol() == Rol.CLIENTE) {
             throw new InvalidRolException("No se puede asignar el rol CLIENTE a un empleado");
         }
-        empleadoRepository.save(empleado);
+
+        Usuario usuario = usuarioService.save(empleadoDTO.getUsuario());
+        Domicilio domicilio = domicilioService.save(empleadoDTO.getDomicilio());
+
+        Empleado empleado = empleadoMapper.toEntity(empleadoDTO);
+        empleado.setUsuario(usuario);
+        empleado.setDomicilio(domicilio);
+
+        return (empleadoRepository.save(empleado));
     }
 
-    public EmpleadoResponseDTO getEmpleadoById(Long id) {
+    @Override
+    @Transactional
+    public void update(Long id, EmpleadoDTO empleadoDTO) {
         Empleado empleado = empleadoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Empleado con el " +  id + " no encontrado"));
-        return toDTO(empleado);
-    }
+                .orElseThrow(() -> new NotFoundException("Empleado con el " + id + " no encontrado"));
 
-    public List<EmpleadoResponseDTO> getAllEmpleados() {
-        List<Empleado> empleados = empleadoRepository.findAll();
-        List<EmpleadoResponseDTO> empleadosDTO = new ArrayList<>();
-        for (Empleado empleado : empleados) {
-            empleadosDTO.add(toDTO(empleado));
-        }
-        return empleadosDTO;
-    }
-
-    public void updateEmpleado(Long id, EmpleadoPatchDTO empleadoDTO) {
-        Empleado empleado = empleadoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Empleado con el " +  id + " no encontrado"));
-
-        if (empleadoDTO.getNombreCompleto() != null) {
-            empleado.setNombreCompleto(empleadoDTO.getNombreCompleto());
-        }
-
-        if (empleadoDTO.getTelefono() != null) {
-            empleado.setTelefono(empleadoDTO.getTelefono());
-        }
-
-        if (empleadoDTO.getActivo() != null) {
-            empleado.setActivo(empleadoDTO.getActivo());
-        }
-
-        // actualizo el usuario del empleado
-        usuarioService.updateUsuario(empleado.getUsuario().getId(), empleadoDTO.getUsuario());
-
-        // actualizo el domicilio del empleado
-        domicilioService.updateDomicilio(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());
-
-        if (empleado.getUsuario().getRol() == Rol.CLIENTE) {
+        if (empleadoDTO.getUsuario().getRol() == Rol.CLIENTE) {
             throw new InvalidRolException("No se puede asignar el rol CLIENTE a un empleado");
         }
+
+        empleado.setNombreCompleto(empleadoDTO.getNombreCompleto());
+        empleado.setTelefono(empleadoDTO.getTelefono());
+
+        usuarioService.update(empleado.getUsuario().getId(), empleadoDTO.getUsuario());
+        domicilioService.update(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());
 
         empleadoRepository.save(empleado);
     }
 
-    public void deleteEmpleado(Long id) {
+    @Override
+    @Transactional
+    public void delete(Long id) {
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Empleado con el id" + id  + " no encontrado"));
         empleado.setActivo(false);
         empleadoRepository.save(empleado);
     }
-
-    // MAPPERS
-    private Empleado toEntity(EmpleadoDTO empleadoDTO) {
-        return Empleado.builder()
-                .nombreCompleto(empleadoDTO.getNombreCompleto())
-                .telefono(empleadoDTO.getTelefono())
-                .activo(true)
-                .usuario(usuarioService.saveUsuario(empleadoDTO.getUsuario()))
-                .domicilio(domicilioService.saveDomicilio(empleadoDTO.getDomicilio()))
-                .build();
-    }
-
-    public EmpleadoResponseDTO toDTO(Empleado empleado) {
-        return EmpleadoResponseDTO.builder()
-                .id(empleado.getId())
-                .nombreCompleto(empleado.getNombreCompleto())
-                .telefono(empleado.getTelefono())
-                .activo(empleado.getActivo())
-                .usuario(usuarioService.toDTO(empleado.getUsuario()))
-                .domicilio(domicilioService.toDTO(empleado.getDomicilio()))
-                .build();
-    }
-
 }

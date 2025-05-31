@@ -2,13 +2,14 @@ package org.spdgrupo.elbuensaborapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Entity
 public class Insumo extends Base {
 
@@ -25,9 +26,9 @@ public class Insumo extends Base {
 
     private Double stockMinimo;
 
-    private boolean esParaElaborar;
+    private Boolean esParaElaborar;
 
-    private boolean activo;
+    private Boolean activo;
 
     @Enumerated(EnumType.STRING)
     private UnidadMedida unidadMedida;

@@ -1,11 +1,11 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoPatchDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.service.ProductoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,21 +13,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/productos")
-@RequiredArgsConstructor
-public class ProductoController {
+public class ProductoController extends GenericoControllerImpl<
+        Producto,
+        ProductoDTO,
+        ProductoResponseDTO,
+        Long,
+        ProductoService> {
 
-    private final ProductoService productoService;
+    @Autowired
+    private ProductoService productoService;
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveProducto(@Valid @RequestBody ProductoDTO productoDTO) {
-        productoService.saveProducto(productoDTO);
-        return ResponseEntity.ok("Producto guardado correctamente");
-    }
-
-    @GetMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<ProductoResponseDTO> getProductoById(@PathVariable Long id) {
-        return ResponseEntity.ok(productoService.getProductoById(id));
+    public ProductoController(ProductoService productoService) {
+        super(productoService);
+        this.productoService = productoService;
     }
 
     @GetMapping("/buscar")
@@ -36,22 +34,23 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.getProductosByDenominacion(denominacion));
     }
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<ProductoResponseDTO>> getAllProductos(@RequestParam(required = false) Long rubroId) {
-        return ResponseEntity.ok(productoService.getAllProductos(rubroId));
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateProducto(@PathVariable Long id,
+                                                 @Valid @RequestBody ProductoDTO productoDTO) {
+        productoService.update(id, productoDTO);
+        return ResponseEntity.ok("Producto actualizado correctamente");
     }
 
-    @PatchMapping("/update/{id}")
-    public ResponseEntity<String> updateProducto(@PathVariable Long id,
-                                                 @RequestBody ProductoPatchDTO productoDTO) {
-        productoService.updateProducto(id, productoDTO);
-        return ResponseEntity.ok("Producto actualizado correctamente");
+    // TODO: Después ver como cambio este metodo
+    @PutMapping("/actualizar-estado/{id}")
+    public ResponseEntity<String> actualizarEstadoProducto(@PathVariable Long id) {
+        productoService.actualizarEstadoProducto(id);
+        return ResponseEntity.ok("Estado del producto actualizado correctamente");
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteProducto(@PathVariable Long id) {
-        productoService.deleteProducto(id);
+        productoService.delete(id);
         return ResponseEntity.ok("Producto eliminado correctamente");
     }
 
