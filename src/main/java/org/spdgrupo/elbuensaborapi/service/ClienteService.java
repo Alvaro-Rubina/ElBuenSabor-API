@@ -1,6 +1,5 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.ClienteMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteDTO;
@@ -15,11 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
-
 public class ClienteService extends GenericoServiceImpl<Cliente, ClienteDTO, ClienteResponseDTO, Long> {
 
     // Dependencias
@@ -27,8 +22,6 @@ public class ClienteService extends GenericoServiceImpl<Cliente, ClienteDTO, Cli
     private ClienteRepository clienteRepository;
     @Autowired
     private UsuarioService usuarioService;
-    @Autowired
-    private DetalleDomicilioService detalleDomicilioService;
     @Autowired
     private ClienteMapper clienteMapper;
 

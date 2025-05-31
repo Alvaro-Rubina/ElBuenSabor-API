@@ -1,13 +1,10 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.DetallePromocionMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepromocion.DetallePromocionDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepromocion.DetallePromocionResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetallePromocion;
-import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
-import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;

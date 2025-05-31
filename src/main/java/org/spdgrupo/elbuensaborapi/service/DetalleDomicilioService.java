@@ -1,15 +1,10 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.DetalleDomicilioMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detalledomicilio.DetalleDomicilioDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detalledomicilio.DetalleDomicilioResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleDomicilio;
-import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
@@ -22,7 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-
 public class DetalleDomicilioService extends GenericoServiceImpl<DetalleDomicilio, DetalleDomicilioDTO, DetalleDomicilioResponseDTO, Long> {
 
     // Dependencias

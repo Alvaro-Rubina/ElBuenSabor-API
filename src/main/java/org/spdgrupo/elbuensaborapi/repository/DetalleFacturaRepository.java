@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DetalleFacturaRepository extends GenericoRepository<DetalleFactura, Long> {
-    // Aquí puedes agregar métodos específicos para DetalleFactura si es necesario
 }

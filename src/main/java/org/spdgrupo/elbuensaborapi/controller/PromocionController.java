@@ -1,8 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Promocion;
@@ -10,8 +8,6 @@ import org.spdgrupo.elbuensaborapi.service.PromocionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/promociones")

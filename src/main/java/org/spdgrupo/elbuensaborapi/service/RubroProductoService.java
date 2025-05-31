@@ -1,6 +1,5 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.RubroProductoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoDTO;
@@ -12,9 +11,6 @@ import org.spdgrupo.elbuensaborapi.repository.RubroProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class RubroProductoService extends GenericoServiceImpl<RubroProducto, RubroProductoDTO, RubroProductoResponseDTO, Long> {

@@ -1,7 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroProducto;
@@ -9,8 +8,6 @@ import org.spdgrupo.elbuensaborapi.service.RubroProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/rubroproductos")
