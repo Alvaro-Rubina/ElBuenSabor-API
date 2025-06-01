@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/detalleDomicilio")
+@RequestMapping("/api/detalledomicilios")
 public class DetalleDomicilioController extends GenericoControllerImpl<
         DetalleDomicilio,
         DetalleDomicilioDTO,
