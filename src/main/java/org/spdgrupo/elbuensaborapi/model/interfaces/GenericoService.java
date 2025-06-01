@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface GenericoService <E extends Base, D, R, ID extends Serializable>  {
-    public E save(D dto);
+    public void save(D dto);
     public R findById(ID id);
     public List<R> findAll();
     public void update(ID id, D entity);

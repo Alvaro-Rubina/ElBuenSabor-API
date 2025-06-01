@@ -23,12 +23,12 @@ public class UsuarioService extends GenericoServiceImpl<Usuario, UsuarioDTO, Usu
         super(genericoRepository, genericoMapper);
     }
 
-    @Override
+    /*@Override
     @Transactional
     public Usuario save(UsuarioDTO usuarioDTO){
         Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
         return usuarioRepository.save(usuario);
-    }
+    }*/
 
     public UsuarioResponseDTO getUsuarioByEmail(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email)

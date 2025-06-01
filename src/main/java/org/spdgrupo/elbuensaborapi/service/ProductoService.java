@@ -7,10 +7,9 @@ import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.ProductoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoDTO;
-
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
 
+import org.spdgrupo.elbuensaborapi.model.entity.DetalleProducto;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
@@ -45,10 +44,10 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
 
     @Override
     @Transactional
-    public Producto save(ProductoDTO productoDTO) {
+    public void save(ProductoDTO productoDTO) {
         Producto producto = productoMapper.toEntity(productoDTO);
         producto.setRubro(rubroProductoRepository.findById(productoDTO.getRubroId())
-                .orElseThrow(() -> new IllegalArgumentException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado")));
+                .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado")));
 
         // Manejo de detalles
         producto.setDetalleProductos(new ArrayList<>());
@@ -59,7 +58,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         }
         producto.setPrecioCosto(getPrecioCosto(producto.getDetalleProductos()));
 
-        return (productoRepository.save(producto));
+        productoRepository.save(producto);
     }
 
     // Acá busca por denominacion parcial. Ej para "Pizza Margarita" busca Pizza o margarita, etc

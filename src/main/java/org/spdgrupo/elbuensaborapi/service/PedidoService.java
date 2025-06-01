@@ -46,7 +46,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
     @Override
     @Transactional
-    public Pedido save(PedidoDTO pedidoDTO) {
+    public void save(PedidoDTO pedidoDTO) {
         Pedido pedido = pedidoMapper.toEntity(pedidoDTO);
 
         // Establecer cliente y domicilio
@@ -86,7 +86,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
             }
         }
 
-        return pedidoRepository.save(pedido);
+        pedidoRepository.save(pedido);
     }
 
     public PedidoResponseDTO getPedidoByCodigo(String codigo) {
