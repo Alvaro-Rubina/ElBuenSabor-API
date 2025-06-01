@@ -36,5 +36,6 @@ public class PromocionDTO {
     @Size(min = 1, message = "El campo detallePromociones debe contener por lo menos 1 elemento")
     private List<DetallePromocionDTO> detallePromociones = new ArrayList<>();
 
+    @NotNull(message = "El campo activo no puede ser nulo")
     private Boolean activo;
 }

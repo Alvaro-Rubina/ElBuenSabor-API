@@ -1,6 +1,7 @@
 package org.spdgrupo.elbuensaborapi.model.dto.cliente;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioDTO;
 
@@ -17,6 +18,7 @@ public class ClienteDTO {
     @NotBlank (message = "El campo telefono no puede estar vacío")
     private String telefono;
 
+    @NotNull(message = "El campo usuario no puede ser nulo")
     private Boolean activo;
 
     private UsuarioDTO usuario;
