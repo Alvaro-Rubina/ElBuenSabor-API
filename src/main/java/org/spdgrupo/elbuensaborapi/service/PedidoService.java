@@ -158,7 +158,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         }
 
         // NOTE: Los tiempos adicionados pueden variar despues
-        // el tiempo va a ser el max + 10 minutos
+        // el tiempo va a ser el max + 5 minutos
         int tiempoAdicional = maxTiempoPreparacion + 5;
 
         // si hay 3 o más productos, 5 minutitos mas

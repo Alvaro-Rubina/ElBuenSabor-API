@@ -43,7 +43,6 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
                 .collect(Collectors.toList());
     }
 
-    //TODO: hacer bien el metodo update
     @Override
     @Transactional
     public void update(ID id, D dto) {
