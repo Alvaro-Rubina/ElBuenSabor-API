@@ -58,4 +58,12 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
         genericoRepository.deleteById(id);
     }
 
+    @Transactional
+    public void toggleActivo(ID id) {
+        E entity = genericoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Entidad con el id " + id + " no encontrada"));
+        entity.setActivo(!entity.getActivo());
+        genericoRepository.save(entity);
+    }
+
 }

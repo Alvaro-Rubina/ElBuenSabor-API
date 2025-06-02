@@ -41,4 +41,10 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
         return ResponseEntity.ok(servicio.findAll());
     }
 
+    @PutMapping("/toggle-activo/{id}")
+    public ResponseEntity<String> toggleActivo(@PathVariable ID id) {
+        servicio.toggleActivo(id);
+        return ResponseEntity.ok("Entidad actualizada exitosamente");
+    }
+
 }

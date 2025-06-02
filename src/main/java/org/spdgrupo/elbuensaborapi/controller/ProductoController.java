@@ -41,13 +41,6 @@ public class ProductoController extends GenericoControllerImpl<
         return ResponseEntity.ok("Producto actualizado correctamente");
     }
 
-    // TODO: Después ver como cambio este metodo
-    @PutMapping("/actualizar-estado/{id}")
-    public ResponseEntity<String> actualizarEstadoProducto(@PathVariable Long id) {
-        productoService.actualizarEstadoProducto(id);
-        return ResponseEntity.ok("Estado del producto actualizado correctamente");
-    }
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteProducto(@PathVariable Long id) {
         productoService.delete(id);

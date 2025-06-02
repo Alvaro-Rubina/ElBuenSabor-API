@@ -107,18 +107,6 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     }
 
     @Transactional
-    public void actualizarEstadoInsumo(Long id) {
-        Insumo insumo = insumoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
-        if (insumo.getActivo()) {
-            insumo.setActivo(false);
-        } else {
-            insumo.setActivo(true);
-        }
-        insumoRepository.save(insumo);
-    }
-
-    @Transactional
     public void actualizarStock(Long id, Double cantidad) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));

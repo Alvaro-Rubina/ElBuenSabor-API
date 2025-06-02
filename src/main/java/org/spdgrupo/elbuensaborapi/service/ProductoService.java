@@ -139,16 +139,4 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         }
         return precioCosto;
     }
-
-    @Transactional
-    public void actualizarEstadoProducto(Long id) {
-        Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Producto con el id " + id + " no encontrado"));
-        if (producto.getActivo()) {
-            producto.setActivo(false);
-        } else {
-            producto.setActivo(true);
-        }
-        productoRepository.save(producto);
-    }
 }
