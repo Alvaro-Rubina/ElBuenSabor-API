@@ -7,6 +7,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -14,34 +15,72 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<String> handleNotFoundException(NotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                "NOT_FOUND",
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidRolException.class)
-    public ResponseEntity<String> handleInvalidRolException(InvalidRolException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleInvalidRolException(InvalidRolException ex) {
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                "INVALID_ROL",
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+
     @ExceptionHandler(CyclicParentException.class)
-    public ResponseEntity<String> handleHierarchyCycleException(CyclicParentException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleHierarchyCycleException(CyclicParentException ex) {
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                "CYCLIC_PARENT",
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                "ILLEGAL_ARGUMENT",
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        String mensaje;
         if (ex.getCause() instanceof InvalidFormatException) {
             InvalidFormatException cause = (InvalidFormatException) ex.getCause();
             if (cause.getTargetType() != null && cause.getTargetType().isEnum()) {
                 String valoresValidos = Arrays.stream(cause.getTargetType().getEnumConstants())
                         .map(Object::toString)
                         .collect(Collectors.joining(", "));
-                return new ResponseEntity<>(
-                        "Valor inválido: '" + cause.getValue() + "'. Los valores permitidos son: [" + valoresValidos + "]",
-                        HttpStatus.BAD_REQUEST
-                );
+                String nombreCampo = cause.getTargetType().getSimpleName();
+                mensaje = nombreCampo + " inválido: '" + cause.getValue() +
+                        "'. Los valores permitidos son: [" + valoresValidos + "]";
+            } else {
+                mensaje = "Error en el formato del JSON: " + ex.getMessage();
             }
+        } else {
+            mensaje = "Error en el formato del JSON: " + ex.getMessage();
         }
-        return new ResponseEntity<>("Error en el formato del JSON: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+
+        ErrorResponse error = ErrorResponse.builder()
+                .mensaje(mensaje)
+                .codigo("INVALID_FORMAT")
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }
