@@ -20,6 +20,4 @@ public class Domicilio extends Base {
 
     private Integer codigoPostal;
 
-    private Boolean activo;
-
 }

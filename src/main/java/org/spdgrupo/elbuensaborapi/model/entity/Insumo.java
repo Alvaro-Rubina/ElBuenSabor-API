@@ -28,8 +28,6 @@ public class Insumo extends Base {
 
     private Boolean esParaElaborar;
 
-    private Boolean activo;
-
     @Enumerated(EnumType.STRING)
     private UnidadMedida unidadMedida;
 

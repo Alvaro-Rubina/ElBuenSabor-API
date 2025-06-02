@@ -13,5 +13,5 @@ import lombok.experimental.SuperBuilder;
 public class RubroProducto extends Base {
 
     private String denominacion;
-    private Boolean activo;
+
 }

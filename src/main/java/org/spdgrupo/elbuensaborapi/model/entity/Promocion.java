@@ -26,8 +26,6 @@ public class Promocion extends Base {
 
     private Double descuento;
 
-    private Boolean activo;
-
     @OneToMany(mappedBy = "promocion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetallePromocion> detallePromociones;
 }

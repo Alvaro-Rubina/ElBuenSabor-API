@@ -16,8 +16,6 @@ public class Empleado extends Base {
 
     private String telefono;
 
-    private Boolean activo;
-
     @OneToOne(cascade = CascadeType.ALL)
     private Usuario usuario;
 
