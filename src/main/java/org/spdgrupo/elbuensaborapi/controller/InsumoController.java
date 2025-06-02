@@ -45,7 +45,7 @@ public class InsumoController extends GenericoControllerImpl<
 
     @PutMapping("/actualizar-estado/{id}")
     public ResponseEntity<String> actualizarEstadoInsumo(@PathVariable Long id) {
-        insumoService.actualizarEstadoInsumo(id);
+        insumoService.updateActivo(id);
         return ResponseEntity.ok("Estado del insumo actualizado correctamente");
     }
 

@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.spdgrupo.elbuensaborapi.model.entity.Base;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
@@ -32,7 +33,7 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
     @Override
     public R findById(ID id){
         E entity = genericoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Entidad con el id " + id + " no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Entidad con el id " + id + " no encontrado"));
         return genericoMapper.toResponseDTO(entity);
     }
 
@@ -52,7 +53,7 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
     @Transactional
     public void delete(ID id) {
         if (!genericoRepository.existsById(id)) {
-            throw new RuntimeException("Entidad con el id " + id + " no encontrada");
+            throw new NotFoundException("Entidad con el id " + id + " no encontrada");
         }
         genericoRepository.deleteById(id);
     }
