@@ -72,7 +72,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
     @Transactional
     public void update(Long id, ProductoDTO productoDTO) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Producto con el id " + id + " no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Producto con el id " + id + " no encontrado"));
 
         if (!producto.getDenominacion().equals(productoDTO.getDenominacion())) {
             producto.setDenominacion(productoDTO.getDenominacion());
@@ -100,7 +100,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
 
         if (!producto.getRubro().getId().equals(productoDTO.getRubroId())) {
             producto.setRubro(rubroProductoRepository.findById(productoDTO.getRubroId())
-                    .orElseThrow(() -> new IllegalArgumentException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado")));
+                    .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado")));
         }
 
         producto.getDetalleProductos().clear();
@@ -118,7 +118,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
     @Transactional
     public void delete(Long id) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto con el id " + id + " no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Producto con el id " + id + " no encontrado"));
         producto.setActivo(false);
         productoRepository.save(producto);
     }

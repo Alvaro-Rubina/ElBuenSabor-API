@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.DetalleProductoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoResponseDTO;
@@ -31,7 +32,7 @@ public class DetalleProductoService extends GenericoServiceImpl<DetalleProducto,
     public DetalleProducto createDetalleProducto(DetalleProductoDTO detalleProductoDTO) {
         DetalleProducto detalleProducto = detalleProductoMapper.toEntity(detalleProductoDTO);
         detalleProducto.setInsumo(insumoRepository.findById(detalleProductoDTO.getInsumoId())
-                .orElseThrow(() -> new IllegalArgumentException("Insumo con el id " + detalleProductoDTO.getInsumoId() + " no encontrado")));
+                .orElseThrow(() -> new NotFoundException("Insumo con el id " + detalleProductoDTO.getInsumoId() + " no encontrado")));
         return detalleProducto;
     }
 
