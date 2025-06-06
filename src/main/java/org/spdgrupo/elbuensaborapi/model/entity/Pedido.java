@@ -46,6 +46,8 @@ public class Pedido extends Base {
     @Enumerated(EnumType.STRING)
     private FormaPago formaPago;
 
+    private String comentario;
+
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;

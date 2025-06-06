@@ -61,7 +61,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
             pedido.setDomicilio(domicilioRepository.findById(pedidoDTO.getDomicilioId())
                     .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado")));
         }
-        
+
         // manejo de detalles
         pedido.setDetallePedidos(new ArrayList<>());
         for (DetallePedidoDTO detalleDTO : pedidoDTO.getDetallePedidos()) {
