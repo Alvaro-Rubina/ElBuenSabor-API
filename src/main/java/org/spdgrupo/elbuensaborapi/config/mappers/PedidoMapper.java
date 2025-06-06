@@ -13,14 +13,14 @@ public interface PedidoMapper extends GenericoMapper<Pedido, PedidoDTO, PedidoRe
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fecha", expression = "java(java.time.LocalDate.now())")
     @Mapping(target = "hora", expression = "java(java.time.LocalTime.now())")
-    @Mapping(target = "codigo", ignore = true)
     @Mapping(target = "estado", constant = "SOLICITADO")
+    @Mapping(target = "codigo", ignore = true)
     @Mapping(target = "horaEstimadaFin", ignore = true)
     @Mapping(target = "totalVenta", ignore = true)
     @Mapping(target = "totalCosto", ignore = true)
     @Mapping(target = "factura", ignore = true)
-    @Mapping(source = "clienteId", target = "cliente.id")
-    @Mapping(source = "domicilioId", target = "domicilio.id")
+    @Mapping(target = "cliente", ignore = true)
+    @Mapping(target = "domicilio", ignore = true)
     @Mapping(target = "detallePedidos", ignore = true)
     Pedido toEntity(PedidoDTO pedidoDTO);
 

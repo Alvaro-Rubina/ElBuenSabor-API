@@ -8,6 +8,7 @@ import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.*;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
+import org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
@@ -49,12 +50,18 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
     public void save(PedidoDTO pedidoDTO) {
         Pedido pedido = pedidoMapper.toEntity(pedidoDTO);
 
-        // Establecer cliente y domicilio
+        // cliente y domicilio
         pedido.setCliente(clienteRepository.findById(pedidoDTO.getClienteId())
                 .orElseThrow(() -> new NotFoundException("Cliente con el id " + pedidoDTO.getClienteId() + " no encontrado")));
-        pedido.setDomicilio(domicilioRepository.findById(pedidoDTO.getDomicilioId())
-                .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado")));
 
+        if (pedidoDTO.getDomicilioId() == null) {
+            if (pedidoDTO.getTipoEnvio() == TipoEnvio.DELIVERY) throw new IllegalArgumentException("El domicilio es requerido para pedidos de tipo DELIVERY");
+
+        } else {
+            pedido.setDomicilio(domicilioRepository.findById(pedidoDTO.getDomicilioId())
+                    .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado")));
+        }
+        
         // manejo de detalles
         pedido.setDetallePedidos(new ArrayList<>());
         for (DetallePedidoDTO detalleDTO : pedidoDTO.getDetallePedidos()) {

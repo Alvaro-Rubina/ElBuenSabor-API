@@ -28,7 +28,6 @@ public class PedidoDTO {
     @Min(value = 1, message = "El campo clienteId no puede ser menor a 1")
     private Long clienteId;
 
-    @NotNull(message = "El campo domicilioId no puede ser nulo")
     @Min(value = 1, message = "El campo domicilioId no puede ser menor a 1")
     private Long domicilioId;
 
