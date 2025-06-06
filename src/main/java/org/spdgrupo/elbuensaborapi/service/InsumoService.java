@@ -1,5 +1,7 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.InsumoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
@@ -18,6 +20,8 @@ import java.util.Objects;
 
 @Service
 public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, InsumoResponseDTO, Long> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(InsumoService.class);
 
     // Dependencias
     @Autowired
@@ -117,6 +121,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         insumo.setStockActual(nuevoStock);
 
         if (nuevoStock < insumo.getStockMinimo()) {
+            LOGGER.warn("El stock actual del insumo " + insumo.getDenominacion() +  " es menor al minimo recomendado");
             insumo.setActivo(false);
         } else {
             insumo.setActivo(true);
