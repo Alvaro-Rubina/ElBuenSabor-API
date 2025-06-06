@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.spdgrupo.elbuensaborapi.model.entity.Base;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
@@ -23,16 +24,16 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
 
     @Override
     @Transactional
-    public E save(D dto){
+    public void save(D dto){
         E entity = genericoMapper.toEntity(dto);
         genericoRepository.save(entity);
-        return entity;
+
     }
 
     @Override
     public R findById(ID id){
         E entity = genericoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Entidad con el id " + id + " no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Entidad con el id " + id + " no encontrado"));
         return genericoMapper.toResponseDTO(entity);
     }
 
@@ -43,7 +44,6 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
                 .collect(Collectors.toList());
     }
 
-    //TODO: hacer bien el metodo update
     @Override
     @Transactional
     public void update(ID id, D dto) {
@@ -53,9 +53,17 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
     @Transactional
     public void delete(ID id) {
         if (!genericoRepository.existsById(id)) {
-            throw new RuntimeException("Entidad con el id " + id + " no encontrada");
+            throw new NotFoundException("Entidad con el id " + id + " no encontrada");
         }
         genericoRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void toggleActivo(ID id) {
+        E entity = genericoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Entidad con el id " + id + " no encontrada"));
+        entity.setActivo(!entity.getActivo());
+        genericoRepository.save(entity);
     }
 
 }

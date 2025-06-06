@@ -25,8 +25,6 @@ public class DetalleDomicilioService extends GenericoServiceImpl<DetalleDomicili
     @Autowired
     private ClienteRepository clienteRepository;
     @Autowired
-    private DomicilioService domicilioService;
-    @Autowired
     private DetalleDomicilioMapper detalleDomicilioMapper;
 
     public DetalleDomicilioService(GenericoRepository<DetalleDomicilio, Long> genericoRepository, GenericoMapper<DetalleDomicilio, DetalleDomicilioDTO, DetalleDomicilioResponseDTO> genericoMapper) {
@@ -35,14 +33,13 @@ public class DetalleDomicilioService extends GenericoServiceImpl<DetalleDomicili
 
     @Override
     @Transactional
-    public DetalleDomicilio save(DetalleDomicilioDTO detalleDomicilioDTO) {
-        DetalleDomicilio detalleDomicilio = DetalleDomicilio.builder()
-                .cliente(clienteRepository.findById(detalleDomicilioDTO.getClienteId())
-                        .orElseThrow(() -> new NotFoundException("Cliente con el id " + detalleDomicilioDTO.getClienteId() + " no encontrado")))
-                .domicilio(domicilioService.save(detalleDomicilioDTO.getDomicilio()))
-                .build();
-        return (detalleDomicilioRepository.save(detalleDomicilio));
+    public void save(DetalleDomicilioDTO detalleDomicilioDTO) {
+        DetalleDomicilio detalleDomicilio = detalleDomicilioMapper.toEntity(detalleDomicilioDTO);
+        detalleDomicilio.setCliente(clienteRepository.findById(detalleDomicilioDTO.getClienteId())
+                .orElseThrow(() -> new NotFoundException("Cliente con el id " + detalleDomicilioDTO.getClienteId() + " no encontrado")));
+        detalleDomicilioRepository.save(detalleDomicilio);
     }
+
     // TODO: Ver si este metodo se queda o hacer uno que cumpla la misma funcion en ClienteService
     public List<DetalleDomicilioResponseDTO> getDetallesDomicilioByClienteId(Long clienteId) {
         return detalleDomicilioRepository.findByClienteId(clienteId).stream()

@@ -16,9 +16,8 @@ public class DetalleDomicilio extends Base {
     @JoinColumn(name="cliente_id")
     private Cliente cliente;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name="domicilio_id")
     private Domicilio domicilio;
-
 
 }

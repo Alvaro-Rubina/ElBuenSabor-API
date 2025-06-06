@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.DomicilioMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.domicilio.DomicilioResponseDTO;
@@ -28,7 +29,7 @@ public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDT
     @Transactional
     public void delete(Long id){
         Domicilio domicilio = domicilioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Domicilio con el id " + id + " no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Domicilio con el id " + id + " no encontrado"));
         domicilio.setActivo(false);
         domicilioRepository.save(domicilio);
     }
@@ -37,7 +38,7 @@ public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDT
     @Transactional
     public void update(Long id, DomicilioDTO domicilioDTO) {
         Domicilio domicilio = domicilioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Domicilio no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Domicilio no encontrado"));
 
         // Actualizamos todos los campos
         domicilio.setCalle(domicilioDTO.getCalle());

@@ -16,6 +16,7 @@ public class DetalleDomicilioDTO {
     @Min(value = 1, message = "El campo clienteId no puede ser menor a 1")
     private Long clienteId;
 
+    @NotNull(message = "El campo domicilio no puede ser nulo")
     private DomicilioDTO domicilio;
 
 }

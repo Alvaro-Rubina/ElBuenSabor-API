@@ -27,8 +27,7 @@ public class DetallePedidoService extends GenericoServiceImpl<DetallePedido, Det
     public DetallePedidoService(GenericoRepository<DetallePedido, Long> genericoRepository, GenericoMapper<DetallePedido, DetallePedidoDTO, DetallePedidoResponseDTO> genericoMapper) {
         super(genericoRepository, genericoMapper);
     }
-
-    // MAPPERS
+    
     @Transactional
     public DetallePedido createDetallePedido(DetallePedidoDTO detallePedidoDTO) {
         validarDetallePedido(detallePedidoDTO);

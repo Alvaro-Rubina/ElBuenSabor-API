@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.UsuarioMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioResponseDTO;
@@ -23,16 +24,9 @@ public class UsuarioService extends GenericoServiceImpl<Usuario, UsuarioDTO, Usu
         super(genericoRepository, genericoMapper);
     }
 
-    @Override
-    @Transactional
-    public Usuario save(UsuarioDTO usuarioDTO){
-        Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
-        return usuarioRepository.save(usuario);
-    }
-
     public UsuarioResponseDTO getUsuarioByEmail(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario con el email " + email + " no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuario con el email " + email + " no encontrado"));
         return usuarioMapper.toResponseDTO(usuario);
     }
 
@@ -40,7 +34,7 @@ public class UsuarioService extends GenericoServiceImpl<Usuario, UsuarioDTO, Usu
     @Transactional
     public void update(Long id, UsuarioDTO usuarioDTO) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario con el id " + id + " no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuario con el id " + id + " no encontrado"));
 
         usuario.setEmail(usuarioDTO.getEmail());
         usuario.setContrasenia(usuarioDTO.getContrasenia());

@@ -11,8 +11,8 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 public interface DetallePedidoMapper extends GenericoMapper<DetallePedido, DetallePedidoDTO, DetallePedidoResponseDTO> {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "productoId", target = "producto.id")
-    @Mapping(source = "insumoId", target = "insumo.id")
+    @Mapping(target = "producto", ignore = true)
+    @Mapping(target = "insumo", ignore = true)
     @Mapping(target = "subTotal", ignore = true)
     @Mapping(target = "subTotalCosto", ignore = true)
     DetallePedido toEntity(DetallePedidoDTO detallePedidoDTO);

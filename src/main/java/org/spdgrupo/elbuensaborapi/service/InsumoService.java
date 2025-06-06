@@ -1,5 +1,7 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.InsumoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
@@ -19,6 +21,8 @@ import java.util.Objects;
 @Service
 public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, InsumoResponseDTO, Long> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(InsumoService.class);
+
     // Dependencias
     @Autowired
     private InsumoRepository insumoRepository;
@@ -33,11 +37,11 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
 
     @Override
     @Transactional
-    public Insumo save(InsumoDTO insumoDTO) {
+    public void save(InsumoDTO insumoDTO) {
         Insumo insumo = insumoMapper.toEntity(insumoDTO);
         insumo.setRubro(rubroInsumoRepository.findById(insumoDTO.getRubroId())
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + insumoDTO.getRubroId() + " no encontrado")));
-        return(insumoRepository.save(insumo));
+        insumoRepository.save(insumo);
     }
 
     public List<InsumoResponseDTO> getInsumosByDenominacion(String denominacion) {
@@ -107,18 +111,6 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     }
 
     @Transactional
-    public void actualizarEstadoInsumo(Long id) {
-        Insumo insumo = insumoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
-        if (insumo.getActivo()) {
-            insumo.setActivo(false);
-        } else {
-            insumo.setActivo(true);
-        }
-        insumoRepository.save(insumo);
-    }
-
-    @Transactional
     public void actualizarStock(Long id, Double cantidad) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
@@ -129,6 +121,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         insumo.setStockActual(nuevoStock);
 
         if (nuevoStock < insumo.getStockMinimo()) {
+            LOGGER.warn("El stock actual del insumo " + insumo.getDenominacion() +  " es menor al minimo recomendado");
             insumo.setActivo(false);
         } else {
             insumo.setActivo(true);

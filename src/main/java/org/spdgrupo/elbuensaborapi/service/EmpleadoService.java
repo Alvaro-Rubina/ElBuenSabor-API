@@ -5,9 +5,7 @@ import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.EmpleadoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.entity.Domicilio;
 import org.spdgrupo.elbuensaborapi.model.entity.Empleado;
-import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
@@ -25,8 +23,6 @@ public class EmpleadoService extends GenericoServiceImpl<Empleado, EmpleadoDTO, 
     @Autowired
     private UsuarioService usuarioService;
     @Autowired
-    private DomicilioService domicilioService;
-    @Autowired
     private EmpleadoMapper empleadoMapper;
 
     public EmpleadoService(GenericoRepository<Empleado, Long> genericoRepository, GenericoMapper<Empleado, EmpleadoDTO, EmpleadoResponseDTO> genericoMapper) {
@@ -35,19 +31,12 @@ public class EmpleadoService extends GenericoServiceImpl<Empleado, EmpleadoDTO, 
 
     @Override
     @Transactional
-    public Empleado save(EmpleadoDTO empleadoDTO) {
+    public void save(EmpleadoDTO empleadoDTO) {
         if (empleadoDTO.getUsuario().getRol() == Rol.CLIENTE) {
             throw new InvalidRolException("No se puede asignar el rol CLIENTE a un empleado");
         }
-
-        Usuario usuario = usuarioService.save(empleadoDTO.getUsuario());
-        Domicilio domicilio = domicilioService.save(empleadoDTO.getDomicilio());
-
         Empleado empleado = empleadoMapper.toEntity(empleadoDTO);
-        empleado.setUsuario(usuario);
-        empleado.setDomicilio(domicilio);
-
-        return (empleadoRepository.save(empleado));
+        empleadoRepository.save(empleado);
     }
 
     @Override
@@ -64,7 +53,7 @@ public class EmpleadoService extends GenericoServiceImpl<Empleado, EmpleadoDTO, 
         empleado.setTelefono(empleadoDTO.getTelefono());
 
         usuarioService.update(empleado.getUsuario().getId(), empleadoDTO.getUsuario());
-        domicilioService.update(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());
+        /*domicilioService.update(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());*/
 
         empleadoRepository.save(empleado);
     }

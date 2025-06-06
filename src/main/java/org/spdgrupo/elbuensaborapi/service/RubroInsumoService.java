@@ -28,7 +28,7 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
 
     @Override
     @Transactional
-    public RubroInsumo save(RubroInsumoDTO rubroInsumoDTO) {
+    public void save(RubroInsumoDTO rubroInsumoDTO) {
         RubroInsumo rubroInsumo = rubroInsumoMapper.toEntity(rubroInsumoDTO);
 
         if (rubroInsumoDTO.getRubroPadreId() != null) {
@@ -37,7 +37,7 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
             rubroInsumo.setRubroPadre(rubroPadre);
         }
 
-        return (rubroInsumoRepository.save(rubroInsumo));
+        rubroInsumoRepository.save(rubroInsumo);
     }
 
     @Override

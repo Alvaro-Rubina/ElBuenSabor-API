@@ -5,7 +5,6 @@ import org.spdgrupo.elbuensaborapi.config.mappers.ClienteMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
-import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
@@ -31,15 +30,11 @@ public class ClienteService extends GenericoServiceImpl<Cliente, ClienteDTO, Cli
 
     @Override
     @Transactional
-    public Cliente save(ClienteDTO clienteDTO) {
-        clienteDTO.getUsuario().setRol(Rol.CLIENTE);
-        Usuario usuario = usuarioService.save(clienteDTO.getUsuario());
-
+    public void save(ClienteDTO clienteDTO) {
         Cliente cliente = clienteMapper.toEntity(clienteDTO);
+        cliente.getUsuario().setRol(Rol.CLIENTE);
 
-        cliente.setUsuario(usuario);
-
-        return (clienteRepository.save(cliente));
+        clienteRepository.save(cliente);
     }
 
     @Override

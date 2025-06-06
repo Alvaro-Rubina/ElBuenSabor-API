@@ -43,12 +43,6 @@ public class InsumoController extends GenericoControllerImpl<
         return ResponseEntity.ok("Insumo actualizado correctamente");
     }
 
-    @PutMapping("/actualizar-estado/{id}")
-    public ResponseEntity<String> actualizarEstadoInsumo(@PathVariable Long id) {
-        insumoService.actualizarEstadoInsumo(id);
-        return ResponseEntity.ok("Estado del insumo actualizado correctamente");
-    }
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteInsumo(@PathVariable Long id) {
         insumoService.delete(id);
