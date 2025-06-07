@@ -79,7 +79,6 @@ mvn spring-boot:run
 
 ---
 
-<!-- Si más adelante tienes Swagger disponible, puedes agregar:
-<h2>📖 Documentación</h2>
-Accede a la documentación Swagger (próximamente)
--->
+<h2>🎬 Próximamente</h2>
+
+Se agregarán demostraciones del funcionamiento del proyecto y ejemplos de uso en futuras actualizaciones.
