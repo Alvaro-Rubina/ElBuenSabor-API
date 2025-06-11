@@ -35,7 +35,7 @@ public class DomicilioController extends GenericoControllerImpl<
     }
 
 
-    @PutMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteDomicilio(@PathVariable Long id) {
         domicilioService.delete(id);
         return ResponseEntity.ok("Domicilio eliminado correctamente");

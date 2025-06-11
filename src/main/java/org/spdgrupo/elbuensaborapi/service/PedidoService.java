@@ -51,8 +51,11 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         Pedido pedido = pedidoMapper.toEntity(pedidoDTO);
 
         // cliente y domicilio
-        pedido.setCliente(clienteRepository.findById(pedidoDTO.getClienteId())
-                .orElseThrow(() -> new NotFoundException("Cliente con el id " + pedidoDTO.getClienteId() + " no encontrado")));
+        if (pedidoDTO.getTipoEnvio() == TipoEnvio.DELIVERY) {
+            if (pedidoDTO.getClienteId() == null) throw new NotFoundException("El id del cliente es obligatorio para pedidos de tipo Delivery");
+            pedido.setCliente(clienteRepository.findById(pedidoDTO.getClienteId())
+                    .orElseThrow(() -> new NotFoundException("Cliente con el id " + pedidoDTO.getClienteId() + " no encontrado")));
+        }
 
         if (pedidoDTO.getDomicilioId() == null) {
             if (pedidoDTO.getTipoEnvio() == TipoEnvio.DELIVERY) throw new IllegalArgumentException("El domicilio es requerido para pedidos de tipo DELIVERY");

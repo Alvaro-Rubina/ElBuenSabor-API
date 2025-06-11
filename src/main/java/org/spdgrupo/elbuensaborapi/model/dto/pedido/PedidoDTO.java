@@ -26,7 +26,7 @@ public class PedidoDTO {
 
     private String comentario = "Sin comentarios";
 
-    @NotNull(message = "El campo clienteId no puede ser nulo")
+    // no es obligatorio porque para pedidos realizados DESDE el local no se necesita
     @Min(value = 1, message = "El campo clienteId no puede ser menor a 1")
     private Long clienteId;
 
