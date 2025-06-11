@@ -18,8 +18,8 @@ public class ClienteDTO {
     @NotBlank (message = "El campo telefono no puede estar vacío")
     private String telefono;
 
-    @NotNull(message = "El campo usuario no puede ser nulo")
     private Boolean activo;
 
+    @NotNull(message = "El campo usuario no puede ser nulo")
     private UsuarioDTO usuario;
 }
