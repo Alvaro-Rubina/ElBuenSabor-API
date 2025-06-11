@@ -1,6 +1,8 @@
 package org.spdgrupo.elbuensaborapi.config.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.mercadopago.exceptions.MPApiException;
+import com.mercadopago.exceptions.MPException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -81,6 +83,27 @@ public class GlobalExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .build();
 
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MPException.class)
+    public ResponseEntity<ErrorResponse> handleMPException(MPException ex) {
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                "MP_ERROR",
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+    @ExceptionHandler(MPApiException.class)
+    public ResponseEntity<ErrorResponse> handleMPApiException(MPApiException ex) {
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                "MP_API_ERROR",
+                LocalDateTime.now()
+        );
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }
