@@ -9,12 +9,10 @@ import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.preference.Preference;
 import jakarta.annotation.PostConstruct;
-import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class MercadoPagoService {
+public class    MercadoPagoService {
 
     @Autowired
     private ProductoService productoService;
