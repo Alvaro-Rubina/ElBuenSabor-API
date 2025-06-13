@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.Serializable;
 import java.util.List;
 
-
-
 public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Serializable,
         S extends GenericoServiceImpl<E, D, R, ID>> implements GenericoController<E, D, R, ID> {
 
