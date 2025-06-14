@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.controller;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Pedido;
+import org.spdgrupo.elbuensaborapi.model.enums.Estado;
 import org.spdgrupo.elbuensaborapi.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,5 +40,14 @@ public class PedidoController extends GenericoControllerImpl<
         pedidoService.agregarTiempoAlPedido(pedidoId, minutos);
         return ResponseEntity.ok("Tiempo agregado al pedido correctamente");
     }
+
+    @PutMapping("/actualizar-estado/{pedidoId}")
+    public ResponseEntity<String> actualizarEstadoPedido(@PathVariable Long pedidoId,
+                                                         @RequestParam Estado estado) {
+        pedidoService.actualizarEstadoDelPedido(pedidoId, estado);
+        return ResponseEntity.ok("Estado del pedido actualizado correctamente");
+    }
+
+
 
 }
