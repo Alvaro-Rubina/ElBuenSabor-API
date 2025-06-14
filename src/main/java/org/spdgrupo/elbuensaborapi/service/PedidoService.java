@@ -190,4 +190,13 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
         return "PED-" + anioStr + mesStr + "-" + numeroStr;
     }
+    @Transactional
+    public PedidoResponseDTO entregarPedido(Long pedidoId) {
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
+        pedido.setEstado(Estado.ENTREGADO);
+        pedidoRepository.save(pedido);
+        return pedidoMapper.toResponseDTO(pedido);
+    }
+
 }
