@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .cors(withDefaults()) //por defecto spring va a buscar un bean con el nombre "corsConfigurationSource".
                 .authorizeHttpRequests(authorizeRequests ->
                                 authorizeRequests // TODO: Esto hay que ajustarlo
-                                        .requestMatchers("/api/public").permitAll()
+                                        /*.requestMatchers("/api/public").permitAll()
                                         .requestMatchers("/api/admin/users/getUserById").authenticated()
                                         .requestMatchers("/api/admin/users/createUserClient").authenticated()
                                         .requestMatchers("/api/admin/roles/getRoleByName").authenticated()
@@ -54,6 +54,8 @@ public class SecurityConfig {
                                         .requestMatchers("/api/admin/**").hasAuthority("Administrador")
 
                                         .anyRequest().authenticated()
+*/
+                                        .anyRequest().permitAll()
 
 
                         //.anyRequest().permitAll()
