@@ -1,45 +1,60 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import com.auth0.client.mgmt.ManagementAPI;
+import com.auth0.exception.Auth0Exception;
+import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.ClienteMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
-import org.spdgrupo.elbuensaborapi.model.enums.Rol;
-import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
-import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
+import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
-public class ClienteService extends GenericoServiceImpl<Cliente, ClienteDTO, ClienteResponseDTO, Long> {
+@RequiredArgsConstructor
+public class ClienteService {
 
     // Dependencias
-    @Autowired
-    private ClienteRepository clienteRepository;
-    @Autowired
-    private UsuarioService usuarioService;
-    @Autowired
-    private ClienteMapper clienteMapper;
+    private final ClienteRepository clienteRepository;
+    private final UsuarioService usuarioService;
+    private final ClienteMapper clienteMapper;
+    private final ManagementAPI managementAPI;
 
-    public ClienteService(GenericoRepository<Cliente, Long> genericoRepository, GenericoMapper<Cliente, ClienteDTO, ClienteResponseDTO> genericoMapper) {
-        super(genericoRepository, genericoMapper);
-    }
-
-    @Override
     @Transactional
-    public void save(ClienteDTO clienteDTO) {
+    public void save(ClienteDTO clienteDTO) throws Auth0Exception {
+        clienteDTO.getUsuario().setNombreCompleto(clienteDTO.getNombreCompleto());
+
+        Usuario usuario = usuarioService.save(clienteDTO.getUsuario());
         Cliente cliente = clienteMapper.toEntity(clienteDTO);
-        cliente.getUsuario().setRol(Rol.CLIENTE);
+        cliente.setUsuario(usuario);
 
-        clienteRepository.save(cliente);
+        try {
+            clienteRepository.save(cliente);
+        } catch (Exception e) {
+            managementAPI.users().delete(usuario.getAuth0Id()).execute();
+            throw e;
+        }
     }
 
-    @Override
+    public ClienteResponseDTO findById(Long id) {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
+        return clienteMapper.toResponseDTO(cliente);
+    }
+
+    public List<ClienteResponseDTO> findAll() {
+        return clienteRepository.findAll().stream()
+                .map(clienteMapper::toResponseDTO)
+                .toList();
+    }
+
     @Transactional
-    public void update(Long id, ClienteDTO clienteDTO) {
+    public void update(Long id, ClienteDTO clienteDTO) throws Auth0Exception {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
 
@@ -47,18 +62,32 @@ public class ClienteService extends GenericoServiceImpl<Cliente, ClienteDTO, Cli
         cliente.setTelefono(clienteDTO.getTelefono());
         cliente.setActivo(clienteDTO.getActivo());
 
-        clienteDTO.getUsuario().setRol(Rol.CLIENTE);
-        usuarioService.update(cliente.getUsuario().getId(), clienteDTO.getUsuario());
-
+        usuarioService.update(cliente.getUsuario().getAuth0Id(), clienteDTO.getUsuario());
         clienteRepository.save(cliente);
     }
 
-    @Override
     @Transactional
     public void delete(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el id" + id  + " no encontrado"));
         cliente.setActivo(false);
+        clienteRepository.save(cliente);
+    }
+
+    @Transactional
+    public void deletePhysically(Long id) throws Auth0Exception {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
+        usuarioService.deletePhysicallyByAuth0Id(cliente.getUsuario().getAuth0Id());
+        clienteRepository.delete(cliente);
+    }
+
+    @Transactional
+    public void toggleActivo(Long id) {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
+        cliente.setActivo(!cliente.getActivo());
+        usuarioService.toggleActivo(cliente.getUsuario().getId());
         clienteRepository.save(cliente);
     }
 }
