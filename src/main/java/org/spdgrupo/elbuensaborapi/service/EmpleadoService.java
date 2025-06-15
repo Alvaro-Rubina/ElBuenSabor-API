@@ -67,6 +67,12 @@ public class EmpleadoService{
         return empleadoMapper.toResponseDTO(empleado);
     }
 
+    public EmpleadoResponseDTO findByEmail(String email) {
+        Empleado empleado = empleadoRepository.findByUsuarioEmail(email)
+                .orElseThrow(() -> new NotFoundException("Empleado con el email " + email + " no encontrado"));
+        return empleadoMapper.toResponseDTO(empleado);
+    }
+
     public List<EmpleadoResponseDTO> findAll() {
         return empleadoRepository.findAll().stream()
                 .map(empleadoMapper::toResponseDTO)

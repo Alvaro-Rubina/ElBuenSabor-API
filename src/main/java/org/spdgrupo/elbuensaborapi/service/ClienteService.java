@@ -47,6 +47,12 @@ public class ClienteService {
         return clienteMapper.toResponseDTO(cliente);
     }
 
+    public ClienteResponseDTO findByEmail(String email) {
+        Cliente cliente = clienteRepository.findByUsuarioEmail(email)
+                .orElseThrow(() -> new NotFoundException("Cliente con el email " + email + " no encontrado"));
+        return clienteMapper.toResponseDTO(cliente);
+    }
+
     public List<ClienteResponseDTO> findAll() {
         return clienteRepository.findAll().stream()
                 .map(clienteMapper::toResponseDTO)

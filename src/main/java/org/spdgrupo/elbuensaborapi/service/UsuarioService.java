@@ -73,6 +73,12 @@ public class UsuarioService{
         return usuarioMapper.toResponseDTO(usuario);
     }
 
+    public List<UsuarioResponseDTO> findAll() {
+        return usuarioRepository.findAll().stream()
+                .map(usuarioMapper::toResponseDTO)
+                .toList();
+    }
+
 
     @Transactional
     public void update(String auth0Id, UsuarioDTO usuarioDTO) throws Auth0Exception {
