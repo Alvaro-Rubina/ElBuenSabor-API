@@ -18,7 +18,7 @@ public class Cliente extends Base {
 
     private String telefono;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private Usuario usuario;
 
     @OneToMany(mappedBy = "cliente")

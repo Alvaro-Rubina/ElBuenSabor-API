@@ -1,11 +1,10 @@
 package org.spdgrupo.elbuensaborapi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import lombok.*;
-import org.spdgrupo.elbuensaborapi.model.entity.auth0.User;
+import lombok.experimental.SuperBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class Rol extends Base {
 
     private String nombre;
@@ -24,5 +23,5 @@ public class Rol extends Base {
 
     @ManyToMany(mappedBy = "roles")
     @JsonIgnore
-    private Set<User> usuarios = new HashSet<>();
+    private Set<Usuario> usuarios = new HashSet<>();
 }
