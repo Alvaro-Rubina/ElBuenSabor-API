@@ -72,7 +72,7 @@ mvn spring-boot:run
 - ✅ CRUD de entidades principales
 - ✅ Integración Mercado Pago Checkout Pro
 - ✅ Autenticación con Auth0
-- ⏳ Implementación de WebSockets
+- ✅ Implementación de WebSockets
 - ⏳ Cache con Redis
 - ⏳ Documentación con Swagger
 - ⏳ Dockerización del proyecto
