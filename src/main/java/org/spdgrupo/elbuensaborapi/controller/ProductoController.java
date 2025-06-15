@@ -28,10 +28,15 @@ public class ProductoController extends GenericoControllerImpl<
         this.productoService = productoService;
     }
 
+    @GetMapping("/denominacion/{denominacion}")
+    public ResponseEntity<ProductoResponseDTO> findByDenominacion(@PathVariable String denominacion) {
+        ProductoResponseDTO producto = productoService.findByDenominacion(denominacion);
+        return ResponseEntity.ok(producto);
+    }
+
     @GetMapping("/buscar")
-    @ResponseBody
-    public ResponseEntity<List<ProductoResponseDTO>> getProductosByDenominacion(@RequestParam String denominacion) {
-        return ResponseEntity.ok(productoService.getProductosByDenominacion(denominacion));
+    public ResponseEntity<List<ProductoResponseDTO>> findByDenominacionContaining(@RequestParam String denominacion) {
+        return ResponseEntity.ok(productoService.findByDenominacionContaining(denominacion));
     }
 
     @PutMapping("/update/{id}")
