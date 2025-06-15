@@ -25,26 +25,26 @@ public class RolController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RolResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<RolResponseDTO> findById(@PathVariable Long id) {
         RolResponseDTO rol = rolService.findById(id);
         return ResponseEntity.ok(rol);
     }
 
     @GetMapping("/auth0/{auth0Id}")
-    public ResponseEntity<RolResponseDTO> getByAuth0Id(@PathVariable String auth0Id) {
+    public ResponseEntity<RolResponseDTO> findByAuth0Id(@PathVariable String auth0Id) {
         RolResponseDTO rol = rolService.findByAuth0RolId(auth0Id);
         return ResponseEntity.ok(rol);
     }
 
     @GetMapping("/nombre/{nombre}")
-    public ResponseEntity<RolResponseDTO> getByNombre(@PathVariable String nombre) {
+    public ResponseEntity<RolResponseDTO> findByNombre(@PathVariable String nombre) {
         RolResponseDTO rol = rolService.findByNombre(nombre);
         return ResponseEntity.ok(rol);
     }
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<RolResponseDTO>> getAll() {
+    public ResponseEntity<List<RolResponseDTO>> findAll() {
         List<RolResponseDTO> roles = rolService.findAll();
         return ResponseEntity.ok(roles);
     }
