@@ -6,8 +6,8 @@ import org.spdgrupo.elbuensaborapi.model.entity.Pedido;
 import org.spdgrupo.elbuensaborapi.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/pedidos")
@@ -33,7 +33,9 @@ public class PedidoController extends GenericoControllerImpl<
         PedidoResponseDTO pedidoDTO = pedidoService.getPedidoByCodigo(codigo);
         return ResponseEntity.ok(pedidoDTO);
     }
+
     @PutMapping("/agregar-min/{pedidoId}")
+    // El url quedaria algo asi: http//localhost:8080/agregarMin/1?minutos=10
     public ResponseEntity<String> agregarTiempoAlPedido(@PathVariable Long pedidoId,
                                                         @RequestParam Long minutos) {
         pedidoService.agregarTiempoAlPedido(pedidoId, minutos);
@@ -42,6 +44,15 @@ public class PedidoController extends GenericoControllerImpl<
         return ResponseEntity.ok("Tiempo agregado al pedido correctamente");
     }
 
+    @PutMapping("/actualizar-estado/{pedidoId}")
+    public ResponseEntity<String> actualizarEstadoPedido(@PathVariable Long pedidoId,
+                                                         @RequestParam Estado estado) {
+        pedidoService.actualizarEstadoDelPedido(pedidoId, estado);
+        return ResponseEntity.ok("Estado del pedido actualizado correctamente");
+    }
+
+
+
     @PutMapping("/{pedidoId}/entregar")
     public ResponseEntity<PedidoResponseDTO> entregarPedido(@PathVariable Long pedidoId) {
         PedidoResponseDTO pedidoActualizado = pedidoService.entregarPedido(pedidoId);
@@ -49,6 +60,3 @@ public class PedidoController extends GenericoControllerImpl<
         return ResponseEntity.ok(pedidoActualizado);
     }
 }
-
-
-
