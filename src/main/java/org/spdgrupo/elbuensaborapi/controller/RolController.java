@@ -24,7 +24,7 @@ public class RolController {
         return ResponseEntity.ok("Registro exitoso");
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<RolResponseDTO> getById(@PathVariable Long id) {
         RolResponseDTO rol = rolService.findById(id);
         return ResponseEntity.ok(rol);
