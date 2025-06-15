@@ -15,6 +15,7 @@ import org.spdgrupo.elbuensaborapi.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,8 @@ public class UsuarioService{
 
     @Transactional
     public Usuario save (UsuarioDTO usuarioDTO) throws Auth0Exception {
+        Set<Rol> roles = assignRoles(usuarioDTO.getRoles());
+
         Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
 
         // auth0
@@ -43,10 +46,11 @@ public class UsuarioService{
 
         User createdUser = managementAPI.users().create(usuarioAuth0).execute();
         usuario.setAuth0Id(createdUser.getId());
-        usuario.setRoles(assignRoles(usuario.getAuth0Id(), usuarioDTO.getRoles()));
+        usuario.setRoles(roles);
 
         try {
             usuarioRepository.save(usuario);
+            managementAPI.users().addRoles(usuario.getAuth0Id(), usuarioDTO.getRoles()).execute();
         } catch (Exception e) {
             // Si falla en la BD, elimino el rol en Auth0
             managementAPI.users().delete(usuarioAuth0.getId()).execute();
@@ -106,7 +110,10 @@ public class UsuarioService{
         Set<String> rolesNuevos = new HashSet<>(usuarioDTO.getRoles());
 
         if (!rolesActuales.equals(rolesNuevos)) {
-            usuario.setRoles(assignRoles(usuario.getAuth0Id(), usuarioDTO.getRoles()));
+            usuario.setRoles(assignRoles(usuarioDTO.getRoles()));
+            // Actualizar roles en Auth0
+            managementAPI.users().removeRoles(auth0Id, new ArrayList<>(rolesActuales)).execute();
+            managementAPI.users().addRoles(auth0Id, usuarioDTO.getRoles()).execute();
             changed = true;
         }
 
@@ -114,8 +121,6 @@ public class UsuarioService{
             managementAPI.users().update(auth0Id, usuarioAuth0).execute();
             usuarioRepository.save(usuario);
         }
-
-        usuarioRepository.save(usuario);
     }
 
     @Transactional
@@ -150,16 +155,13 @@ public class UsuarioService{
         usuarioRepository.save(usuario);
     }
 
-    // -----------------
-    private Set<Rol> assignRoles(String auth0Id, List<String> auth0RolIds) throws Auth0Exception {
-        Set<Rol> roles = new HashSet<>();
-
-        for (String rolId : auth0RolIds) {
-            Rol rol = rolRepository.findByAuth0RolId(rolId)
-                    .orElseThrow(() -> new NotFoundException("Rol con el auth0Id " + rolId + " no encontrado"));
-            roles.add(rol);
-        }
-        managementAPI.users().addRoles(auth0Id, auth0RolIds).execute();
-        return roles;
-    }
+   private Set<Rol> assignRoles(List<String> auth0RolIds) {
+       Set<Rol> roles = new HashSet<>();
+       for (String rolId : auth0RolIds) {
+           Rol rol = rolRepository.findByAuth0RolId(rolId)
+                   .orElseThrow(() -> new NotFoundException("Rol con el auth0Id " + rolId + " no encontrado"));
+           roles.add(rol);
+       }
+       return roles;
+   }
 }
