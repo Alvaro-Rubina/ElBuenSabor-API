@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface RolRepository extends GenericoRepository<Rol, Long> {
     Optional<Rol> findByAuth0RolId(String name);
     Optional<Rol> findByNombre(String name);
+    boolean existsByAuth0RolId(String auth0RolId);
 
 }
