@@ -1,9 +1,9 @@
 package org.spdgrupo.elbuensaborapi.model.dto.usuario;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.spdgrupo.elbuensaborapi.model.enums.Rol;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -12,13 +12,19 @@ import org.spdgrupo.elbuensaborapi.model.enums.Rol;
 @Builder
 public class UsuarioDTO {
 
-    @NotBlank(message = "El campo email no puede estar vacio")
+    // TODO: Esto tendría que ser opcional? por lo de registrarse con google
+    /*@NotBlank(message = "El campo email no puede estar vacio")*/
     private String email;
 
-    @NotBlank(message = "El campo contraseña no puede estar vacio")
+    private String nombreCompleto;
+
+    // TODO: Esto tendría que ser opcional? por lo de registrarse con google
+    /*@NotBlank(message = "El campo contraseña no puede estar vacio")*/
     private String contrasenia;
 
-    @NotNull(message = "el campo rol no puede estar vacio")
-    private Rol rol;
+    // Esto no se si tiene que ir
+    private String connection;
+
+    private List<String> roles;
 }
 
