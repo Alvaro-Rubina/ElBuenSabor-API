@@ -6,6 +6,7 @@ import org.spdgrupo.elbuensaborapi.config.mappers.PedidoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.webhook_dtos.PedidoEstadoDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.*;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
 import org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio;
@@ -103,20 +104,24 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
     }
 
     @Transactional
-    public void actualizarEstadoDelPedido(Long pedidoId, Estado estado) {
+    public PedidoResponseDTO actualizarEstadoDelPedido(Long pedidoId, Estado estado) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
 
         if (estado != null) {
             pedido.setEstado(estado);
 
-            if (estado == Estado.SOLICITADO) {
+            // NOTE: Esto creo que tendría que estar en el metodo savePedido
+            /*if (estado == Estado.SOLICITADO) {
                 pedido.setFactura(facturaService.createFacturaFromPedido(pedido));
-            }
+            }*/
         }
 
         pedidoRepository.save(pedido);
+        return pedidoMapper.toResponseDTO(pedido);
     }
+
+    // TODO: Agragar metodo para EMITIR UNA FACTURA
 
     public void agregarTiempoAlPedido(Long pedidoId, Long minutos) {
         if (minutos == null || minutos < 0) {
@@ -190,13 +195,4 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
         return "PED-" + anioStr + mesStr + "-" + numeroStr;
     }
-    @Transactional
-    public PedidoResponseDTO entregarPedido(Long pedidoId) {
-        Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
-        pedido.setEstado(Estado.ENTREGADO);
-        pedidoRepository.save(pedido);
-        return pedidoMapper.toResponseDTO(pedido);
-    }
-
 }
