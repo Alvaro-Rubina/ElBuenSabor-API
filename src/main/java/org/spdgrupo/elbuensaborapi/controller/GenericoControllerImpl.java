@@ -28,14 +28,14 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<R> getById(@PathVariable ID id) {
+    public ResponseEntity<R> findById(@PathVariable ID id) {
         R response = servicio.findById(id);
         return ResponseEntity.ok(response);
     }
 
     @Override
     @GetMapping
-    public ResponseEntity<List<R>> getAll() {
+    public ResponseEntity<List<R>> findAll() {
         return ResponseEntity.ok(servicio.findAll());
     }
 
