@@ -6,7 +6,6 @@ import org.spdgrupo.elbuensaborapi.config.mappers.PedidoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.webhook_dtos.PedidoEstadoDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.*;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
 import org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio;
@@ -123,7 +122,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
     // TODO: Agragar metodo para EMITIR UNA FACTURA
 
-    public void agregarTiempoAlPedido(Long pedidoId, Long minutos) {
+    public PedidoResponseDTO agregarTiempoAlPedido(Long pedidoId, Long minutos) {
         if (minutos == null || minutos < 0) {
             throw new IllegalArgumentException("El tiempo adicional debe ser un valor positivo.");
         }
@@ -133,6 +132,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
         pedido.setHoraEstimadaFin(pedido.getHoraEstimadaFin().plusMinutes(minutos));
         pedidoRepository.save(pedido);
+        return pedidoMapper.toResponseDTO(pedido);
     }
 
     // Metodos adicionales

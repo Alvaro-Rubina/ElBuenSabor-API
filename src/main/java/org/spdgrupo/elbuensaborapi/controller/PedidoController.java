@@ -40,15 +40,16 @@ public class PedidoController extends GenericoControllerImpl<
     // El url quedaria algo asi: http//localhost:8080/agregarMin/1?minutos=10
     public ResponseEntity<String> agregarTiempoAlPedido(@PathVariable Long pedidoId,
                                                         @RequestParam Long minutos) {
-        pedidoService.agregarTiempoAlPedido(pedidoId, minutos);
-        PedidoResponseDTO pedidoActualizado = pedidoService.findById(pedidoId);
-        messagingTemplate.convertAndSend("/topic/pedidos", pedidoActualizado);
+
+        PedidoResponseDTO pedido = pedidoService.agregarTiempoAlPedido(pedidoId, minutos);
+        messagingTemplate.convertAndSend("/topic/pedidos", pedido);
         return ResponseEntity.ok("Tiempo agregado al pedido correctamente");
     }
 
     @PutMapping("/actualizar-estado/{pedidoId}")
     public ResponseEntity<String> actualizarEstadoPedido(@PathVariable Long pedidoId,
                                                          @RequestParam Estado estado) {
+
         PedidoResponseDTO pedido = pedidoService.actualizarEstadoDelPedido(pedidoId, estado);
         messagingTemplate.convertAndSend("/topic/pedidos", pedido);
         return ResponseEntity.ok("Estado del pedido actualizado correctamente");
