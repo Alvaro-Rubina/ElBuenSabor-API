@@ -27,7 +27,7 @@ public class RolService {
     public void save(RolDTO rolDTO) throws Auth0Exception {
         Rol rol = rolMapper.toEntity(rolDTO);
 
-        // ahora lo guardo en Auth0
+        // auth0
         Role rolAuth0 = new Role();
         rolAuth0.setName(rolDTO.getNombre());
         rolAuth0.setDescription(rolDTO.getDescripcion());
@@ -69,7 +69,7 @@ public class RolService {
         return rolMapper.toResponseDTO(rol);
     }
 
-    @Transactional(noRollbackFor = Exception.class)
+    @Transactional
     public void update(String auth0RolId, RolDTO rolDTO) throws Auth0Exception {
         Rol rol = rolRepository.findByAuth0RolId(auth0RolId)
                 .orElseThrow(() -> new NotFoundException("Rol con el auht0Id " + auth0RolId + " no encontrado"));
@@ -137,6 +137,10 @@ public class RolService {
                 .orElseThrow(() -> new NotFoundException("Rol con el id " + id + " no encontrado"));
         rol.setActivo(!rol.getActivo());
         rolRepository.save(rol);
+    }
+
+    public boolean existsByAuth0RolId(String auth0RolId) {
+        return rolRepository.existsByAuth0RolId(auth0RolId);
     }
 
     /*@Transactional
