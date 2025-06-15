@@ -70,8 +70,8 @@ mvn spring-boot:run
 - ✅ Arquitectura por capas y DTOs
 - ✅ Mapeo entidades/DTOs con MapStruct
 - ✅ CRUD de entidades principales
-- ⏳ Integración Mercado Pago Checkout Pro
-- ⏳ Autenticación con Auth0
+- ✅ Integración Mercado Pago Checkout Pro
+- ✅ Autenticación con Auth0
 - ⏳ Implementación de WebSockets
 - ⏳ Cache con Redis
 - ⏳ Documentación con Swagger
