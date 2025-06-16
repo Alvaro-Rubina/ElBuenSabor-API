@@ -42,7 +42,7 @@ public class UsuarioService{
         usuarioAuth0.setName(usuarioDTO.getNombreCompleto());
         usuarioAuth0.setPassword(usuarioDTO.getContrasenia().toCharArray());
         usuarioAuth0.setEmailVerified(true);
-        usuarioAuth0.setConnection("Username-Password-Authentication");
+        usuarioAuth0.setConnection(usuarioDTO.getConnection());
 
         User createdUser = managementAPI.users().create(usuarioAuth0).execute();
         usuario.setAuth0Id(createdUser.getId());
@@ -57,6 +57,14 @@ public class UsuarioService{
             throw e;
         }
         return usuario;
+    }
+
+    public void saveExistingUser(UsuarioDTO usuarioDTO) throws Auth0Exception {
+        User usuarioAuth0 = managementAPI.users().get(usuarioDTO.getAuth0Id(), null).execute();
+        if (usuarioAuth0 == null) {
+            throw new NotFoundException("Usuario con el auth0Id " + usuarioDTO.getAuth0Id() + " no encontrado");
+        }
+        Set<Rol> roles = assignRoles(usuarioDTO.getRoles());
     }
 
     public UsuarioResponseDTO findById(Long id) {
