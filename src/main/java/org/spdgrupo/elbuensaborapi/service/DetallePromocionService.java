@@ -37,13 +37,14 @@ public class DetallePromocionService extends GenericoServiceImpl<DetallePromocio
 
         DetallePromocion detallePromocion = detallePromocionMapper.toEntity(detallePromocionDTO);
 
-        // Establecer producto o insumo
         if (detallePromocionDTO.getProductoId() != null) {
             detallePromocion.setProducto(productoRepository.findById(detallePromocionDTO.getProductoId())
                     .orElseThrow(() -> new NotFoundException("Producto con el id " + detallePromocionDTO.getProductoId() + " no encontrado")));
+            detallePromocion.setInsumo(null); // Asegura que insumo sea null
         } else {
             detallePromocion.setInsumo(insumoRepository.findById(detallePromocionDTO.getInsumoId())
                     .orElseThrow(() -> new NotFoundException("Insumo con el id " + detallePromocionDTO.getInsumoId() + " no encontrado")));
+            detallePromocion.setProducto(null); // Asegura que producto sea null
         }
 
         return detallePromocion;
