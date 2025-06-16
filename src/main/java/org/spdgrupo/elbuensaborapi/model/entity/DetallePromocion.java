@@ -14,6 +14,10 @@ public class DetallePromocion extends Base {
 
     private Integer cantidad;
 
+    private Double subTotal;
+
+    private Double subTotalCosto;
+
     @ManyToOne
     @JoinColumn(name = "promocion_id")
     private Promocion promocion;

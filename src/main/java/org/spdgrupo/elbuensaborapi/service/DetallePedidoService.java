@@ -38,9 +38,11 @@ public class DetallePedidoService extends GenericoServiceImpl<DetallePedido, Det
         if (detallePedidoDTO.getProductoId() != null) {
             detallePedido.setProducto(productoRepository.findById(detallePedidoDTO.getProductoId())
                     .orElseThrow(() -> new NotFoundException("Producto con el id " + detallePedidoDTO.getProductoId() + " no encontrado")));
+            /*detallePedido.setInsumo(null);*/
         } else {
             detallePedido.setInsumo(insumoRepository.findById(detallePedidoDTO.getInsumoId())
                     .orElseThrow(() -> new NotFoundException("Insumo con el id " + detallePedidoDTO.getInsumoId() + " no encontrado")));
+            /*detallePedido.setProducto(null);*/
         }
 
         // Calcular subtotales

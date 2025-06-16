@@ -23,6 +23,10 @@ public class Promocion extends Base {
 
     private String urlImagen;
 
+    private Double total;
+
+    private Double totalCosto;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaHasta;
 

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDTO, PromocionResponseDTO, Long> {
@@ -46,6 +47,10 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
             detalle.setPromocion(promocion);
             promocion.getDetallePromociones().add(detalle);
         }
+
+        // calculo totales
+        promocion.setTotal(getTotalVenta(promocion.getDetallePromociones()));
+        promocion.setTotalCosto(getTotalCosto(promocion.getDetallePromociones()));
 
         promocionRepository.save(promocion);
     }
@@ -78,5 +83,25 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
         if (fechaDesde.isAfter(fechaHasta)) {
             throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de finalización");
         }
+    }
+
+    // Metodos adicionales
+    private Double getTotalVenta(List<DetallePromocion> detallePromociones) {
+        Double totalVenta = 0.0;
+
+        for (DetallePromocion detallePromocion : detallePromociones) {
+            totalVenta += detallePromocion.getSubTotal();
+        }
+        return totalVenta;
+    }
+
+    private Double getTotalCosto(List<DetallePromocion> detallePromociones) {
+        Double totalCosto = 0.0;
+
+        for (DetallePromocion detallePromocion: detallePromociones) {
+            totalCosto += detallePromocion.getSubTotalCosto();
+        }
+
+        return totalCosto;
     }
 }

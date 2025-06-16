@@ -47,6 +47,9 @@ public class DetallePromocionService extends GenericoServiceImpl<DetallePromocio
             detallePromocion.setProducto(null); // Asegura que producto sea null
         }
 
+        // Calcular subtotales
+        calcularTotales(detallePromocion);
+
         return detallePromocion;
     }
 
@@ -59,5 +62,18 @@ public class DetallePromocionService extends GenericoServiceImpl<DetallePromocio
                 (detallePromocionDTO.getProductoId() != null && detallePromocionDTO.getInsumoId() != null)) {
             throw new IllegalArgumentException("Debe haber un producto o un insumo en el DetallePromocion, no pueden ser ambos nulos ni tampoco pueden estar ambos");
         }
+    }
+
+    private void calcularTotales(DetallePromocion detallePromocion) {
+        Double precioVenta = detallePromocion.getProducto() != null ?
+                detallePromocion.getProducto().getPrecioVenta() :
+                detallePromocion.getInsumo().getPrecioVenta();
+
+        Double precioCosto = detallePromocion.getProducto() != null ?
+                detallePromocion.getProducto().getPrecioCosto() :
+                detallePromocion.getInsumo().getPrecioCosto();
+
+        detallePromocion.setSubTotal(precioVenta * detallePromocion.getCantidad());
+        detallePromocion.setSubTotalCosto(precioCosto * detallePromocion.getCantidad());
     }
 }

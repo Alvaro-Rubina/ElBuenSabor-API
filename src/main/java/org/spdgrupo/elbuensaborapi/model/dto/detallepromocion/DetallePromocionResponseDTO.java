@@ -13,6 +13,8 @@ public class DetallePromocionResponseDTO {
 
     private Long id;
     private Integer cantidad;
+    private Double subTotal;
+    private Double subTotalCosto;
     private ProductoResponseDTO producto;
     private InsumoResponseDTO insumo;
 }
