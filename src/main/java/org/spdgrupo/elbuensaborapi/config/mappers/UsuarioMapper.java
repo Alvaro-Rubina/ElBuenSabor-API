@@ -12,18 +12,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = RolMapper.class)
 public interface UsuarioMapper extends GenericoMapper<Usuario, UsuarioDTO, UsuarioResponseDTO> {
 
     @Mapping(target = "roles", source = "roles")
     UsuarioResponseDTO toResponseDTO(Usuario usuario);
 
-    @Mapping(target = "roles", ignore = true) // El mapeo inverso lo manejas en el service
+    @Mapping(target = "roles", ignore = true)
     Usuario toEntity(UsuarioDTO usuarioDTO);
-
-    default List<String> map(Set<Rol> roles) {
-        return roles == null ? null : roles.stream()
-            .map(Rol::getAuth0RolId)
-            .collect(Collectors.toList());
-    }
 }
