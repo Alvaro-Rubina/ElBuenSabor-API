@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,6 +68,31 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
                 .map(productoMapper::toResponseDTO)
                 .toList();
     }
+
+    private List<ProductoResponseDTO> getProductosByInsumoid(Long InsumoId) {
+        return productoRepository.findByDetalleProductosInsumoId(InsumoId).stream()
+                .map(productoMapper::toResponseDTO)
+                .toList();
+    }
+
+    public void cambiarActivoProducto(long id){
+        List<ProductoResponseDTO> productos = getProductosByInsumoid(id);
+
+        for (ProductoResponseDTO producto : productos) {
+
+            boolean todosInsumosActivos = true;
+            List<DetalleProductoResponseDTO> detalleProductoResponseDTO = producto.getDetalleProductos();
+
+            for (DetalleProductoResponseDTO detalle : detalleProductoResponseDTO) {
+                if (!detalle.getInsumo().isActivo()) {
+                    delete(producto.getId());
+                    break;
+                }
+            }
+        }
+
+    }
+
 
     @Override
     @Transactional

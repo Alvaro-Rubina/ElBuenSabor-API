@@ -30,6 +30,8 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     private RubroInsumoRepository rubroInsumoRepository;
     @Autowired
     private InsumoMapper insumoMapper;
+    @Autowired
+    private ProductoService productoService;
 
     public InsumoService(GenericoRepository<Insumo, Long> genericoRepository, GenericoMapper<Insumo, InsumoDTO, InsumoResponseDTO> genericoMapper) {
         super(genericoRepository, genericoMapper);
@@ -123,6 +125,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         if (nuevoStock < insumo.getStockMinimo()) {
             LOGGER.warn("El stock actual del insumo " + insumo.getDenominacion() +  " es menor al minimo recomendado");
             insumo.setActivo(false);
+            productoService.cambiarActivoProducto(id);
         } else {
             insumo.setActivo(true);
         }
