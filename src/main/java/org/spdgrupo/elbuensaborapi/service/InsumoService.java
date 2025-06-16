@@ -125,7 +125,10 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         if (nuevoStock < insumo.getStockMinimo()) {
             LOGGER.warn("El stock actual del insumo " + insumo.getDenominacion() +  " es menor al minimo recomendado");
             insumo.setActivo(false);
-            productoService.cambiarActivoProducto(id);
+            if (insumo.getEsParaElaborar()) {
+                // Si el insumo es para elaborar, se desactiva el producto asociado
+                productoService.cambiarActivoProducto(id);
+            }
         } else {
             insumo.setActivo(true);
         }
