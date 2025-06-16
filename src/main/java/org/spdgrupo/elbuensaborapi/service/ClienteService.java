@@ -29,7 +29,12 @@ public class ClienteService {
     public void save(ClienteDTO clienteDTO) throws Auth0Exception {
         clienteDTO.getUsuario().setNombreCompleto(clienteDTO.getNombreCompleto());
 
-        Usuario usuario = usuarioService.save(clienteDTO.getUsuario());
+        Usuario usuario = new Usuario();
+        if (!clienteDTO.getUsuario().getConnection().equals("Username-Password-Authentication") || clienteDTO.getUsuario().getAuth0Id() == null) {
+            usuario = usuarioService.save(clienteDTO.getUsuario());
+        } else {
+            usuario = usuarioService.saveExistingUser(clienteDTO.getUsuario());
+        }
         Cliente cliente = clienteMapper.toEntity(clienteDTO);
         cliente.setUsuario(usuario);
 
@@ -41,6 +46,7 @@ public class ClienteService {
         }
     }
 
+    @Transactional
     public ClienteResponseDTO findById(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));

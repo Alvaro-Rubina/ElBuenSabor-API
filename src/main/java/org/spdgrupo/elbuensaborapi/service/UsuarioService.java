@@ -52,19 +52,36 @@ public class UsuarioService{
             usuarioRepository.save(usuario);
             managementAPI.users().addRoles(usuario.getAuth0Id(), usuarioDTO.getRoles()).execute();
         } catch (Exception e) {
-            // Si falla en la BD, elimino el rol en Auth0
+            // Si falla en la BD, elimino el usuario en Auth0
             managementAPI.users().delete(usuarioAuth0.getId()).execute();
             throw e;
         }
         return usuario;
     }
 
-    public void saveExistingUser(UsuarioDTO usuarioDTO) throws Auth0Exception {
+    @Transactional
+    public Usuario saveExistingUser(UsuarioDTO usuarioDTO) throws Auth0Exception {
         User usuarioAuth0 = managementAPI.users().get(usuarioDTO.getAuth0Id(), null).execute();
-        if (usuarioAuth0 == null) {
-            throw new NotFoundException("Usuario con el auth0Id " + usuarioDTO.getAuth0Id() + " no encontrado");
+        if (usuarioAuth0 == null || usuarioAuth0.getEmail() == null) {
+            throw new Auth0Exception("El usuario con el id " + usuarioDTO.getAuth0Id() + " no existe en Auth0");
         }
         Set<Rol> roles = assignRoles(usuarioDTO.getRoles());
+
+        usuarioDTO.setNombreCompleto(usuarioAuth0.getName());
+        usuarioDTO.setEmail(usuarioAuth0.getEmail());
+        usuarioDTO.setNickName(usuarioAuth0.getNickname());
+        Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
+        usuario.setRoles(roles);
+
+        try {
+            usuarioRepository.save(usuario);
+        } catch (Exception e) {
+            // Si falla en la BD, elimino el usuario en Auth0
+            managementAPI.users().delete(usuarioAuth0.getId()).execute();
+            throw e;
+        }
+        return usuario;
+
     }
 
     public UsuarioResponseDTO findById(Long id) {
