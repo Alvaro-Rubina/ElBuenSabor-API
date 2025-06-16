@@ -40,7 +40,9 @@ public class UsuarioService{
         User usuarioAuth0 = new User();
         usuarioAuth0.setEmail(usuarioDTO.getEmail());
         usuarioAuth0.setName(usuarioDTO.getNombreCompleto());
-        usuarioAuth0.setPassword(usuarioDTO.getContrasenia().toCharArray());
+        if (usuarioDTO.getContrasenia() != null) {
+            usuarioAuth0.setPassword(usuarioDTO.getContrasenia().toCharArray());
+        }
         usuarioAuth0.setEmailVerified(true);
         usuarioAuth0.setConnection(usuarioDTO.getConnection());
 
