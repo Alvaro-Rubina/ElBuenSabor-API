@@ -11,4 +11,7 @@ public interface ProductoRepository extends GenericoRepository<Producto, Long> {
     List<Producto> findByDenominacionContainingIgnoreCase(String denominacion);
 
     List<Producto> findByRubroId(Long rubroId);
+
+    List<Producto> findByDetalleProductosInsumoId(Long insumoId);
+
 }
