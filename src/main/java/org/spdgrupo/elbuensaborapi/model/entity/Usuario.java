@@ -24,6 +24,10 @@ public class Usuario extends Base {
     @Column(unique = true)
     private String auth0Id;
 
+    private String connection;
+
+    private String nickName;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnoreProperties("usuarios")
     @JoinTable(
