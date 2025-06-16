@@ -28,10 +28,15 @@ public class EmpleadoService{
     @Transactional
     public void save(EmpleadoDTO empleadoDTO) throws Auth0Exception {
         empleadoDTO.getUsuario().setNombreCompleto(empleadoDTO.getNombreCompleto());
-        Usuario usuario = usuarioService.save(empleadoDTO.getUsuario());
+
+        Usuario usuario = new Usuario();
+        if (!empleadoDTO.getUsuario().getConnection().equals("Username-Password-Authentication") || empleadoDTO.getUsuario().getAuth0Id() == null) {
+            usuario = usuarioService.save(empleadoDTO.getUsuario());
+        } else {
+            usuario = usuarioService.saveExistingUser(empleadoDTO.getUsuario());
+        }
         Empleado empleado = empleadoMapper.toEntity(empleadoDTO);
         empleado.setUsuario(usuario);
-        empleadoRepository.save(empleado);
 
         try {
             empleadoRepository.save(empleado);
