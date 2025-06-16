@@ -49,7 +49,9 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
         }
 
         // calculo totales
-        promocion.setTotal(getTotalVenta(promocion.getDetallePromociones()));
+        double totalVenta = getTotalVenta(promocion.getDetallePromociones());
+        double totalConDescuento = totalVenta - (totalVenta * (promocion.getDescuento() / 100.0));
+        promocion.setTotal(totalConDescuento);
         promocion.setTotalCosto(getTotalCosto(promocion.getDetallePromociones()));
 
         promocionRepository.save(promocion);
