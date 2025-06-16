@@ -30,7 +30,7 @@ public class EmpleadoService{
         empleadoDTO.getUsuario().setNombreCompleto(empleadoDTO.getNombreCompleto());
 
         Usuario usuario = new Usuario();
-        if (!empleadoDTO.getUsuario().getConnection().equals("Username-Password-Authentication") || empleadoDTO.getUsuario().getAuth0Id() == null) {
+        if ("Username-Password-Authentication".equals(empleadoDTO.getUsuario().getConnection())) {
             usuario = usuarioService.save(empleadoDTO.getUsuario());
         } else {
             usuario = usuarioService.saveExistingUser(empleadoDTO.getUsuario());

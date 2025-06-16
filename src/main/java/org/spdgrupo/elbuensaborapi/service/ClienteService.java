@@ -30,7 +30,7 @@ public class ClienteService {
         clienteDTO.getUsuario().setNombreCompleto(clienteDTO.getNombreCompleto());
 
         Usuario usuario = new Usuario();
-        if (!clienteDTO.getUsuario().getConnection().equals("Username-Password-Authentication") || clienteDTO.getUsuario().getAuth0Id() == null) {
+        if ("Username-Password-Authentication".equals(clienteDTO.getUsuario().getConnection())) {
             usuario = usuarioService.save(clienteDTO.getUsuario());
         } else {
             usuario = usuarioService.saveExistingUser(clienteDTO.getUsuario());
