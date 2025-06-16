@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import jakarta.validation.Valid;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Pedido;
@@ -23,6 +24,15 @@ public class PedidoController extends GenericoControllerImpl<
     private PedidoService pedidoService;
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+
+    @Override
+    @PostMapping("/save")
+    public ResponseEntity<String> save(@Valid @RequestBody PedidoDTO pedidoDTO) {
+        servicio.save(pedidoDTO);
+        // TODO: Cambiar el pedidoDTO (PedidoDTO) a que sea un PedidoResponseDTO
+        messagingTemplate.convertAndSend("/topic/pedidos", pedidoDTO);
+        return ResponseEntity.ok("Registro exitoso");
+    }
 
     public PedidoController(PedidoService pedidoService) {
         super(pedidoService);
