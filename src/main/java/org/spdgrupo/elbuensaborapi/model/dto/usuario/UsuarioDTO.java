@@ -1,6 +1,5 @@
 package org.spdgrupo.elbuensaborapi.model.dto.usuario;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
@@ -24,6 +23,8 @@ public class UsuarioDTO {
 
     // Esto no se si tiene que ir
     private String connection;
+
+    private String auth0Id;
 
     private List<String> roles;
 }
