@@ -169,4 +169,25 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         }
         return precioCosto;
     }
+
+    @Override
+    @Transactional
+    public void toggleActivo(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Producto con el id " + id + " no encontrado"));
+
+        boolean activar = !producto.getActivo();
+
+        if (activar) {
+            boolean todosInsumosActivos = producto.getDetalleProductos().stream()
+                .allMatch(detalle -> detalle.getInsumo().getActivo());
+            if (!todosInsumosActivos) {
+                throw new IllegalStateException("No se puede activar el producto porque tiene insumos desactivados.");
+            }
+        }
+
+        producto.setActivo(activar);
+        productoRepository.save(producto);
+    }
+
 }
