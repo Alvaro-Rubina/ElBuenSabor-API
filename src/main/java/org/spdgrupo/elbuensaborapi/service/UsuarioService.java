@@ -131,6 +131,11 @@ public class UsuarioService{
             changed = true;
         }
 
+        if (usuarioDTO.getContrasenia() != null && !usuarioDTO.getContrasenia().trim().isEmpty()) {
+            usuarioAuth0.setPassword(usuarioDTO.getContrasenia().toCharArray());
+            changed = true;
+        }
+
         Set<String> rolesActuales = usuario.getRoles().stream()
                 .map(Rol::getAuth0RolId)
                 .collect(Collectors.toSet());
