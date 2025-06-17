@@ -120,7 +120,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         double nuevoStock = insumo.getStockActual() + cantidad;
 
         if (nuevoStock < 0) {
-            throw new IllegalArgumentException("No hay suficiente stock para realizar la operación.");
+            throw new RuntimeException("No hay suficiente stock para realizar la operación.");
         }
 
         insumo.setStockActual(nuevoStock);
