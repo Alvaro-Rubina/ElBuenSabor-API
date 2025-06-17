@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/pedidos")
 public class PedidoController extends GenericoControllerImpl<
@@ -64,4 +66,11 @@ public class PedidoController extends GenericoControllerImpl<
         messagingTemplate.convertAndSend("/topic/pedidos", pedido);
         return ResponseEntity.ok("Estado del pedido actualizado correctamente");
     }
+
+    @GetMapping("/estado")
+    public ResponseEntity<List<PedidoResponseDTO>> getPedidosByEstado(@RequestParam Estado estado) {
+        List<PedidoResponseDTO> pedidos = pedidoService.getPedidosByEstado(estado);
+        return ResponseEntity.ok(pedidos);
+    }
+
 }

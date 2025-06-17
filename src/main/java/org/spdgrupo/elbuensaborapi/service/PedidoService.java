@@ -195,4 +195,18 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
         return "PED-" + anioStr + mesStr + "-" + numeroStr;
     }
+
+    public List<PedidoResponseDTO> getPedidosByEstado(Estado estado) {
+        List<Pedido> pedidos = pedidoRepository.findAllByEstado(estado);
+
+        if (pedidos.isEmpty()) {
+            throw new NotFoundException("No se encontraron pedidos con el estado " + estado);
+        }
+
+        return pedidos.stream()
+                .map(pedidoMapper::toResponseDTO)
+                .toList();
+
+    }
+
 }
