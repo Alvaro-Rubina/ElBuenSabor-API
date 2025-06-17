@@ -182,7 +182,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
             boolean todosInsumosActivos = producto.getDetalleProductos().stream()
                 .allMatch(detalle -> detalle.getInsumo().getActivo());
             if (!todosInsumosActivos) {
-                throw new IllegalStateException("No se puede activar el producto porque tiene insumos desactivados.");
+                throw new RuntimeException("No se puede activar el producto porque tiene insumos desactivados.");
             }
         }
 
