@@ -14,8 +14,7 @@ public class ClienteDTO {
 
     @NotBlank (message = "El campo nombreCompleto no puede estar vacío")
     private String nombreCompleto;
-
-    @NotBlank (message = "El campo telefono no puede estar vacío")
+    
     private String telefono;
 
     private Boolean activo;
