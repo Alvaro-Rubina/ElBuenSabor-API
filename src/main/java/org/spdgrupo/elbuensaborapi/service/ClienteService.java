@@ -36,6 +36,7 @@ public class ClienteService {
             usuario = usuarioService.saveExistingUser(clienteDTO.getUsuario());
         }
         Cliente cliente = clienteMapper.toEntity(clienteDTO);
+        System.out.println(cliente.getActivo());
         cliente.setUsuario(usuario);
 
         try {
