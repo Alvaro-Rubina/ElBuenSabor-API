@@ -30,11 +30,18 @@ public class ClienteService {
         clienteDTO.getUsuario().setNombreCompleto(clienteDTO.getNombreCompleto());
 
         Usuario usuario = new Usuario();
-        if ("Username-Password-Authentication".equals(clienteDTO.getUsuario().getConnection())) {
+        /*if ("Username-Password-Authentication".equals(clienteDTO.getUsuario().getConnection())) {
+            usuario = usuarioService.save(clienteDTO.getUsuario());
+        } else {
+            usuario = usuarioService.saveExistingUser(clienteDTO.getUsuario());
+        }*/
+
+        if (clienteDTO.getUsuario().getAuth0Id() == null) {
             usuario = usuarioService.save(clienteDTO.getUsuario());
         } else {
             usuario = usuarioService.saveExistingUser(clienteDTO.getUsuario());
         }
+
         Cliente cliente = clienteMapper.toEntity(clienteDTO);
         cliente.setUsuario(usuario);
 

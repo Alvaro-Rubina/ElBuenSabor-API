@@ -71,7 +71,9 @@ public class UsuarioService{
 
         usuarioDTO.setNombreCompleto(usuarioAuth0.getName());
         usuarioDTO.setEmail(usuarioAuth0.getEmail());
-        usuarioDTO.setNickName(usuarioAuth0.getNickname());
+        if (usuarioDTO.getNickName() != null) {
+            usuarioDTO.setNickName(usuarioAuth0.getNickname());
+        }
         Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
         usuario.setRoles(roles);
 
