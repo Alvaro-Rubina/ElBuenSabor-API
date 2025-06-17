@@ -11,6 +11,7 @@ public interface GenericoService <E extends Base, D, R, ID extends Serializable>
     List<R> findAll();
     void update(ID id, D entity);
     void delete(ID id);
+    void toggleActivo(ID id);
 
 
 }
