@@ -8,6 +8,7 @@ import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.*;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
+import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
 import org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
@@ -60,6 +61,13 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         } else {
             pedido.setDomicilio(domicilioRepository.findById(pedidoDTO.getDomicilioId())
                     .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado")));
+        }
+
+        // Estado segun metodo de pago
+        if(pedidoDTO.getFormaPago().equals(FormaPago.EFECTIVO)) {
+            pedido.setEstado(Estado.SOLICITADO);
+        } else {
+            pedido.setEstado(Estado.PENDIENTE_FACTURACION);
         }
 
         // manejo de detalles
