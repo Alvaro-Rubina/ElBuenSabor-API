@@ -81,14 +81,18 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         for (ProductoResponseDTO producto : productos) {
 
             boolean todosInsumosActivos = true;
-            List<DetalleProductoResponseDTO> detalleProductoResponseDTO = producto.getDetalleProductos();
 
-            for (DetalleProductoResponseDTO detalle : detalleProductoResponseDTO) {
-                if (!detalle.getInsumo().isActivo()) {
-                    delete(producto.getId());
-                    break;
+            if(producto.isActivo()){
+                List<DetalleProductoResponseDTO> detalleProductoResponseDTO = producto.getDetalleProductos();
+
+                for (DetalleProductoResponseDTO detalle : detalleProductoResponseDTO) {
+                    if (!detalle.getInsumo().isActivo()) {
+                        delete(producto.getId());
+                        break;
+                    }
                 }
             }
+
         }
 
     }
