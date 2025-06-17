@@ -77,6 +77,10 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
             detalle.setPromocion(promocion);
             promocion.getDetallePromociones().add(detalle);
         }
+        promocion.setPrecioCosto(getTotalCosto(promocion.getDetallePromociones()));
+        double precioVenta = getTotalVenta(promocion.getDetallePromociones());
+        double totalConDescuento = precioVenta - (precioVenta * (promocion.getDescuento() / 100.0));
+        promocion.setPrecioVenta(totalConDescuento);
 
         promocionRepository.save(promocion);
     }
