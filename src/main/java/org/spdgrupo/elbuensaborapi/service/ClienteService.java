@@ -36,7 +36,6 @@ public class ClienteService {
             usuario = usuarioService.saveExistingUser(clienteDTO.getUsuario());
         }
         Cliente cliente = clienteMapper.toEntity(clienteDTO);
-        cliente.setActivo(true);
         cliente.setUsuario(usuario);
 
         try {
@@ -74,7 +73,6 @@ public class ClienteService {
 
         cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
         cliente.setTelefono(clienteDTO.getTelefono());
-        cliente.setActivo(clienteDTO.getActivo());
 
         usuarioService.update(cliente.getUsuario().getAuth0Id(), clienteDTO.getUsuario());
        return clienteMapper.toResponseDTO(clienteRepository.save(cliente));
