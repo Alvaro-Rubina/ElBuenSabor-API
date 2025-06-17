@@ -26,7 +26,7 @@ public class ClienteService {
     private final ManagementAPI managementAPI;
 
     @Transactional
-    public void save(ClienteDTO clienteDTO) throws Auth0Exception {
+    public ClienteResponseDTO save(ClienteDTO clienteDTO) throws Auth0Exception {
         clienteDTO.getUsuario().setNombreCompleto(clienteDTO.getNombreCompleto());
 
         Usuario usuario = new Usuario();
@@ -40,6 +40,7 @@ public class ClienteService {
 
         try {
             clienteRepository.save(cliente);
+            return clienteMapper.toResponseDTO(cliente);
         } catch (Exception e) {
             managementAPI.users().delete(usuario.getAuth0Id()).execute();
             throw e;
@@ -66,7 +67,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public void update(Long id, ClienteDTO clienteDTO) throws Auth0Exception {
+    public ClienteResponseDTO update(Long id, ClienteDTO clienteDTO) throws Auth0Exception {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
 
@@ -75,7 +76,7 @@ public class ClienteService {
         cliente.setActivo(clienteDTO.getActivo());
 
         usuarioService.update(cliente.getUsuario().getAuth0Id(), clienteDTO.getUsuario());
-        clienteRepository.save(cliente);
+       return clienteMapper.toResponseDTO(clienteRepository.save(cliente));
     }
 
     @Transactional

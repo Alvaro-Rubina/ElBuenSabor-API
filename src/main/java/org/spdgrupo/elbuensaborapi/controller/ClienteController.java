@@ -4,6 +4,7 @@ import com.auth0.exception.Auth0Exception;
 import jakarta.validation.Valid;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.Cliente;
 import org.spdgrupo.elbuensaborapi.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,9 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@Valid @RequestBody ClienteDTO clienteDTO) throws Auth0Exception {
-        clienteService.save(clienteDTO);
-        return ResponseEntity.ok("Registro exitoso");
+    public ResponseEntity<ClienteResponseDTO> save(@Valid @RequestBody ClienteDTO clienteDTO) throws Auth0Exception {
+        ClienteResponseDTO cliente = clienteService.save(clienteDTO);
+        return ResponseEntity.ok(cliente);
     }
 
     @GetMapping("/{id}")
@@ -42,10 +43,10 @@ public class ClienteController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id,
+    public ResponseEntity<ClienteResponseDTO> update(@PathVariable Long id,
                                                 @Valid @RequestBody ClienteDTO clienteDTO) throws Auth0Exception {
-        clienteService.update(id, clienteDTO);
-        return ResponseEntity.ok("Cliente actualizado correctamente");
+        ClienteResponseDTO cliente = clienteService.update(id, clienteDTO);
+        return ResponseEntity.ok(cliente);
     }
 
     @DeleteMapping("/delete/{id}")
