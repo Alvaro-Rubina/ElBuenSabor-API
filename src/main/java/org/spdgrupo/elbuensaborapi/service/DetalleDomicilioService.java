@@ -33,11 +33,12 @@ public class DetalleDomicilioService extends GenericoServiceImpl<DetalleDomicili
 
     @Override
     @Transactional
-    public void save(DetalleDomicilioDTO detalleDomicilioDTO) {
+    public DetalleDomicilioResponseDTO save(DetalleDomicilioDTO detalleDomicilioDTO) {
         DetalleDomicilio detalleDomicilio = detalleDomicilioMapper.toEntity(detalleDomicilioDTO);
         detalleDomicilio.setCliente(clienteRepository.findById(detalleDomicilioDTO.getClienteId())
                 .orElseThrow(() -> new NotFoundException("Cliente con el id " + detalleDomicilioDTO.getClienteId() + " no encontrado")));
         detalleDomicilioRepository.save(detalleDomicilio);
+        return detalleDomicilioMapper.toResponseDTO(detalleDomicilio);
     }
 
     // TODO: Ver si este metodo se queda o hacer uno que cumpla la misma funcion en ClienteService

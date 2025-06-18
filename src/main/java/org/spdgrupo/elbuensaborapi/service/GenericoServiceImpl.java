@@ -24,10 +24,10 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
 
     @Override
     @Transactional
-    public void save(D dto){
+    public R save(D dto){
         E entity = genericoMapper.toEntity(dto);
         genericoRepository.save(entity);
-
+        return genericoMapper.toResponseDTO(entity);
     }
 
     @Override

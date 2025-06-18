@@ -35,7 +35,7 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
 
     @Override
     @Transactional
-    public void save(PromocionDTO promocionDTO) {
+    public PromocionResponseDTO save(PromocionDTO promocionDTO) {
         validarFechas(promocionDTO.getFechaDesde(), promocionDTO.getFechaHasta());
 
         Promocion promocion = promocionMapper.toEntity(promocionDTO);
@@ -55,6 +55,7 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
         promocion.setTotalCosto(getTotalCosto(promocion.getDetallePromociones()));
 
         promocionRepository.save(promocion);
+        return promocionMapper.toResponseDTO(promocion);
     }
 
     @Override

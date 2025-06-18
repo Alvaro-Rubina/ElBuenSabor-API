@@ -47,7 +47,7 @@ public class    MercadoPagoService {
         MercadoPagoConfig.setAccessToken(mpAccessToken);
     }
 
-    public Preference createPreference(PedidoDTO pedido) throws MPException, MPApiException {
+    public Preference createPreference(PedidoDTO pedido, String codigoPedido) throws MPException, MPApiException {
 
         List<PreferenceItemRequest> items = new ArrayList<>();
 
@@ -66,6 +66,7 @@ public class    MercadoPagoService {
                                 .failure(mpFailureBackUrl)
                                 .build()
                 )
+                .externalReference(codigoPedido)
                 .build();
 
         PreferenceClient client = new PreferenceClient();
