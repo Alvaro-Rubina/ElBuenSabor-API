@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,6 +68,35 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
                 .map(productoMapper::toResponseDTO)
                 .toList();
     }
+
+    private List<ProductoResponseDTO> getProductosByInsumoid(Long InsumoId) {
+        return productoRepository.findByDetalleProductosInsumoId(InsumoId).stream()
+                .map(productoMapper::toResponseDTO)
+                .toList();
+    }
+
+    public void cambiarActivoProducto(long id){
+        List<ProductoResponseDTO> productos = getProductosByInsumoid(id);
+
+        for (ProductoResponseDTO producto : productos) {
+
+            boolean todosInsumosActivos = true;
+
+            if(producto.isActivo()){
+                List<DetalleProductoResponseDTO> detalleProductoResponseDTO = producto.getDetalleProductos();
+
+                for (DetalleProductoResponseDTO detalle : detalleProductoResponseDTO) {
+                    if (!detalle.getInsumo().isActivo()) {
+                        delete(producto.getId());
+                        break;
+                    }
+                }
+            }
+
+        }
+
+    }
+
 
     @Override
     @Transactional
@@ -139,4 +169,25 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         }
         return precioCosto;
     }
+
+    @Override
+    @Transactional
+    public void toggleActivo(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Producto con el id " + id + " no encontrado"));
+
+        boolean activar = !producto.getActivo();
+
+        if (activar) {
+            boolean todosInsumosActivos = producto.getDetalleProductos().stream()
+                .allMatch(detalle -> detalle.getInsumo().getActivo());
+            if (!todosInsumosActivos) {
+                throw new RuntimeException("No se puede activar el producto porque tiene insumos desactivados.");
+            }
+        }
+
+        producto.setActivo(activar);
+        productoRepository.save(producto);
+    }
+
 }

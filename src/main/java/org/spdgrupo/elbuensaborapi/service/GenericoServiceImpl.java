@@ -58,6 +58,7 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
         genericoRepository.deleteById(id);
     }
 
+    @Override
     @Transactional
     public void toggleActivo(ID id) {
         E entity = genericoRepository.findById(id)

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -83,6 +84,38 @@ public class GlobalExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .build();
 
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String mensaje;
+        if (ex.getRequiredType() != null && ex.getRequiredType().isEnum()) {
+            String valoresValidos = Arrays.stream(ex.getRequiredType().getEnumConstants())
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "));
+            mensaje = "Valor inválido para " + ex.getName() + ": '" + ex.getValue() +
+                    "'. Los valores permitidos son: [" + valoresValidos + "]";
+        } else {
+            mensaje = "Parámetro inválido: " + ex.getMessage();
+        }
+        ErrorResponse error = ErrorResponse.builder()
+                .mensaje(mensaje)
+                .codigo("INVALID_PARAM")
+                .timestamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(org.springframework.web.bind.MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingServletRequestParameter(
+            org.springframework.web.bind.MissingServletRequestParameterException ex) {
+        String mensaje = "Falta el parámetro requerido: " + ex.getParameterName();
+        ErrorResponse error = ErrorResponse.builder()
+                .mensaje(mensaje)
+                .codigo("MISSING_PARAM")
+                .timestamp(LocalDateTime.now())
+                .build();
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 

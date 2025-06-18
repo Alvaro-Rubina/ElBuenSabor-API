@@ -103,22 +103,26 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
     }
 
     @Transactional
-    public void actualizarEstadoDelPedido(Long pedidoId, Estado estado) {
+    public PedidoResponseDTO actualizarEstadoDelPedido(Long pedidoId, Estado estado) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
 
         if (estado != null) {
             pedido.setEstado(estado);
 
-            if (estado == Estado.SOLICITADO) {
+            // NOTE: Esto creo que tendría que estar en el metodo savePedido
+            /*if (estado == Estado.SOLICITADO) {
                 pedido.setFactura(facturaService.createFacturaFromPedido(pedido));
-            }
+            }*/
         }
 
         pedidoRepository.save(pedido);
+        return pedidoMapper.toResponseDTO(pedido);
     }
 
-    public void agregarTiempoAlPedido(Long pedidoId, Long minutos) {
+    // TODO: Agragar metodo para EMITIR UNA FACTURA
+
+    public PedidoResponseDTO agregarTiempoAlPedido(Long pedidoId, Long minutos) {
         if (minutos == null || minutos < 0) {
             throw new IllegalArgumentException("El tiempo adicional debe ser un valor positivo.");
         }
@@ -128,6 +132,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
         pedido.setHoraEstimadaFin(pedido.getHoraEstimadaFin().plusMinutes(minutos));
         pedidoRepository.save(pedido);
+        return pedidoMapper.toResponseDTO(pedido);
     }
 
     // Metodos adicionales
@@ -190,4 +195,14 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
         return "PED-" + anioStr + mesStr + "-" + numeroStr;
     }
+
+    public List<PedidoResponseDTO> getPedidosByEstado(Estado estado) {
+        List<Pedido> pedidos = pedidoRepository.findAllByEstado(estado);
+
+        return pedidos.stream()
+                .map(pedidoMapper::toResponseDTO)
+                .toList();
+
+    }
+
 }

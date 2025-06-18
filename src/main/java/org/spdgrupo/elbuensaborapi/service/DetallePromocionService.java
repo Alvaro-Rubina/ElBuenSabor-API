@@ -37,14 +37,18 @@ public class DetallePromocionService extends GenericoServiceImpl<DetallePromocio
 
         DetallePromocion detallePromocion = detallePromocionMapper.toEntity(detallePromocionDTO);
 
-        // Establecer producto o insumo
         if (detallePromocionDTO.getProductoId() != null) {
             detallePromocion.setProducto(productoRepository.findById(detallePromocionDTO.getProductoId())
                     .orElseThrow(() -> new NotFoundException("Producto con el id " + detallePromocionDTO.getProductoId() + " no encontrado")));
+            detallePromocion.setInsumo(null); // Asegura que insumo sea null
         } else {
             detallePromocion.setInsumo(insumoRepository.findById(detallePromocionDTO.getInsumoId())
                     .orElseThrow(() -> new NotFoundException("Insumo con el id " + detallePromocionDTO.getInsumoId() + " no encontrado")));
+            detallePromocion.setProducto(null); // Asegura que producto sea null
         }
+
+        // Calcular subtotales
+        calcularTotales(detallePromocion);
 
         return detallePromocion;
     }
@@ -58,5 +62,18 @@ public class DetallePromocionService extends GenericoServiceImpl<DetallePromocio
                 (detallePromocionDTO.getProductoId() != null && detallePromocionDTO.getInsumoId() != null)) {
             throw new IllegalArgumentException("Debe haber un producto o un insumo en el DetallePromocion, no pueden ser ambos nulos ni tampoco pueden estar ambos");
         }
+    }
+
+    private void calcularTotales(DetallePromocion detallePromocion) {
+        Double precioVenta = detallePromocion.getProducto() != null ?
+                detallePromocion.getProducto().getPrecioVenta() :
+                detallePromocion.getInsumo().getPrecioVenta();
+
+        Double precioCosto = detallePromocion.getProducto() != null ?
+                detallePromocion.getProducto().getPrecioCosto() :
+                detallePromocion.getInsumo().getPrecioCosto();
+
+        detallePromocion.setSubTotal(precioVenta * detallePromocion.getCantidad());
+        detallePromocion.setSubTotalCosto(precioCosto * detallePromocion.getCantidad());
     }
 }

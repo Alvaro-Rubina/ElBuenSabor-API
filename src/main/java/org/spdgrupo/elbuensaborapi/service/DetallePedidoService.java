@@ -10,6 +10,7 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
+import org.spdgrupo.elbuensaborapi.repository.PromocionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,8 @@ public class DetallePedidoService extends GenericoServiceImpl<DetallePedido, Det
     private ProductoRepository productoRepository;
     @Autowired
     private InsumoRepository insumoRepository;
+    @Autowired
+    private PromocionRepository promocionRepository;
     @Autowired
     private DetallePedidoMapper detallePedidoMapper;
 
@@ -34,13 +37,22 @@ public class DetallePedidoService extends GenericoServiceImpl<DetallePedido, Det
 
         DetallePedido detallePedido = detallePedidoMapper.toEntity(detallePedidoDTO);
 
-        // Establecer producto o insumo
+        // Establecer producto, insumo o promocion
         if (detallePedidoDTO.getProductoId() != null) {
             detallePedido.setProducto(productoRepository.findById(detallePedidoDTO.getProductoId())
                     .orElseThrow(() -> new NotFoundException("Producto con el id " + detallePedidoDTO.getProductoId() + " no encontrado")));
-        } else {
+            /*detallePedido.setInsumo(null);*/
+            /*detallePedido.setPromocion(null);*/
+        } else if (detallePedidoDTO.getInsumoId() != null) {
             detallePedido.setInsumo(insumoRepository.findById(detallePedidoDTO.getInsumoId())
                     .orElseThrow(() -> new NotFoundException("Insumo con el id " + detallePedidoDTO.getInsumoId() + " no encontrado")));
+            /*detallePedido.setProducto(null);*/
+            /*detallePedido.setPromocion(null);*/
+        } else if (detallePedidoDTO.getPromocionId() != null) {
+            detallePedido.setPromocion(promocionRepository.findById(detallePedidoDTO.getPromocionId())
+                    .orElseThrow(() -> new NotFoundException("Promoción con el id " + detallePedidoDTO.getInsumoId() + " no encontrada")));
+            /*detallePedido.setProducto(null);*/
+            /*detallePedido.setInsumo(null);*/
         }
 
         // Calcular subtotales
@@ -54,9 +66,13 @@ public class DetallePedidoService extends GenericoServiceImpl<DetallePedido, Det
     }
 
     private void validarDetallePedido(DetallePedidoDTO detallePedidoDTO) {
-        if ((detallePedidoDTO.getProductoId() == null && detallePedidoDTO.getInsumoId() == null) ||
-                (detallePedidoDTO.getProductoId() != null && detallePedidoDTO.getInsumoId() != null)) {
-            throw new IllegalArgumentException("Debe haber un producto o un insumo en el DetallePedido, no pueden ser ambos nulos ni tampoco pueden estar ambos");
+        int count = 0;
+        if (detallePedidoDTO.getProductoId() != null) count++;
+        if (detallePedidoDTO.getInsumoId() != null) count++;
+        if (detallePedidoDTO.getPromocionId() != null) count++;
+
+        if (count != 1) {
+            throw new IllegalArgumentException("Debe especificar exactamente uno de los siguientes campos en el DetallePedido: productoId, insumoId o promocionId.");
         }
     }
 

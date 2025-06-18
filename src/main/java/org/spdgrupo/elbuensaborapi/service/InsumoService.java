@@ -30,6 +30,8 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     private RubroInsumoRepository rubroInsumoRepository;
     @Autowired
     private InsumoMapper insumoMapper;
+    @Autowired
+    private ProductoService productoService;
 
     public InsumoService(GenericoRepository<Insumo, Long> genericoRepository, GenericoMapper<Insumo, InsumoDTO, InsumoResponseDTO> genericoMapper) {
         super(genericoRepository, genericoMapper);
@@ -114,10 +116,13 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     public void actualizarStock(Long id, Double cantidad) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
+
         double nuevoStock = insumo.getStockActual() + cantidad;
-        if (nuevoStock < 0) { // NOTE: Esto en caso de que se reste una cantidad al realizar un pedido y el stock quede menor a 0
-            throw new IllegalArgumentException("No hay suficiente stock para realizar la operación.");
+
+        if (nuevoStock < 0) {
+            throw new RuntimeException("No hay suficiente stock para realizar la operación.");
         }
+
         insumo.setStockActual(nuevoStock);
 
         if (nuevoStock < insumo.getStockMinimo()) {
@@ -128,5 +133,26 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         }
 
         insumoRepository.save(insumo);
+
+        if (!insumo.getActivo() && insumo.getEsParaElaborar()) {
+
+            productoService.cambiarActivoProducto(id);
+
+        }
     }
+
+    @Override
+    @Transactional
+    public void toggleActivo(Long id) {
+        Insumo insumo = insumoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
+        boolean estabaActivo = insumo.getActivo();
+        insumo.setActivo(!estabaActivo);
+        insumoRepository.save(insumo);
+
+        if (estabaActivo && !insumo.getActivo() && insumo.getEsParaElaborar()) {
+            productoService.cambiarActivoProducto(id);
+        }
+    }
+
 }
