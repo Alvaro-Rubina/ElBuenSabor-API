@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface ProductoRepository extends GenericoRepository<Producto, Long> {
     Optional<Producto> findByDenominacion(String denominacion);
     List<Producto> findByDenominacionContainingIgnoreCase(String denominacion);
-
     List<Producto> findByRubroId(Long rubroId);
+    List<Producto> findByDetalleProductosInsumoId(Long insumoId);
 }

@@ -13,7 +13,6 @@ public interface PedidoMapper extends GenericoMapper<Pedido, PedidoDTO, PedidoRe
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fecha", expression = "java(java.time.LocalDate.now())")
     @Mapping(target = "hora", expression = "java(java.time.LocalTime.now())")
-    @Mapping(target = "estado", constant = "SOLICITADO")
     @Mapping(target = "codigo", ignore = true)
     @Mapping(target = "horaEstimadaFin", ignore = true)
     @Mapping(target = "totalVenta", ignore = true)

@@ -8,6 +8,7 @@ import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.*;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
+import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
 import org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
@@ -47,7 +48,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
     @Override
     @Transactional
-    public void save(PedidoDTO pedidoDTO) {
+    public PedidoResponseDTO save(PedidoDTO pedidoDTO) {
         Pedido pedido = pedidoMapper.toEntity(pedidoDTO);
 
         // cliente y domicilio
@@ -60,6 +61,13 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         } else {
             pedido.setDomicilio(domicilioRepository.findById(pedidoDTO.getDomicilioId())
                     .orElseThrow(() -> new NotFoundException("Domicilio con el id " + pedidoDTO.getDomicilioId() + " no encontrado")));
+        }
+
+        // Estado segun metodo de pago
+        if (pedidoDTO.getFormaPago().equals(FormaPago.MERCADO_PAGO)) {
+            pedido.setEstado(Estado.PENDIENTE_FACTURACION);
+        } else {
+            pedido.setEstado(Estado.SOLICITADO); // Por defecto, para pagos en efectivo
         }
 
         // manejo de detalles
@@ -94,6 +102,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         }
 
         pedidoRepository.save(pedido);
+        return pedidoMapper.toResponseDTO(pedido);
     }
 
     public PedidoResponseDTO getPedidoByCodigo(String codigo) {
@@ -103,22 +112,26 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
     }
 
     @Transactional
-    public void actualizarEstadoDelPedido(Long pedidoId, Estado estado) {
+    public PedidoResponseDTO actualizarEstadoDelPedido(Long pedidoId, Estado estado) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
 
         if (estado != null) {
             pedido.setEstado(estado);
 
-            if (estado == Estado.SOLICITADO) {
+            // NOTE: Esto creo que tendría que estar en el metodo savePedido
+            /*if (estado == Estado.SOLICITADO) {
                 pedido.setFactura(facturaService.createFacturaFromPedido(pedido));
-            }
+            }*/
         }
 
         pedidoRepository.save(pedido);
+        return pedidoMapper.toResponseDTO(pedido);
     }
 
-    public void agregarTiempoAlPedido(Long pedidoId, Long minutos) {
+    // TODO: Agragar metodo para EMITIR UNA FACTURA
+
+    public PedidoResponseDTO agregarTiempoAlPedido(Long pedidoId, Long minutos) {
         if (minutos == null || minutos < 0) {
             throw new IllegalArgumentException("El tiempo adicional debe ser un valor positivo.");
         }
@@ -128,6 +141,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
         pedido.setHoraEstimadaFin(pedido.getHoraEstimadaFin().plusMinutes(minutos));
         pedidoRepository.save(pedido);
+        return pedidoMapper.toResponseDTO(pedido);
     }
 
     // Metodos adicionales
@@ -190,4 +204,14 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
         return "PED-" + anioStr + mesStr + "-" + numeroStr;
     }
+
+    public List<PedidoResponseDTO> getPedidosByEstado(Estado estado) {
+        List<Pedido> pedidos = pedidoRepository.findAllByEstado(estado);
+
+        return pedidos.stream()
+                .map(pedidoMapper::toResponseDTO)
+                .toList();
+
+    }
+
 }

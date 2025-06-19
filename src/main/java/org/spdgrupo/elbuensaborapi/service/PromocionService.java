@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDTO, PromocionResponseDTO, Long> {
@@ -34,7 +35,7 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
 
     @Override
     @Transactional
-    public void save(PromocionDTO promocionDTO) {
+    public PromocionResponseDTO save(PromocionDTO promocionDTO) {
         validarFechas(promocionDTO.getFechaDesde(), promocionDTO.getFechaHasta());
 
         Promocion promocion = promocionMapper.toEntity(promocionDTO);
@@ -47,7 +48,14 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
             promocion.getDetallePromociones().add(detalle);
         }
 
+        // calculo totales
+        double totalVenta = getTotalVenta(promocion.getDetallePromociones());
+        double totalConDescuento = totalVenta - (totalVenta * (promocion.getDescuento() / 100.0));
+        promocion.setPrecioVenta(totalConDescuento);
+        promocion.setPrecioCosto(getTotalCosto(promocion.getDetallePromociones()));
+
         promocionRepository.save(promocion);
+        return promocionMapper.toResponseDTO(promocion);
     }
 
     @Override
@@ -70,6 +78,10 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
             detalle.setPromocion(promocion);
             promocion.getDetallePromociones().add(detalle);
         }
+        promocion.setPrecioCosto(getTotalCosto(promocion.getDetallePromociones()));
+        double precioVenta = getTotalVenta(promocion.getDetallePromociones());
+        double totalConDescuento = precioVenta - (precioVenta * (promocion.getDescuento() / 100.0));
+        promocion.setPrecioVenta(totalConDescuento);
 
         promocionRepository.save(promocion);
     }
@@ -78,5 +90,25 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
         if (fechaDesde.isAfter(fechaHasta)) {
             throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de finalización");
         }
+    }
+
+    // Metodos adicionales
+    private Double getTotalVenta(List<DetallePromocion> detallePromociones) {
+        Double totalVenta = 0.0;
+
+        for (DetallePromocion detallePromocion : detallePromociones) {
+            totalVenta += detallePromocion.getSubTotal();
+        }
+        return totalVenta;
+    }
+
+    private Double getTotalCosto(List<DetallePromocion> detallePromociones) {
+        Double totalCosto = 0.0;
+
+        for (DetallePromocion detallePromocion: detallePromociones) {
+            totalCosto += detallePromocion.getSubTotalCosto();
+        }
+
+        return totalCosto;
     }
 }
