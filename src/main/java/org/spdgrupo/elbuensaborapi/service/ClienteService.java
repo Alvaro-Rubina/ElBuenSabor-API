@@ -30,11 +30,12 @@ public class ClienteService extends GenericoServiceImpl<Cliente, ClienteDTO, Cli
 
     @Override
     @Transactional
-    public void save(ClienteDTO clienteDTO) {
+    public ClienteResponseDTO save(ClienteDTO clienteDTO) {
         Cliente cliente = clienteMapper.toEntity(clienteDTO);
         cliente.getUsuario().setRol(Rol.CLIENTE);
 
         clienteRepository.save(cliente);
+        return clienteMapper.toResponseDTO(cliente);
     }
 
     @Override
