@@ -79,11 +79,33 @@ public class ClienteService {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
 
-        cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
-        cliente.setTelefono(clienteDTO.getTelefono());
+        if ((!cliente.getNombreCompleto().equals(clienteDTO.getNombreCompleto())) && (!clienteDTO.getNombreCompleto().trim().isEmpty())) {
+            cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
+        }
+
+        if ((!cliente.getTelefono().equals(clienteDTO.getTelefono())) && (!clienteDTO.getTelefono().trim().isEmpty())) {
+            cliente.setTelefono(clienteDTO.getTelefono());
+        }
 
         usuarioService.update(cliente.getUsuario().getAuth0Id(), clienteDTO.getUsuario());
        return clienteMapper.toResponseDTO(clienteRepository.save(cliente));
+    }
+
+    @Transactional
+    public ClienteResponseDTO updateByAuth0Id(String auth0Id, ClienteDTO clienteDTO) throws Auth0Exception {
+        Cliente cliente = clienteRepository.findByUsuario_Auth0Id(auth0Id)
+                .orElseThrow(() -> new NotFoundException("Cliente con el auth0Id " + auth0Id + " no encontrado"));
+
+        if ((!cliente.getNombreCompleto().equals(clienteDTO.getNombreCompleto())) && (!clienteDTO.getNombreCompleto().trim().isEmpty())) {
+            cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
+        }
+
+        if ((!cliente.getTelefono().equals(clienteDTO.getTelefono())) && (!clienteDTO.getTelefono().trim().isEmpty())) {
+            cliente.setTelefono(clienteDTO.getTelefono());
+        }
+
+        usuarioService.update(cliente.getUsuario().getAuth0Id(), clienteDTO.getUsuario());
+        return clienteMapper.toResponseDTO(clienteRepository.save(cliente));
     }
 
     @Transactional

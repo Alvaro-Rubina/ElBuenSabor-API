@@ -55,6 +55,13 @@ public class ClienteController {
         return ResponseEntity.ok(cliente);
     }
 
+    @PutMapping("/update/auth0Id/{auth0Id}")
+    public ResponseEntity<ClienteResponseDTO> updateByAuth0Id(@PathVariable String auth0Id,
+                                                     @Valid @RequestBody ClienteDTO clienteDTO) throws Auth0Exception {
+        ClienteResponseDTO cliente = clienteService.updateByAuth0Id(auth0Id, clienteDTO);
+        return ResponseEntity.ok(cliente);
+    }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
         clienteService.delete(id);
