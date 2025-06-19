@@ -31,12 +31,13 @@ public class EmpleadoService extends GenericoServiceImpl<Empleado, EmpleadoDTO, 
 
     @Override
     @Transactional
-    public void save(EmpleadoDTO empleadoDTO) {
+    public EmpleadoResponseDTO save(EmpleadoDTO empleadoDTO) {
         if (empleadoDTO.getUsuario().getRol() == Rol.CLIENTE) {
             throw new InvalidRolException("No se puede asignar el rol CLIENTE a un empleado");
         }
         Empleado empleado = empleadoMapper.toEntity(empleadoDTO);
         empleadoRepository.save(empleado);
+        return empleadoMapper.toResponseDTO(empleado);
     }
 
     @Override

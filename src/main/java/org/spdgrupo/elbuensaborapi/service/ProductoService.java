@@ -45,7 +45,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
 
     @Override
     @Transactional
-    public void save(ProductoDTO productoDTO) {
+    public ProductoResponseDTO save(ProductoDTO productoDTO) {
         Producto producto = productoMapper.toEntity(productoDTO);
         producto.setRubro(rubroProductoRepository.findById(productoDTO.getRubroId())
                 .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + productoDTO.getRubroId() + " no encontrado")));
@@ -60,6 +60,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         producto.setPrecioCosto(getPrecioCosto(producto.getDetalleProductos()));
 
         productoRepository.save(producto);
+        return productoMapper.toResponseDTO(producto);
     }
 
     // Acá busca por denominacion parcial. Ej para "Pizza Margarita" busca Pizza o margarita, etc
