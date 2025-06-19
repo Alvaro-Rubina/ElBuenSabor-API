@@ -37,6 +37,12 @@ public class ClienteController {
         return ResponseEntity.ok(cliente);
     }
 
+    @GetMapping("/auth0Id/{auth0Id}")
+    public ResponseEntity<ClienteResponseDTO> findByAuth0Id(@PathVariable String auth0Id) {
+        ClienteResponseDTO cliente = clienteService.findByAuth0Id(auth0Id);
+        return ResponseEntity.ok(cliente);
+    }
+
     @GetMapping
     public ResponseEntity<List<ClienteResponseDTO>> findAll() {
         return ResponseEntity.ok(clienteService.findAll());

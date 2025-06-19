@@ -29,12 +29,7 @@ public class ClienteService {
     public ClienteResponseDTO save(ClienteDTO clienteDTO) throws Auth0Exception {
         clienteDTO.getUsuario().setNombreCompleto(clienteDTO.getNombreCompleto());
 
-        Usuario usuario = new Usuario();
-        /*if ("Username-Password-Authentication".equals(clienteDTO.getUsuario().getConnection())) {
-            usuario = usuarioService.save(clienteDTO.getUsuario());
-        } else {
-            usuario = usuarioService.saveExistingUser(clienteDTO.getUsuario());
-        }*/
+        Usuario usuario;
 
         if (clienteDTO.getUsuario().getAuth0Id() == null) {
             usuario = usuarioService.save(clienteDTO.getUsuario());
@@ -64,6 +59,12 @@ public class ClienteService {
     public ClienteResponseDTO findByEmail(String email) {
         Cliente cliente = clienteRepository.findByUsuarioEmail(email)
                 .orElseThrow(() -> new NotFoundException("Cliente con el email " + email + " no encontrado"));
+        return clienteMapper.toResponseDTO(cliente);
+    }
+
+    public ClienteResponseDTO findByAuth0Id(String auth0Id) {
+        Cliente cliente = clienteRepository.findByUsuario_Auth0Id(auth0Id)
+                .orElseThrow(() -> new NotFoundException("Cliente con el auth0Id " + auth0Id + " no encontrado"));
         return clienteMapper.toResponseDTO(cliente);
     }
 
