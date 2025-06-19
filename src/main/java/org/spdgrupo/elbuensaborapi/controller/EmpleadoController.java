@@ -1,42 +1,71 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import com.auth0.exception.Auth0Exception;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.entity.Empleado;
 import org.spdgrupo.elbuensaborapi.service.EmpleadoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/empleados")
+@RequiredArgsConstructor
+public class EmpleadoController {
 
-public class EmpleadoController extends GenericoControllerImpl<
-        Empleado,
-        EmpleadoDTO,
-        EmpleadoResponseDTO,
-        Long,
-        EmpleadoService> {
+    private final EmpleadoService empleadoService;
 
-    @Autowired
-    private EmpleadoService empleadoService;
+    @PostMapping("/save")
+    public ResponseEntity<String> save(@Valid @RequestBody EmpleadoDTO empleadoDTO) throws Auth0Exception {
+        empleadoService.save(empleadoDTO);
+        return ResponseEntity.ok("Registro exitoso");
+    }
 
-    public EmpleadoController(EmpleadoService empleadoService) {
-        super(empleadoService);
+    @GetMapping("/{id}")
+    public ResponseEntity<EmpleadoResponseDTO> findById(@PathVariable Long id) {
+        EmpleadoResponseDTO empleado = empleadoService.findById(id);
+        return ResponseEntity.ok(empleado);
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<EmpleadoResponseDTO> findByEmail(@PathVariable String email) {
+        EmpleadoResponseDTO empleado = empleadoService.findByEmail(email);
+        return ResponseEntity.ok(empleado);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<EmpleadoResponseDTO>> findAll() {
+        return ResponseEntity.ok(empleadoService.findAll());
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateEmpleado(@PathVariable Long id,
-                                                 @Valid @RequestBody EmpleadoDTO empleadoDTO) {
+    public ResponseEntity<String> update(@PathVariable Long id,
+                                                 @Valid @RequestBody EmpleadoDTO empleadoDTO) throws Auth0Exception {
         empleadoService.update(id, empleadoDTO);
         return ResponseEntity.ok("Empleado actualizado correctamente");
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteEmpleado(@PathVariable Long id) {
+    public ResponseEntity<String> delete(@PathVariable Long id) {
         empleadoService.delete(id);
         return ResponseEntity.ok("Empleado eliminado correctamente");
+    }
+
+    @DeleteMapping("delete/physical/{id}")
+    public ResponseEntity<String> deletePhysically(@PathVariable Long id) throws Auth0Exception {
+        empleadoService.deletePhysically(id);
+        return ResponseEntity.ok("Empleado eliminado fisicamente");
+    }
+
+    @PutMapping("/toggle-activo/{id}")
+    public ResponseEntity<String> toggleActivo(@PathVariable Long id) {
+        empleadoService.toggleActivo(id);
+        return ResponseEntity.ok("Empleado actualizado exitosamente");
     }
 }
 

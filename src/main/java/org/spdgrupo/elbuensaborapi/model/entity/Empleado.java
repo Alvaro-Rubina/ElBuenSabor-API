@@ -16,7 +16,7 @@ public class Empleado extends Base {
 
     private String telefono;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private Usuario usuario;
 
     @OneToOne(cascade = CascadeType.ALL)

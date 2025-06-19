@@ -1,7 +1,9 @@
 package org.spdgrupo.elbuensaborapi.model.dto.usuario;
 
 import lombok.*;
-import org.spdgrupo.elbuensaborapi.model.enums.Rol;
+import org.spdgrupo.elbuensaborapi.model.dto.rol.RolResponseDTO;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,5 +15,5 @@ public class UsuarioResponseDTO {
     private Long id;
     private String email;
     private String auth0Id;
-    private Rol rol;
+    private List<RolResponseDTO> roles;
 }

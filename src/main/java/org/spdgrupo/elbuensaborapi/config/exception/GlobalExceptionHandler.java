@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.config.exception;
 
+import com.auth0.exception.Auth0Exception;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
@@ -16,6 +17,26 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex) {
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                "INTERNAL_SERVER_ERROR",
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                "INTERNAL_SERVER_ERROR",
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
@@ -36,7 +57,6 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
-
 
     @ExceptionHandler(CyclicParentException.class)
     public ResponseEntity<ErrorResponse> handleHierarchyCycleException(CyclicParentException ex) {
@@ -129,7 +149,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
     @ExceptionHandler(MPApiException.class)
     public ResponseEntity<ErrorResponse> handleMPApiException(MPApiException ex) {
         ErrorResponse error = new ErrorResponse(
@@ -138,5 +157,15 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Auth0Exception.class)
+    public ResponseEntity<ErrorResponse> handleAuth0Exception(Auth0Exception ex) {
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                "AUTH0_ERROR",
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

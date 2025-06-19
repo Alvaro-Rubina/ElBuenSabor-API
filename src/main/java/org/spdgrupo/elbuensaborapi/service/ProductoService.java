@@ -63,8 +63,14 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         return productoMapper.toResponseDTO(producto);
     }
 
+    public ProductoResponseDTO findByDenominacion(String denominacion) {
+        Producto producto = productoRepository.findByDenominacion(denominacion)
+                .orElseThrow(() -> new NotFoundException("Producto con la denominacion " + denominacion + " no encontrado"));
+        return productoMapper.toResponseDTO(producto);
+    }
+
     // Acá busca por denominacion parcial. Ej para "Pizza Margarita" busca Pizza o margarita, etc
-    public List<ProductoResponseDTO> getProductosByDenominacion(String denominacion) {
+    public List<ProductoResponseDTO> findByDenominacionContaining(String denominacion) {
         return productoRepository.findByDenominacionContainingIgnoreCase(denominacion).stream()
                 .map(productoMapper::toResponseDTO)
                 .toList();
