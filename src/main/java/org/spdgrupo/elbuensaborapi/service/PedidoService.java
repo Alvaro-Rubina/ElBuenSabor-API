@@ -48,7 +48,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
     @Override
     @Transactional
-    public void save(PedidoDTO pedidoDTO) {
+    public PedidoResponseDTO save(PedidoDTO pedidoDTO) {
         Pedido pedido = pedidoMapper.toEntity(pedidoDTO);
 
         // cliente y domicilio
@@ -64,10 +64,10 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         }
 
         // Estado segun metodo de pago
-        if(pedidoDTO.getFormaPago().equals(FormaPago.EFECTIVO)) {
-            pedido.setEstado(Estado.SOLICITADO);
-        } else {
+        if (pedidoDTO.getFormaPago().equals(FormaPago.MERCADO_PAGO)) {
             pedido.setEstado(Estado.PENDIENTE_FACTURACION);
+        } else {
+            pedido.setEstado(Estado.SOLICITADO); // Por defecto, para pagos en efectivo
         }
 
         // manejo de detalles
@@ -102,6 +102,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         }
 
         pedidoRepository.save(pedido);
+        return pedidoMapper.toResponseDTO(pedido);
     }
 
     public PedidoResponseDTO getPedidoByCodigo(String codigo) {
