@@ -13,11 +13,13 @@ public interface DetallePedidoMapper extends GenericoMapper<DetallePedido, Detal
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "producto", ignore = true)
     @Mapping(target = "insumo", ignore = true)
+    @Mapping(target = "promocion", ignore = true)
     @Mapping(target = "subTotal", ignore = true)
     @Mapping(target = "subTotalCosto", ignore = true)
     DetallePedido toEntity(DetallePedidoDTO detallePedidoDTO);
 
     @Mapping(source = "producto", target = "producto")
     @Mapping(source = "insumo", target = "insumo")
+    @Mapping(target = "promocion", ignore = true)
     DetallePedidoResponseDTO toResponseDTO(DetallePedido detallePedido);
 }
