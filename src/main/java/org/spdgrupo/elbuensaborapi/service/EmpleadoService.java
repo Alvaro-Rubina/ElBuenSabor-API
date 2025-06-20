@@ -26,7 +26,7 @@ public class EmpleadoService{
     private ManagementAPI managementAPI;
 
     @Transactional
-    public void save(EmpleadoDTO empleadoDTO) throws Auth0Exception {
+    public EmpleadoResponseDTO save(EmpleadoDTO empleadoDTO) throws Auth0Exception {
         empleadoDTO.getUsuario().setNombreCompleto(empleadoDTO.getNombreCompleto());
 
         Usuario usuario = new Usuario();
@@ -40,6 +40,7 @@ public class EmpleadoService{
 
         try {
             empleadoRepository.save(empleado);
+            return empleadoMapper.toResponseDTO(empleado);
         } catch (Exception e) {
             managementAPI.users().delete(usuario.getAuth0Id()).execute();
             throw e;

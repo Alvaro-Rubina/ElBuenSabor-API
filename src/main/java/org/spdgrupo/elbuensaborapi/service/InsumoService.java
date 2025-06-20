@@ -136,9 +136,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         insumoRepository.save(insumo);
 
         if (!insumo.getActivo() && insumo.getEsParaElaborar()) {
-
             productoService.cambiarActivoProducto(id);
-
         }
     }
 
