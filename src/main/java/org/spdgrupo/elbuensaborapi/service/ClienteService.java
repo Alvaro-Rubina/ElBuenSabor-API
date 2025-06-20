@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import com.auth0.client.mgmt.ManagementAPI;
 import com.auth0.exception.Auth0Exception;
+import com.auth0.json.mgmt.users.User;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.ClienteMapper;
@@ -96,7 +97,13 @@ public class ClienteService {
         Cliente cliente = clienteRepository.findByUsuario_Auth0Id(auth0Id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el auth0Id " + auth0Id + " no encontrado"));
 
-        if ((!cliente.getNombreCompleto().equals(clienteDTO.getNombreCompleto())) && (!clienteDTO.getNombreCompleto().trim().isEmpty())) {
+        User usuarioAuth0 = managementAPI.users().get(auth0Id, null).execute();
+        boolean isSocial = usuarioAuth0.getIdentities() != null &&
+                usuarioAuth0.getIdentities().stream()
+                        .anyMatch(identity -> !identity.getConnection().equals("Username-Password-Authentication"));
+
+        if ((!cliente.getNombreCompleto().equals(clienteDTO.getNombreCompleto()))
+                && (!clienteDTO.getNombreCompleto().trim().isEmpty()) && !isSocial) {
             cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
         }
 
@@ -104,7 +111,9 @@ public class ClienteService {
             cliente.setTelefono(clienteDTO.getTelefono());
         }
 
-        usuarioService.update(cliente.getUsuario().getAuth0Id(), clienteDTO.getUsuario());
+        if (!isSocial) {
+            usuarioService.update(cliente.getUsuario().getAuth0Id(), clienteDTO.getUsuario());
+        }
         return clienteMapper.toResponseDTO(clienteRepository.save(cliente));
     }
 

@@ -121,12 +121,6 @@ public class UsuarioService{
         User usuarioAuth0 = new User();
         boolean changed = false;
 
-        if ((!usuario.getEmail().equals(usuarioDTO.getEmail())) && (!usuarioDTO.getEmail().trim().isEmpty())) {
-            usuario.setEmail(usuarioDTO.getEmail());
-            usuarioAuth0.setEmail(usuarioDTO.getEmail());
-            changed = true;
-        }
-
         if ((!usuario.getNombreCompleto().equals(usuarioDTO.getNombreCompleto())) && (!usuarioDTO.getNombreCompleto().trim().isEmpty())) {
             usuario.setNombreCompleto(usuarioDTO.getNombreCompleto());
             usuarioAuth0.setName(usuarioDTO.getNombreCompleto());
