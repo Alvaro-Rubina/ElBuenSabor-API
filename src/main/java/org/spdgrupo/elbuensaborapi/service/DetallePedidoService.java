@@ -50,7 +50,7 @@ public class DetallePedidoService extends GenericoServiceImpl<DetallePedido, Det
             /*detallePedido.setPromocion(null);*/
         } else if (detallePedidoDTO.getPromocionId() != null) {
             detallePedido.setPromocion(promocionRepository.findById(detallePedidoDTO.getPromocionId())
-                    .orElseThrow(() -> new NotFoundException("Promoción con el id " + detallePedidoDTO.getInsumoId() + " no encontrada")));
+                    .orElseThrow(() -> new NotFoundException("Promoción con el id " + detallePedidoDTO.getPromocionId() + " no encontrada")));
             /*detallePedido.setProducto(null);*/
             /*detallePedido.setInsumo(null);*/
         }
