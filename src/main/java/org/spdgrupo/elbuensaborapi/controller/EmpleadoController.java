@@ -49,6 +49,13 @@ public class EmpleadoController {
         empleadoService.update(id, empleadoDTO);
         return ResponseEntity.ok("Empleado actualizado correctamente");
     }
+    
+    @PutMapping("/update/auth0Id/{auth0Id}")
+    public ResponseEntity<EmpleadoResponseDTO> updateByAuth0Id(@PathVariable String auth0Id,
+                                                               @Valid @RequestBody EmpleadoDTO empleadoDTO) throws Auth0Exception {
+        EmpleadoResponseDTO empleado = empleadoService.updateByAuth0Id(auth0Id, empleadoDTO);
+        return ResponseEntity.ok(empleado);
+    }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {

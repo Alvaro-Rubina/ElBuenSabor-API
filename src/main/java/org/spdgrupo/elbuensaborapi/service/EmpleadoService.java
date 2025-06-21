@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import com.auth0.client.mgmt.ManagementAPI;
 import com.auth0.exception.Auth0Exception;
+import com.auth0.json.mgmt.users.User;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.EmpleadoMapper;
@@ -23,7 +24,7 @@ public class EmpleadoService{
     private final EmpleadoRepository empleadoRepository;
     private final UsuarioService usuarioService;
     private final EmpleadoMapper empleadoMapper;
-    private ManagementAPI managementAPI;
+    private final ManagementAPI managementAPI;
 
     @Transactional
     public EmpleadoResponseDTO save(EmpleadoDTO empleadoDTO) throws Auth0Exception {
@@ -65,6 +66,31 @@ public class EmpleadoService{
 
         usuarioService.update(empleado.getUsuario().getAuth0Id(), empleadoDTO.getUsuario());
         empleadoRepository.save(empleado);
+    }
+
+    @Transactional
+    public EmpleadoResponseDTO updateByAuth0Id(String auth0Id, EmpleadoDTO empleadoDTO) throws Auth0Exception {
+        Empleado empleado = empleadoRepository.findByUsuario_Auth0Id(auth0Id)
+                .orElseThrow(() -> new NotFoundException("Cliente con el auth0Id " + auth0Id + " no encontrado"));
+
+        User usuarioAuth0 = managementAPI.users().get(auth0Id, null).execute();
+        boolean isSocial = usuarioAuth0.getIdentities() != null &&
+                usuarioAuth0.getIdentities().stream()
+                        .anyMatch(identity -> !identity.getConnection().equals("Username-Password-Authentication"));
+
+        if ((!empleado.getNombreCompleto().equals(empleadoDTO.getNombreCompleto()))
+                && (!empleadoDTO.getNombreCompleto().trim().isEmpty()) && !isSocial) {
+            empleado.setNombreCompleto(empleadoDTO.getNombreCompleto());
+        }
+
+        if ((!empleado.getTelefono().equals(empleadoDTO.getTelefono())) && (!empleadoDTO.getTelefono().trim().isEmpty())) {
+            empleado.setTelefono(empleadoDTO.getTelefono());
+        }
+
+        if (!isSocial) {
+            usuarioService.update(empleado.getUsuario().getAuth0Id(), empleadoDTO.getUsuario());
+        }
+        return empleadoMapper.toResponseDTO(empleadoRepository.save(empleado));
     }
 
     public EmpleadoResponseDTO findById(Long id) {
