@@ -41,7 +41,7 @@ public class PedidoController extends GenericoControllerImpl<
         this.pedidoService = pedidoService;
     }
 
-    @GetMapping("/{codigo}")
+    @GetMapping("/codigo/{codigo}")
     @ResponseBody
     public ResponseEntity<PedidoResponseDTO> getPedidoByCodigoOrden(@PathVariable String codigo) {
         PedidoResponseDTO pedidoDTO = pedidoService.getPedidoByCodigo(codigo);
