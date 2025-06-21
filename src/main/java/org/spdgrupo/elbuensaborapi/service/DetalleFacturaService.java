@@ -9,6 +9,7 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ProductoRepository;
+import org.spdgrupo.elbuensaborapi.repository.PromocionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,8 @@ public class DetalleFacturaService extends GenericoServiceImpl<DetalleFactura, D
     private ProductoRepository productoRepository;
     @Autowired
     private InsumoRepository insumoRepository;
+    @Autowired
+    private PromocionRepository promocionRepository;
     @Autowired
     private DetalleFacturaMapper detalleFacturaMapper;
 
@@ -33,12 +36,22 @@ public class DetalleFacturaService extends GenericoServiceImpl<DetalleFactura, D
 
         DetalleFactura detalleFactura = detalleFacturaMapper.toEntity(detalleFacturaDTO);
 
+        // Establecer producto, insumo o promocion
         if (detalleFacturaDTO.getProductoId() != null) {
             detalleFactura.setProducto(productoRepository.findById(detalleFacturaDTO.getProductoId())
                     .orElseThrow(() -> new NotFoundException("Producto con el id " + detalleFacturaDTO.getProductoId() + " no encontrado")));
-        } else {
+            /*detallePedido.setInsumo(null);*/
+            /*detallePedido.setPromocion(null);*/
+        } else if (detalleFacturaDTO.getInsumoId() != null) {
             detalleFactura.setInsumo(insumoRepository.findById(detalleFacturaDTO.getInsumoId())
                     .orElseThrow(() -> new NotFoundException("Insumo con el id " + detalleFacturaDTO.getInsumoId() + " no encontrado")));
+            /*detallePedido.setProducto(null);*/
+            /*detallePedido.setPromocion(null);*/
+        } else if (detalleFacturaDTO.getPromocionId() != null) {
+            detalleFactura.setPromocion(promocionRepository.findById(detalleFacturaDTO.getPromocionId())
+                    .orElseThrow(() -> new NotFoundException("Promoción con el id " + detalleFacturaDTO.getInsumoId() + " no encontrada")));
+            /*detallePedido.setProducto(null);*/
+            /*detallePedido.setInsumo(null);*/
         }
 
         calcularSubtotales(detalleFactura);
