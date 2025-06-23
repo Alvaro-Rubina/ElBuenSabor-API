@@ -218,27 +218,26 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
     @Transactional(readOnly = true)
     public IngresosEgresosDTO calcularIngresosEgresos(LocalDate fechaDesde, LocalDate fechaHasta) {
-        // Obtenemos los pedidos entregados desde el repositorio
-        List<Pedido> pedidosEntregados = pedidoRepository.findPedidosEntregados(fechaDesde, fechaHasta);
+        List<Pedido> pedidos = pedidoRepository.findPedidosEntregadosYCancelados(fechaDesde, fechaHasta);
 
-        // Si no hay pedidos, valores predeterminados
-        if (pedidosEntregados.isEmpty()) {
+        if (pedidos.isEmpty()) {
             return new IngresosEgresosDTO(0.0, 0.0, 0.0);
         }
 
-        // Realizamos los cálculos
-        double ingresos = pedidosEntregados.stream()
-                .mapToDouble(Pedido::getTotalVenta)
-                .sum();
+        double ingresos = 0.0;
+        double egresos = 0.0;
 
-        double egresos = pedidosEntregados.stream()
-                .mapToDouble(Pedido::getTotalCosto)
-                .sum();
+        for (Pedido pedido : pedidos) {
+            // Solo sumo el totalVenta si el pedido fue entregado, si fue cancelado no.
+            if (pedido.getEstado() == Estado.ENTREGADO) {
+                ingresos += pedido.getTotalVenta();
+            }
 
-        // Calculamos las ganancias
+            egresos += pedido.getTotalCosto();
+        }
+
         double ganancias = ingresos - egresos;
 
-        // Devolvemos el DTO con los resultados
         return new IngresosEgresosDTO(ingresos, egresos, ganancias);
     }
 }

@@ -21,10 +21,10 @@ public interface PedidoRepository extends GenericoRepository<Pedido, Long> {
     List<Pedido> findAllByEstado(Estado estado);
 
     @Query("SELECT p FROM Pedido p " +
-            "WHERE p.estado = 'ENTREGADO' " +
+            "WHERE p.estado IN (org.spdgrupo.elbuensaborapi.model.enums.Estado.ENTREGADO, org.spdgrupo.elbuensaborapi.model.enums.Estado.CANCELADO) " +
             "AND (:fechaDesde IS NULL OR p.fecha >= :fechaDesde) " +
             "AND (:fechaHasta IS NULL OR p.fecha <= :fechaHasta)")
-    List<Pedido> findPedidosEntregados(
+    List<Pedido> findPedidosEntregadosYCancelados(
             @Param("fechaDesde") LocalDate fechaDesde,
             @Param("fechaHasta") LocalDate fechaHasta);
 
