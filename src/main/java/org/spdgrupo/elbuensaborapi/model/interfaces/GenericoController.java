@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public interface GenericoController <E extends Base, D, R, ID extends Serializable> {
-    ResponseEntity<String> save(@RequestBody D entity);
+    ResponseEntity<R> save(@RequestBody D entity);
     ResponseEntity<R> findById(@PathVariable ID id);
     ResponseEntity<List<R>> findAll();
 }

@@ -28,11 +28,11 @@ public class PedidoController extends GenericoControllerImpl<
 
     @Override
     @PostMapping("/save")
-    public ResponseEntity<String> save(@Valid @RequestBody PedidoDTO pedidoDTO) {
-        servicio.save(pedidoDTO);
+    public ResponseEntity<PedidoResponseDTO> save(@Valid @RequestBody PedidoDTO pedidoDTO) {
+        PedidoResponseDTO pedido = servicio.save(pedidoDTO);
         // TODO: Cambiar el pedidoDTO (PedidoDTO) a que sea un PedidoResponseDTO
         messagingTemplate.convertAndSend("/topic/pedidos", pedidoDTO);
-        return ResponseEntity.ok("Registro exitoso");
+        return ResponseEntity.ok(pedido);
     }
 
     public PedidoController(PedidoService pedidoService) {
