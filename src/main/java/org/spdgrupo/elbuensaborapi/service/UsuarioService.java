@@ -122,7 +122,7 @@ public class UsuarioService{
         User usuarioAuth0 = new User();
         boolean changed = false;
 
-        if ((!usuario.getNombreCompleto().equals(usuarioDTO.getNombreCompleto())) && (!usuarioDTO.getNombreCompleto().trim().isEmpty())) {
+        if (usuario.getNombreCompleto() != null && !usuario.getNombreCompleto().equals(usuarioDTO.getNombreCompleto())) {
             usuario.setNombreCompleto(usuarioDTO.getNombreCompleto());
             usuarioAuth0.setName(usuarioDTO.getNombreCompleto());
             changed = true;

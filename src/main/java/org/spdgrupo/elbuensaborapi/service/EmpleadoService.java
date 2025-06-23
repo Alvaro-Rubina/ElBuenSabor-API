@@ -30,12 +30,14 @@ public class EmpleadoService{
     public EmpleadoResponseDTO save(EmpleadoDTO empleadoDTO) throws Auth0Exception {
         empleadoDTO.getUsuario().setNombreCompleto(empleadoDTO.getNombreCompleto());
 
-        Usuario usuario = new Usuario();
-        if ("Username-Password-Authentication".equals(empleadoDTO.getUsuario().getConnection())) {
+        Usuario usuario;
+
+        if (empleadoDTO.getUsuario().getAuth0Id() == null) {
             usuario = usuarioService.save(empleadoDTO.getUsuario());
         } else {
             usuario = usuarioService.saveExistingUser(empleadoDTO.getUsuario());
         }
+        
         Empleado empleado = empleadoMapper.toEntity(empleadoDTO);
         empleado.setUsuario(usuario);
 
@@ -55,6 +57,7 @@ public class EmpleadoService{
 
         if ((!empleado.getNombreCompleto().equals(empleadoDTO.getNombreCompleto())) && (!empleadoDTO.getNombreCompleto().trim().isEmpty())) {
             empleado.setNombreCompleto(empleadoDTO.getNombreCompleto());
+            empleado.getUsuario().setNombreCompleto(empleadoDTO.getNombreCompleto());
         }
 
         if ((!empleado.getTelefono().equals(empleadoDTO.getTelefono())) && (!empleadoDTO.getTelefono().trim().isEmpty())) {
@@ -81,6 +84,7 @@ public class EmpleadoService{
         if ((!empleado.getNombreCompleto().equals(empleadoDTO.getNombreCompleto()))
                 && (!empleadoDTO.getNombreCompleto().trim().isEmpty()) && !isSocial) {
             empleado.setNombreCompleto(empleadoDTO.getNombreCompleto());
+            empleadoDTO.getUsuario().setNombreCompleto(empleado.getNombreCompleto());
         }
 
         if ((!empleado.getTelefono().equals(empleadoDTO.getTelefono())) && (!empleadoDTO.getTelefono().trim().isEmpty())) {

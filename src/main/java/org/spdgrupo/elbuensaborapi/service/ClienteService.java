@@ -82,6 +82,7 @@ public class ClienteService {
 
         if ((!cliente.getNombreCompleto().equals(clienteDTO.getNombreCompleto())) && (!clienteDTO.getNombreCompleto().trim().isEmpty())) {
             cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
+            clienteDTO.getUsuario().setNombreCompleto(cliente.getNombreCompleto());
         }
 
         if ((!cliente.getTelefono().equals(clienteDTO.getTelefono())) && (!clienteDTO.getTelefono().trim().isEmpty())) {
@@ -105,6 +106,7 @@ public class ClienteService {
         if ((!cliente.getNombreCompleto().equals(clienteDTO.getNombreCompleto()))
                 && (!clienteDTO.getNombreCompleto().trim().isEmpty()) && !isSocial) {
             cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
+            cliente.getUsuario().setNombreCompleto(clienteDTO.getNombreCompleto());
         }
 
         if ((!cliente.getTelefono().equals(clienteDTO.getTelefono())) && (!clienteDTO.getTelefono().trim().isEmpty())) {
