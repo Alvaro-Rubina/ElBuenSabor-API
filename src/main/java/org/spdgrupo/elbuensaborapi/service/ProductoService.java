@@ -1,7 +1,9 @@
 package org.spdgrupo.elbuensaborapi.service;
 
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoVentasDTO;
 import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
@@ -20,6 +22,7 @@ import org.spdgrupo.elbuensaborapi.repository.RubroProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -159,6 +162,18 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         producto.setActivo(false);
         productoRepository.save(producto);
     }
+
+    @Transactional(readOnly = true)
+    public List<ProductoVentasDTO> obtenerProductosMasVendidos(LocalDate fechaDesde, LocalDate fechaHasta, int limite) {
+        // Validación de fechas
+        if (fechaDesde != null && fechaHasta != null && fechaDesde.isAfter(fechaHasta)) {
+            throw new IllegalArgumentException("La fechaDesde no puede ser posterior a la fechaHasta.");
+        }
+
+        // Consulta al repositorio
+        return productoRepository.findProductosMasVendidos(fechaDesde, fechaHasta, PageRequest.of(0, limite));
+    }
+
 
     // Metodos auxiliares
     private Double getPrecioCosto(List<DetalleProducto> detalleProductos) {
