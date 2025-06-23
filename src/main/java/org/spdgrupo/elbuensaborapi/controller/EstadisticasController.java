@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/api/estadisticas")
 @RequiredArgsConstructor
-public final class EstadisticasController {
+public class EstadisticasController {
 
     private final PedidoService pedidoService;
 
