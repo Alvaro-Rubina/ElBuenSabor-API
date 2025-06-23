@@ -52,14 +52,4 @@ public class InsumoController extends GenericoControllerImpl<
         return ResponseEntity.ok("Insumo eliminado exitosamente");
     }
 
-    @GetMapping("/top-ventas")
-    public ResponseEntity<List<InsumoVentasDTO>> obtenerInsumosMasVendidos(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
-            @RequestParam(defaultValue = "10") int limite) {
-        List<InsumoVentasDTO> insumos = insumoService.obtenerInsumosMasVendidos(fechaDesde, fechaHasta, limite);
-        return ResponseEntity.ok(insumos);
-    }
-
-
 }

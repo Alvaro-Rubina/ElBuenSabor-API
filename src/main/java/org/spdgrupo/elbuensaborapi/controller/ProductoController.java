@@ -55,16 +55,4 @@ public class ProductoController extends GenericoControllerImpl<
         return ResponseEntity.ok("Producto eliminado correctamente");
     }
 
-    // Nuevo endpoint para obtener los productos más vendidos
-    @GetMapping("/top-ventas")
-    public ResponseEntity<List<ProductoVentasDTO>> obtenerProductosMasVendidos(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
-            @RequestParam(defaultValue = "10") int limite) {
-        List<ProductoVentasDTO> productos = productoService.obtenerProductosMasVendidos(fechaDesde, fechaHasta, limite);
-        return ResponseEntity.ok(productos);
-    }
-
-
-
 }
