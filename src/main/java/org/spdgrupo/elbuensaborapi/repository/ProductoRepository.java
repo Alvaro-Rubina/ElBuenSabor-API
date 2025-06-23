@@ -23,7 +23,8 @@ public interface ProductoRepository extends GenericoRepository<Producto, Long> {
             "p.id, p.denominacion, SUM(dp.cantidad)) " +
             "FROM DetallePedido dp " +
             "JOIN dp.producto p " +
-            "WHERE (:fechaDesde IS NULL OR dp.pedido.fecha >= :fechaDesde) " +
+            "WHERE dp.pedido.estado = 'ENTREGADO' " + // Filtro por estado "ENTREGADO"
+            "AND (:fechaDesde IS NULL OR dp.pedido.fecha >= :fechaDesde) " +
             "AND (:fechaHasta IS NULL OR dp.pedido.fecha <= :fechaHasta) " +
             "GROUP BY p.id " +
             "ORDER BY SUM(dp.cantidad) DESC")
@@ -31,6 +32,5 @@ public interface ProductoRepository extends GenericoRepository<Producto, Long> {
             @Param("fechaDesde") LocalDate fechaDesde,
             @Param("fechaHasta") LocalDate fechaHasta,
             Pageable pageable);
-
 
 }

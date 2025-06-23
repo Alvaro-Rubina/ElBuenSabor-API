@@ -21,6 +21,7 @@ public interface InsumoRepository extends GenericoRepository<Insumo, Long> {
             "FROM DetallePedido dp " +
             "JOIN dp.insumo i " +
             "WHERE i.esParaElaborar = false " +
+            "AND dp.pedido.estado = 'ENTREGADO' " + // Filtro por estado "ENTREGADO"
             "AND (:fechaDesde IS NULL OR dp.pedido.fecha >= :fechaDesde) " +
             "AND (:fechaHasta IS NULL OR dp.pedido.fecha <= :fechaHasta) " +
             "GROUP BY i.id " +
