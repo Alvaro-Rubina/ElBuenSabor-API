@@ -1,8 +1,9 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import jakarta.transaction.Transactional;
+
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.PedidoMapper;
+import org.spdgrupo.elbuensaborapi.model.dto.IngresosEgresosDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
@@ -17,6 +18,7 @@ import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
 import org.spdgrupo.elbuensaborapi.repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -214,4 +216,20 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
     }
 
+    @Transactional(readOnly = true)
+    public IngresosEgresosDTO calcularIngresosEgresos(LocalDate fechaDesde, LocalDate fechaHasta) {
+        Object[] resultados = pedidoRepository.calcularIngresosEgresos(fechaDesde, fechaHasta);
+
+        if (resultados == null || resultados.length < 2) {
+            return new IngresosEgresosDTO(0.0, 0.0, 0.0); // Valores por defecto si no hay datos
+        }
+
+        Double ingresos = (Double) resultados[0]; // Total de ingresos (totalVenta)
+        Double egresos = (Double) resultados[1];  // Total de egresos (totalCosto)
+
+        // Las ganancias se calculan como ingresos - egresos
+        Double ganancias = ingresos - egresos;
+
+        return new IngresosEgresosDTO(ingresos, egresos, ganancias);
+    }
 }

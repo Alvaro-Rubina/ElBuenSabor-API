@@ -4,12 +4,15 @@ import jakarta.validation.Valid;
 
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoVentasDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.service.InsumoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -48,5 +51,15 @@ public class InsumoController extends GenericoControllerImpl<
         insumoService.delete(id);
         return ResponseEntity.ok("Insumo eliminado exitosamente");
     }
-    
+
+    @GetMapping("/top-ventas")
+    public ResponseEntity<List<InsumoVentasDTO>> obtenerInsumosMasVendidos(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
+            @RequestParam(defaultValue = "10") int limite) {
+        List<InsumoVentasDTO> insumos = insumoService.obtenerInsumosMasVendidos(fechaDesde, fechaHasta, limite);
+        return ResponseEntity.ok(insumos);
+    }
+
+
 }

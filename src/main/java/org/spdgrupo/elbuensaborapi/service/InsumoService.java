@@ -6,15 +6,19 @@ import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.InsumoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoVentasDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -153,5 +157,17 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
             productoService.cambiarActivoProducto(id);
         }
     }
+
+    @Transactional(readOnly = true)
+    public List<InsumoVentasDTO> obtenerInsumosMasVendidos(LocalDate fechaDesde, LocalDate fechaHasta, int limite) {
+        // Validación de fechas opcional
+        if (fechaDesde != null && fechaHasta != null && fechaDesde.isAfter(fechaHasta)) {
+            throw new IllegalArgumentException("La fechaDesde no puede ser posterior a la fechaHasta.");
+        }
+
+        Pageable pageable = PageRequest.of(0, limite); // Limitar la cantidad de resultados
+        return insumoRepository.findInsumosMasVendidos(fechaDesde, fechaHasta, pageable);
+    }
+
 
 }
