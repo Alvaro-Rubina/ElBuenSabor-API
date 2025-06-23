@@ -20,14 +20,11 @@ public interface PedidoRepository extends GenericoRepository<Pedido, Long> {
 
     List<Pedido> findAllByEstado(Estado estado);
 
-    @Query("SELECT SUM(" +
-            "CASE WHEN p.estado = 'ENTREGADO' THEN p.totalVenta ELSE 0 END) AS ingresos, " +
-            "SUM(p.totalCosto) AS egresos " +
-            "FROM Pedido p " +
-            "WHERE p.estado IN ('ENTREGADO', 'CANCELADO') " +
+    @Query("SELECT p FROM Pedido p " +
+            "WHERE p.estado = 'ENTREGADO' " +
             "AND (:fechaDesde IS NULL OR p.fecha >= :fechaDesde) " +
             "AND (:fechaHasta IS NULL OR p.fecha <= :fechaHasta)")
-    Object[] calcularIngresosEgresos(
+    List<Pedido> findPedidosEntregados(
             @Param("fechaDesde") LocalDate fechaDesde,
             @Param("fechaHasta") LocalDate fechaHasta);
 
