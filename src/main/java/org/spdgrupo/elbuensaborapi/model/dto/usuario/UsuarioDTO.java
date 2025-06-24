@@ -12,7 +12,6 @@ import java.util.List;
 @Builder
 public class UsuarioDTO {
 
-    // TODO: Esto tendría que ser opcional? por lo de registrarse con google
     @NotBlank(message = "El campo email no puede estar vacio")
     private String email;
 

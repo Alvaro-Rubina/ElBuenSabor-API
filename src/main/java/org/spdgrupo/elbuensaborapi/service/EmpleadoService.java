@@ -57,7 +57,7 @@ public class EmpleadoService{
 
         if ((!empleado.getNombreCompleto().equals(empleadoDTO.getNombreCompleto())) && (!empleadoDTO.getNombreCompleto().trim().isEmpty())) {
             empleado.setNombreCompleto(empleadoDTO.getNombreCompleto());
-            empleado.getUsuario().setNombreCompleto(empleadoDTO.getNombreCompleto());
+            empleadoDTO.getUsuario().setNombreCompleto(empleadoDTO.getNombreCompleto());
         }
 
         if ((!empleado.getTelefono().equals(empleadoDTO.getTelefono())) && (!empleadoDTO.getTelefono().trim().isEmpty())) {
