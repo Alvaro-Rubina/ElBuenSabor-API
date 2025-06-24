@@ -80,4 +80,10 @@ public class RolController {
         return ResponseEntity.ok("Rol actualizado exitosamente");
     }
 
+    @PostMapping("/sincronizar")
+    public ResponseEntity<String> sincronizarRolesDesdeAuth0() throws Auth0Exception {
+        rolService.sincronizarRolesDesdeAuth0();
+        return ResponseEntity.ok("Roles sincronizados desde Auth0 correctamente");
+    }
+
 }
