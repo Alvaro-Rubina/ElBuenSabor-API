@@ -25,6 +25,8 @@ public class Producto extends Base {
 
     private Double precioCosto;
 
+    private Double margenGanancia;
+
     @Column(length = 500)
     private String urlImagen;
 

@@ -61,6 +61,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
             producto.getDetalleProductos().add(detalle);
         }
         producto.setPrecioCosto(getPrecioCosto(producto.getDetalleProductos()));
+        producto.setPrecioVenta(getPrecioVenta(producto.getPrecioCosto(), productoDTO.getMargenGanancia()));
 
         productoRepository.save(producto);
         return productoMapper.toResponseDTO(producto);
@@ -85,12 +86,11 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
                 .toList();
     }
 
+    @Transactional
     public void cambiarActivoProducto(long id){
         List<ProductoResponseDTO> productos = getProductosByInsumoid(id);
 
         for (ProductoResponseDTO producto : productos) {
-
-            boolean todosInsumosActivos = true;
 
             if(producto.isActivo()){
                 List<DetalleProductoResponseDTO> detalleProductoResponseDTO = producto.getDetalleProductos();
@@ -102,11 +102,8 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
                     }
                 }
             }
-
         }
-
     }
-
 
     @Override
     @Transactional
@@ -126,9 +123,9 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
             producto.setTiempoEstimadoPreparacion(productoDTO.getTiempoEstimadoPreparacion());
         }
 
-        if (!producto.getPrecioVenta().equals(productoDTO.getPrecioVenta())) {
+        /*if (!producto.getPrecioVenta().equals(productoDTO.getPrecioVenta())) {
             producto.setPrecioVenta(productoDTO.getPrecioVenta());
-        }
+        }*/
 
         if (!producto.getUrlImagen().equals(productoDTO.getUrlImagen())) {
             producto.setUrlImagen(productoDTO.getUrlImagen());
@@ -150,6 +147,11 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
             producto.getDetalleProductos().add(detalle);
         }
         producto.setPrecioCosto(getPrecioCosto(producto.getDetalleProductos()));
+
+        if (!producto.getPrecioVenta().equals(getPrecioVenta(producto.getPrecioCosto(), productoDTO.getMargenGanancia()))) {
+            producto.setPrecioVenta(getPrecioVenta(producto.getPrecioCosto(), productoDTO.getMargenGanancia()));
+            producto.setMargenGanancia(productoDTO.getMargenGanancia());
+        }
 
         productoRepository.save(producto);
     }
@@ -190,6 +192,11 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
             precioCosto += cantidad * detalleProducto.getInsumo().getPrecioCosto();
         }
         return precioCosto;
+    }
+
+    private Double getPrecioVenta(Double precioCosto, Double margenGanancia) {
+        double margen = margenGanancia / 100.0;
+        return precioCosto * (1 + margen);
     }
 
     @Override

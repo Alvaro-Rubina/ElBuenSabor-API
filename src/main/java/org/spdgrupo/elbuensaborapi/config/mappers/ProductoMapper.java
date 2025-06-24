@@ -13,6 +13,7 @@ public interface ProductoMapper extends GenericoMapper<Producto, ProductoDTO, Pr
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "rubroId", target = "rubro.id")
     @Mapping(target = "precioCosto", ignore = true)
+    @Mapping(target = "precioVenta", ignore = true)
     @Mapping(target = "detalleProductos", ignore = true)
     Producto toEntity(ProductoDTO productoDTO);
 
