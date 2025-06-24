@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/domicilios")
 
@@ -25,6 +27,12 @@ public class DomicilioController extends GenericoControllerImpl<
     public DomicilioController(DomicilioService domicilioService) {
         super(domicilioService);
         this.domicilioService = domicilioService;
+    }
+
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<DomicilioResponseDTO>> getDomicilioByClienteId(@PathVariable Long clienteId) {
+        List<DomicilioResponseDTO> domicilios = domicilioService.getDomiciliosByClienteId(clienteId);
+        return ResponseEntity.ok(domicilios);
     }
 
     @PutMapping("/update/{id}")
