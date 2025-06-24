@@ -46,6 +46,8 @@ public class Pedido extends Base {
     @Enumerated(EnumType.STRING)
     private FormaPago formaPago;
 
+    private Double costoEnvio;
+
     private String comentario;
 
     @ManyToOne

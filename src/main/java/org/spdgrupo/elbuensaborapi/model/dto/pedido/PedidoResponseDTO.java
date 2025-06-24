@@ -32,6 +32,7 @@ public class PedidoResponseDTO {
     private Double totalVenta;
     private Double totalCosto;
     private FormaPago formaPago;
+    private Double costoEnvio;
     private String comentario;
     private ClienteResponseDTO cliente;
     private DomicilioResponseDTO domicilio;

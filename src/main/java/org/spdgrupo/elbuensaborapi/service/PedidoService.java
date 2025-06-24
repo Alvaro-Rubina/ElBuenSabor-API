@@ -72,6 +72,13 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
             pedido.setEstado(Estado.SOLICITADO); // Por defecto, para pagos en efectivo
         }
 
+        // Costo de envio segun tipo de envio TODO: El valor por ahora es provisional, después ajustar
+        if (pedidoDTO.getTipoEnvio() == TipoEnvio.DELIVERY) {
+            pedido.setCostoEnvio(2000.0);
+        } else {
+            pedido.setCostoEnvio(0.0);
+        }
+
         // manejo de detalles
         pedido.setDetallePedidos(new ArrayList<>());
         for (DetallePedidoDTO detalleDTO : pedidoDTO.getDetallePedidos()) {
@@ -81,7 +88,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         }
 
         // calculo totales y hora estimada
-        pedido.setTotalVenta(getTotalVenta(pedido.getDetallePedidos()));
+        pedido.setTotalVenta(getTotalVenta(pedido.getDetallePedidos()) + pedido.getCostoEnvio());
         pedido.setTotalCosto(getTotalCosto(pedido.getDetallePedidos()));
         pedido.setHoraEstimadaFin(getHoraEstimadaFin(pedido));
         pedido.setCodigo(generateCodigo());

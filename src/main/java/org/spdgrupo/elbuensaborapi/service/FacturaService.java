@@ -47,9 +47,9 @@ public class FacturaService extends GenericoServiceImpl<Factura, FacturaDTO, Fac
                 .horaFacturacion(java.time.LocalTime.now())
                 .codigoComprobante(pedido.getCodigo())
                 .formaPago(pedido.getFormaPago())
-                .totalVenta(pedido.getTotalVenta().toString())
-                .montoDescuento(0.0) // TODO: ver esto cuando hayan promociones
-                .costoEnvio(0.0) // TODO: ver esto
+                .totalVenta(pedido.getTotalVenta())
+                .montoDescuento(0.0) // TODO: Esto podria ser util si en algun momentos hay promos o cosas asi
+                .costoEnvio(pedido.getCostoEnvio())
                 .pedido(pedido)
                 .cliente(pedido.getCliente())
                 .detalleFacturas(new ArrayList<>())

@@ -26,7 +26,7 @@ public class FacturaResponseDTO {
     private String numeroComprobante;
     @Enumerated(EnumType.STRING)
     private FormaPago formaPago;
-    private String totalVenta;
+    private Double totalVenta;
     private Double montoDescuento;
     private Double costoEnvio;
     private PedidoResponseDTO pedido;

@@ -21,6 +21,7 @@ public interface PedidoMapper extends GenericoMapper<Pedido, PedidoDTO, PedidoRe
     @Mapping(target = "cliente", ignore = true)
     @Mapping(target = "domicilio", ignore = true)
     @Mapping(target = "detallePedidos", ignore = true)
+    @Mapping(target = "costoEnvio", ignore = true)
     Pedido toEntity(PedidoDTO pedidoDTO);
 
     @Mapping(source = "cliente", target = "cliente")

@@ -24,6 +24,8 @@ public class PedidoDTO {
     @NotNull(message = "El campo formaPago no puede ser nulo")
     private FormaPago formaPago;
 
+    private Double costoEnvio;
+
     private String comentario = "Sin comentarios";
 
     @NotNull(message = "El campo clienteId no puede ser nulo")

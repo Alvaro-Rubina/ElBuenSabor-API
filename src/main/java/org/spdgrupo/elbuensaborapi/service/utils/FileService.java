@@ -65,7 +65,7 @@ public class FileService {
         document.add(new Paragraph(" "));
 
         // TABLA DE PRODUCTOS
-        PdfPTable table = new PdfPTable(4); //Producto, Cantidad, Unitario, Subtotal)
+        PdfPTable table = new PdfPTable(4); // Producto, Cantidad, Unitario, Subtotal
         table.setWidthPercentage(100);
         table.setSpacingBefore(10f);
         table.setSpacingAfter(10f);
@@ -91,9 +91,9 @@ public class FileService {
         // TOTALES
         Paragraph totales = new Paragraph(
                 "Costos:\n" +
-                        "Subtotal: $" + factura.getTotalVenta() + "\n" +
+                        "Subtotal: $" + (factura.getTotalVenta() - factura.getCostoEnvio()) + "\n" +
                         "Costo de Envío: $" + factura.getCostoEnvio() + "\n" +
-                        "Total: $" + factura.getTotalVenta(),  // Ajusta el cálculo para sumar envío y otros costos.
+                        "Total: $" + factura.getTotalVenta(),
                 FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12));
         totales.setAlignment(Element.ALIGN_RIGHT);
         document.add(totales);
