@@ -15,6 +15,12 @@ import java.util.Optional;
 public interface PedidoRepository extends GenericoRepository<Pedido, Long> {
     Optional<Pedido> findByCodigo(String codigo);
 
+    @Query("SELECT p FROM Pedido p " +
+            "WHERE (:estado IS NULL OR p.estado = :estado) " +
+            "AND p.cliente.id = :clienteId")
+    List<Pedido> findPedidosByClienteIdAndEstado(@Param("clienteId") Long clienteId,
+                                                 @Param("estado") Estado estado);
+
     @Query("SELECT COUNT(p) FROM Pedido p WHERE YEAR(p.fecha) = :anio AND MONTH(p.fecha) = :mes")
     int countByYearAndMonth(@Param("anio") int anio, @Param("mes") int mes);
 

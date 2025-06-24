@@ -47,6 +47,15 @@ public class PedidoController extends GenericoControllerImpl<
         return ResponseEntity.ok(pedidoDTO);
     }
 
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<PedidoResponseDTO>> getPedidosByClienteId(
+            @PathVariable Long clienteId,
+            @RequestParam(required = false) Estado estado) {
+
+        List<PedidoResponseDTO> pedidos = pedidoService.getPedidosByClienteId(clienteId, estado);
+        return ResponseEntity.ok(pedidos);
+    }
+
     @PutMapping("/agregar-min/{pedidoId}")
     // El url quedaria algo asi: http//localhost:8080/agregarMin/1?minutos=10
     public ResponseEntity<String> agregarTiempoAlPedido(@PathVariable Long pedidoId,

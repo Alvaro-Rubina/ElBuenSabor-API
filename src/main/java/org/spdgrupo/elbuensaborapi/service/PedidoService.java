@@ -153,6 +153,49 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         return pedidoMapper.toResponseDTO(pedido);
     }
 
+    public List<PedidoResponseDTO> getPedidosByEstado(Estado estado) {
+        List<Pedido> pedidos = pedidoRepository.findAllByEstado(estado);
+
+        return pedidos.stream()
+                .map(pedidoMapper::toResponseDTO)
+                .toList();
+
+    }
+
+    @Transactional(readOnly = true)
+    public IngresosEgresosDTO calcularIngresosEgresos(LocalDate fechaDesde, LocalDate fechaHasta) {
+        List<Pedido> pedidos = pedidoRepository.findPedidosEntregadosYCancelados(fechaDesde, fechaHasta);
+
+        if (pedidos.isEmpty()) {
+            return new IngresosEgresosDTO(0.0, 0.0, 0.0);
+        }
+
+        double ingresos = 0.0;
+        double egresos = 0.0;
+
+        for (Pedido pedido : pedidos) {
+            // Solo sumo el totalVenta si el pedido fue entregado, si fue cancelado no.
+            if (pedido.getEstado() == Estado.ENTREGADO) {
+                ingresos += pedido.getTotalVenta();
+            }
+
+            egresos += pedido.getTotalCosto();
+        }
+
+        double ganancias = ingresos - egresos;
+
+        return new IngresosEgresosDTO(ingresos, egresos, ganancias);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PedidoResponseDTO> getPedidosByClienteId(Long clienteId, Estado estado) {
+        List<Pedido> pedidos = pedidoRepository.findPedidosByClienteIdAndEstado(clienteId, estado);
+
+        return pedidos.stream()
+                .map(pedidoMapper::toResponseDTO)
+                .toList();
+    }
+
     // Metodos adicionales
     private Double getTotalVenta(List<DetallePedido> detallePedidos) {
         Double totalVenta = 0.0;
@@ -199,6 +242,8 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         return pedido.getHora().plusMinutes(tiempoAdicional);
     }
 
+
+
     private String generateCodigo() {
         LocalDate hoy = LocalDate.now();
         int anio = hoy.getYear();
@@ -212,39 +257,5 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         String numeroStr = String.format("%05d", nuevoNumero);
 
         return "PED-" + anioStr + mesStr + "-" + numeroStr;
-    }
-
-    public List<PedidoResponseDTO> getPedidosByEstado(Estado estado) {
-        List<Pedido> pedidos = pedidoRepository.findAllByEstado(estado);
-
-        return pedidos.stream()
-                .map(pedidoMapper::toResponseDTO)
-                .toList();
-
-    }
-
-    @Transactional(readOnly = true)
-    public IngresosEgresosDTO calcularIngresosEgresos(LocalDate fechaDesde, LocalDate fechaHasta) {
-        List<Pedido> pedidos = pedidoRepository.findPedidosEntregadosYCancelados(fechaDesde, fechaHasta);
-
-        if (pedidos.isEmpty()) {
-            return new IngresosEgresosDTO(0.0, 0.0, 0.0);
-        }
-
-        double ingresos = 0.0;
-        double egresos = 0.0;
-
-        for (Pedido pedido : pedidos) {
-            // Solo sumo el totalVenta si el pedido fue entregado, si fue cancelado no.
-            if (pedido.getEstado() == Estado.ENTREGADO) {
-                ingresos += pedido.getTotalVenta();
-            }
-
-            egresos += pedido.getTotalCosto();
-        }
-
-        double ganancias = ingresos - egresos;
-
-        return new IngresosEgresosDTO(ingresos, egresos, ganancias);
     }
 }
