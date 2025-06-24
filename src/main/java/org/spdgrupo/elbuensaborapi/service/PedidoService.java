@@ -122,9 +122,9 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
             pedido.setEstado(estado);
 
             // NOTE: Esto creo que tendría que estar en el metodo savePedido
-            /*if (estado == Estado.SOLICITADO) {
+            if (estado == Estado.TERMINADO) {
                 pedido.setFactura(facturaService.createFacturaFromPedido(pedido));
-            }*/
+            }
         }
 
         pedidoRepository.save(pedido);

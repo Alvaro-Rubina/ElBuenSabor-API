@@ -11,13 +11,15 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 public interface DetalleFacturaMapper extends GenericoMapper<DetalleFactura, DetalleFacturaDTO, DetalleFacturaResponseDTO> {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "productoId", target = "producto.id")
-    @Mapping(source = "insumoId", target = "insumo.id")
+    @Mapping(target = "producto", ignore = true)
+    @Mapping(target = "insumo", ignore = true)
+    @Mapping(target = "promocion", ignore = true)
     @Mapping(target = "subTotal", ignore = true)
     @Mapping(target = "subTotalCosto", ignore = true)
     DetalleFactura toEntity(DetalleFacturaDTO detalleFacturaDTO);
 
     @Mapping(source = "producto", target = "producto")
     @Mapping(source = "insumo", target = "insumo")
+    @Mapping(target = "promocion", ignore = true)
     DetalleFacturaResponseDTO toResponseDTO(DetalleFactura detalleFactura);
 }
