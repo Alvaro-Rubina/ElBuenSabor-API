@@ -65,25 +65,21 @@ public class FileService {
         document.add(new Paragraph(" "));
 
         // TABLA DE PRODUCTOS
-        PdfPTable table = new PdfPTable(5); // (Código, Producto, Cantidad, Unitario, Subtotal)
+        PdfPTable table = new PdfPTable(4); //Producto, Cantidad, Unitario, Subtotal)
         table.setWidthPercentage(100);
         table.setSpacingBefore(10f);
         table.setSpacingAfter(10f);
-        table.setWidths(new float[]{1f, 2f, 1f, 1f, 1f});
+        table.setWidths(new float[]{2f, 1f, 1f, 1f});
 
         // Encabezado de la tabla
-        addTableHeader(table, "Código", "Producto", "Cantidad", "Precio Unitario", "Subtotal");
+        addTableHeader(table, "Producto", "Cantidad", "Precio Unitario", "Subtotal");
 
         // Contenido de la tabla
         for (DetalleFacturaResponseDTO detalle : factura.getDetalleFacturas()) {
-            String codigo = (detalle.getProducto() != null) ? detalle.getProducto().getId().toString() :
-                    (detalle.getInsumo() != null) ? detalle.getInsumo().getId().toString() :
-                            (detalle.getPromocion() != null) ? detalle.getPromocion().getId().toString() : "";
             String descripcion = (detalle.getProducto() != null) ? detalle.getProducto().getDenominacion() :
                     (detalle.getInsumo() != null) ? detalle.getInsumo().getDenominacion() :
                             (detalle.getPromocion() != null) ? detalle.getPromocion().getDenominacion() : "";
 
-            table.addCell(codigo);
             table.addCell(descripcion);
             table.addCell(String.valueOf(detalle.getCantidad()));
             table.addCell(String.format("$ %.2f", detalle.getSubTotal() / detalle.getCantidad()));
@@ -105,7 +101,7 @@ public class FileService {
         // TÉRMINOS Y CONDICIONES
         Paragraph pie = new Paragraph("\n\nGracias por su compra. Esperamos volver a verlo pronto.\n" +
                 "Esta factura es un comprobante válido de la transacción.\n" +
-                "Para consultas llame al +54 123 456 7890 o escriba a info@elbuenavor.com.\n",
+                "Para consultas llame al +54 123 456 7890 o escriba a info@elbuensabor.com.\n",
                 FontFactory.getFont(FontFactory.HELVETICA, 10));
         pie.setAlignment(Element.ALIGN_CENTER);
         document.add(pie);
