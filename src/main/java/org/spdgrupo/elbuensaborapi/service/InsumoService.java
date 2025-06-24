@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, InsumoResponseDTO, Long> {
@@ -169,5 +170,10 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         return insumoRepository.findInsumosMasVendidos(fechaDesde, fechaHasta, pageable);
     }
 
+    public List<InsumoResponseDTO> findAllVendibles() {
+        return genericoRepository.findAll().stream()
+                .map(insumoMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
 
 }

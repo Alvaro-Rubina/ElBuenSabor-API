@@ -16,6 +16,8 @@ public interface InsumoRepository extends GenericoRepository<Insumo, Long> {
 
     List<Insumo> findByDenominacionContainingIgnoreCase(String denominacion);
 
+    List<Insumo> findByEsParaElaborarFalse();
+
     @Query("SELECT new org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoVentasDTO(" +
             "i.id, i.denominacion, SUM(dp.cantidad)) " +
             "FROM DetallePedido dp " +

@@ -32,6 +32,12 @@ public class InsumoController extends GenericoControllerImpl<
         this.insumoService = insumoService;
     }
 
+    @GetMapping("vendibles")
+    public ResponseEntity<List<InsumoResponseDTO>> findAllVendibles() {
+        List<InsumoResponseDTO> insumos = insumoService.findAllVendibles();
+        return ResponseEntity.ok(insumos);
+    }
+
 
     @GetMapping("/buscar")
     @ResponseBody
