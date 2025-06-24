@@ -18,6 +18,9 @@ public interface InsumoRepository extends GenericoRepository<Insumo, Long> {
 
     List<Insumo> findByEsParaElaborarFalse();
 
+    List<Insumo> findByActivoTrue();
+
+
     @Query("SELECT new org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoVentasDTO(" +
             "i.id, i.denominacion, SUM(dp.cantidad)) " +
             "FROM DetallePedido dp " +

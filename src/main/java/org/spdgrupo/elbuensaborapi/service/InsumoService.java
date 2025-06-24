@@ -171,7 +171,13 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     }
 
     public List<InsumoResponseDTO> findAllVendibles() {
-        return genericoRepository.findAll().stream()
+        return insumoRepository.findByEsParaElaborarFalse().stream()
+                .map(insumoMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<InsumoResponseDTO> findAllActivos() {
+        return insumoRepository.findByActivoTrue().stream()
                 .map(insumoMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
