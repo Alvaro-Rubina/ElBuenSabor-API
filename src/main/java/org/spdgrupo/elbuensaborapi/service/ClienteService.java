@@ -90,7 +90,7 @@ public class ClienteService {
         }
 
         usuarioService.update(cliente.getUsuario().getAuth0Id(), clienteDTO.getUsuario());
-       return clienteMapper.toResponseDTO(clienteRepository.save(cliente));
+        return clienteMapper.toResponseDTO(clienteRepository.save(cliente));
     }
 
     @Transactional

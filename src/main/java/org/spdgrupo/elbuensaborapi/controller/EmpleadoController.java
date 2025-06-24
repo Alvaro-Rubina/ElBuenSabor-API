@@ -21,9 +21,9 @@ public class EmpleadoController {
     private final EmpleadoService empleadoService;
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@Valid @RequestBody EmpleadoDTO empleadoDTO) throws Auth0Exception {
-        empleadoService.save(empleadoDTO);
-        return ResponseEntity.ok("Registro exitoso");
+    public ResponseEntity<EmpleadoResponseDTO> save(@Valid @RequestBody EmpleadoDTO empleadoDTO) throws Auth0Exception {
+        EmpleadoResponseDTO empleado = empleadoService.save(empleadoDTO);
+        return ResponseEntity.ok(empleado);
     }
 
     @GetMapping("/{id}")
@@ -44,10 +44,10 @@ public class EmpleadoController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id,
+    public ResponseEntity<EmpleadoResponseDTO> update(@PathVariable Long id,
                                                  @Valid @RequestBody EmpleadoDTO empleadoDTO) throws Auth0Exception {
-        empleadoService.update(id, empleadoDTO);
-        return ResponseEntity.ok("Empleado actualizado correctamente");
+        EmpleadoResponseDTO empleado = empleadoService.update(id, empleadoDTO);
+        return ResponseEntity.ok(empleado);
     }
     
     @PutMapping("/update/auth0Id/{auth0Id}")

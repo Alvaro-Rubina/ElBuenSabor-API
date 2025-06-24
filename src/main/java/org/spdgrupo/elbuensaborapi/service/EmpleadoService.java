@@ -51,7 +51,7 @@ public class EmpleadoService{
     }
 
     @Transactional
-    public void update(Long id, EmpleadoDTO empleadoDTO) throws Auth0Exception {
+    public EmpleadoResponseDTO update(Long id, EmpleadoDTO empleadoDTO) throws Auth0Exception {
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Empleado con el " + id + " no encontrado"));
 
@@ -68,7 +68,7 @@ public class EmpleadoService{
         /*domicilioService.update(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());*/
 
         usuarioService.update(empleado.getUsuario().getAuth0Id(), empleadoDTO.getUsuario());
-        empleadoRepository.save(empleado);
+        return empleadoMapper.toResponseDTO(empleadoRepository.save(empleado));
     }
 
     @Transactional
