@@ -111,4 +111,14 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
 
         return totalCosto;
     }
+
+    @Transactional
+    public void desactivarPromocionesPorProducto(Long productoId) {
+        List<Promocion> promociones = promocionRepository.findAllByDetallePromocionesProductoIdAndActivoTrue(productoId);
+        for (Promocion promocion : promociones) {
+            promocion.setActivo(false);
+            promocionRepository.save(promocion);
+        }
+    }
+
 }
