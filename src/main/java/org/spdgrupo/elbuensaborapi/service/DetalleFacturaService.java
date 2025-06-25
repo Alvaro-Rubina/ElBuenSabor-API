@@ -5,6 +5,7 @@ import org.spdgrupo.elbuensaborapi.config.mappers.DetalleFacturaMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleFactura;
+import org.spdgrupo.elbuensaborapi.model.entity.DetallePedido;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
@@ -75,13 +76,23 @@ public class DetalleFacturaService extends GenericoServiceImpl<DetalleFactura, D
     }
 
     private void calcularSubtotales(DetalleFactura detalleFactura) {
-        Double precioVenta = detalleFactura.getProducto() != null ?
-                detalleFactura.getProducto().getPrecioVenta() :
-                detalleFactura.getInsumo().getPrecioVenta();
+        Double precioVenta = null;
+        Double precioCosto = null;
 
-        Double precioCosto = detalleFactura.getProducto() != null ?
-                detalleFactura.getProducto().getPrecioCosto() :
-                detalleFactura.getInsumo().getPrecioCosto();
+        if (detalleFactura.getProducto() != null) {
+            precioVenta = detalleFactura.getProducto().getPrecioVenta();
+            precioCosto = detalleFactura.getProducto().getPrecioCosto();
+        } else if (detalleFactura.getInsumo() != null) {
+            precioVenta = detalleFactura.getInsumo().getPrecioVenta();
+            precioCosto = detalleFactura.getInsumo().getPrecioCosto();
+        } else if (detalleFactura.getPromocion() != null) {
+            precioVenta = detalleFactura.getPromocion().getPrecioVenta();
+            precioCosto = detalleFactura.getPromocion().getPrecioCosto();
+        }
+
+        if (precioVenta == null || precioCosto == null) {
+            throw new IllegalStateException("No se pudo determinar el precio de venta o costo para el detalle del pedido.");
+        }
 
         detalleFactura.setSubTotal(precioVenta * detalleFactura.getCantidad());
         detalleFactura.setSubTotalCosto(precioCosto * detalleFactura.getCantidad());
