@@ -27,11 +27,11 @@ public class EstadisticasController {
     private final InsumoService insumoService;
 
     @GetMapping("/ingresos-egresos")
-    public ResponseEntity<IngresosEgresosDTO> obtenerIngresosEgresos(
+    public ResponseEntity<List<IngresosEgresosDTO>> obtenerIngresosEgresos(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta) {
 
-        IngresosEgresosDTO dto = pedidoService.calcularIngresosEgresos(fechaDesde, fechaHasta);
+        List<IngresosEgresosDTO> dto = pedidoService.calcularIngresosEgresos(fechaDesde, fechaHasta);
         return ResponseEntity.ok(dto);
     }
 

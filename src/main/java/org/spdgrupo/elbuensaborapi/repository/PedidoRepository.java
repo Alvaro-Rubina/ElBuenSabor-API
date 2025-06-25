@@ -35,4 +35,13 @@ public interface PedidoRepository extends GenericoRepository<Pedido, Long> {
             @Param("fechaHasta") LocalDate fechaHasta);
 
 
+    @Query("SELECT p FROM Pedido p " +
+            "WHERE p.estado = org.spdgrupo.elbuensaborapi.model.enums.Estado.ENTREGADO " +
+            "AND (:fechaDesde IS NULL OR p.fecha >= :fechaDesde) " +
+            "AND (:fechaHasta IS NULL OR p.fecha <= :fechaHasta)")
+    List<Pedido> findPedidosEntregados(
+            @Param("fechaDesde") LocalDate fechaDesde,
+            @Param("fechaHasta") LocalDate fechaHasta);
+
+
 }

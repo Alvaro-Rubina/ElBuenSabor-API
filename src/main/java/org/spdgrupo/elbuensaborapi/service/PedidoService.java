@@ -23,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, PedidoResponseDTO, Long>{
@@ -163,28 +165,54 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
     }
 
     @Transactional(readOnly = true)
-    public IngresosEgresosDTO calcularIngresosEgresos(LocalDate fechaDesde, LocalDate fechaHasta) {
-        List<Pedido> pedidos = pedidoRepository.findPedidosEntregadosYCancelados(fechaDesde, fechaHasta);
+    public List<IngresosEgresosDTO> calcularIngresosEgresos(LocalDate fechaDesde, LocalDate fechaHasta) {
 
-        if (pedidos.isEmpty()) {
-            return new IngresosEgresosDTO(0.0, 0.0, 0.0);
+        List<Pedido> pedidos = pedidoRepository.findPedidosEntregados(fechaDesde, fechaHasta);
+
+        if (fechaDesde == null && fechaHasta == null) {
+            Map<LocalDate, IngresosEgresosDTO> mapaMeses = new HashMap<>();
+
+            for (Pedido pedido : pedidos) {
+                int anio = pedido.getFecha().getYear();
+                int mes = pedido.getFecha().getMonthValue();
+                LocalDate fechaMes = LocalDate.of(anio, mes, 1);
+
+                IngresosEgresosDTO dtoMes = mapaMeses.get(fechaMes);
+                if (dtoMes == null) {
+                    dtoMes = IngresosEgresosDTO.builder()
+                            .ingresos(pedido.getTotalVenta())
+                            .egresos(pedido.getTotalCosto())
+                            .ganancias(pedido.getTotalVenta() - pedido.getTotalCosto())
+                            .fecha(fechaMes)
+                            .build();
+                    mapaMeses.put(fechaMes, dtoMes);
+                } else {
+                    dtoMes.setIngresos(dtoMes.getIngresos() + pedido.getTotalVenta());
+                    dtoMes.setEgresos(dtoMes.getEgresos() + pedido.getTotalCosto());
+                    dtoMes.setGanancias(dtoMes.getIngresos() - dtoMes.getEgresos());
+                }
+            }
+            return new ArrayList<>(mapaMeses.values());
         }
 
         double ingresos = 0.0;
         double egresos = 0.0;
 
         for (Pedido pedido : pedidos) {
-            // Solo sumo el totalVenta si el pedido fue entregado, si fue cancelado no.
             if (pedido.getEstado() == Estado.ENTREGADO) {
                 ingresos += pedido.getTotalVenta();
+                egresos += pedido.getTotalCosto();
             }
-
-            egresos += pedido.getTotalCosto();
         }
 
         double ganancias = ingresos - egresos;
 
-        return new IngresosEgresosDTO(ingresos, egresos, ganancias);
+        return List.of(IngresosEgresosDTO.builder()
+                .ingresos(ingresos)
+                .egresos(egresos)
+                .ganancias(ganancias)
+                .fecha(null)
+                .build());
     }
 
     @Transactional(readOnly = true)
