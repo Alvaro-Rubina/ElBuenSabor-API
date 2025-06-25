@@ -1,6 +1,5 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.PedidoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.IngresosEgresosDTO;
@@ -16,6 +15,7 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
 import org.spdgrupo.elbuensaborapi.repository.PedidoRepository;
+import org.spdgrupo.elbuensaborapi.service.utils.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +45,8 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
     private PedidoMapper pedidoMapper;
     @Autowired
     private InsumoService insumoService;
+    @Autowired
+    private EmailService emailService;
 
     public PedidoService(GenericoRepository<Pedido, Long> genericoRepository, GenericoMapper<Pedido, PedidoDTO, PedidoResponseDTO> genericoMapper) {
         super(genericoRepository, genericoMapper);
@@ -123,16 +125,35 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
     }
 
     @Transactional
-    public PedidoResponseDTO actualizarEstadoDelPedido(Long pedidoId, Estado estado) {
+    public PedidoResponseDTO actualizarEstadoDelPedido(Long pedidoId, Estado nuevoEstado) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoId + " no encontrado"));
 
-        if (estado != null) {
-            pedido.setEstado(estado);
+        Estado estadoActual = pedido.getEstado();
 
-            // NOTE: Esto creo que tendría que estar en el metodo savePedido
-            if (estado == Estado.TERMINADO) {
+        if (nuevoEstado != null) {
+            if (!estadoActual.puedeTransicionarA(nuevoEstado)) {
+                throw new IllegalStateException("Transición de estado no permitida: de " + estadoActual + " a " + nuevoEstado);
+            }
+
+            pedido.setEstado(nuevoEstado);
+
+            if (nuevoEstado == Estado.TERMINADO) {
                 pedido.setFactura(facturaService.createFacturaFromPedido(pedido));
+
+            }
+
+            try {
+                if (nuevoEstado == Estado.TERMINADO && pedido.getTipoEnvio() == TipoEnvio.RETIRO_LOCAL) {
+                    enviarMailConFactura(pedido, "¡Tu pedido está listo para retirar!",
+                            "¡Hola " +  pedido.getCliente().getNombreCompleto() + "! Tu pedido ya está disponible para retirar en el local. Adjuntamos la factura de compra.");
+                }
+                if (nuevoEstado == Estado.EN_CAMINO && pedido.getTipoEnvio() == TipoEnvio.DELIVERY) {
+                    enviarMailConFactura(pedido, "¡Tu pedido está en camino!",
+                            "¡Hola " + pedido.getCliente().getNombreCompleto() +"! Tu pedido ya está en camino. Adjuntamos la factura de compra.");
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
         }
 
@@ -270,8 +291,6 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         return pedido.getHora().plusMinutes(tiempoAdicional);
     }
 
-
-
     private String generateCodigo() {
         LocalDate hoy = LocalDate.now();
         int anio = hoy.getYear();
@@ -285,5 +304,11 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         String numeroStr = String.format("%05d", nuevoNumero);
 
         return "PED-" + anioStr + mesStr + "-" + numeroStr;
+    }
+
+    private void enviarMailConFactura(Pedido pedido, String asunto, String cuerpo) throws Exception {
+        String email = pedido.getCliente().getUsuario().getEmail();
+        byte[] facturaPdf = facturaService.exportarFacturaPdf(pedido.getId());
+        emailService.enviarMailConAdjunto(email, asunto, cuerpo, facturaPdf, "factura-" + pedido.getCodigo() + ".pdf");
     }
 }
