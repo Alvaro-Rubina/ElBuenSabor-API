@@ -41,6 +41,9 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
     private DetalleProductoService detalleProductoService;
     @Autowired
     private ProductoMapper productoMapper;
+    @Autowired
+    private PromocionService promocionService;
+
 
     public ProductoService(GenericoRepository<Producto, Long> genericoRepository, GenericoMapper<Producto, ProductoDTO, ProductoResponseDTO> genericoMapper) {
         super(genericoRepository, genericoMapper);
@@ -98,10 +101,13 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
                 for (DetalleProductoResponseDTO detalle : detalleProductoResponseDTO) {
                     if (!detalle.getInsumo().isActivo()) {
                         delete(producto.getId());
+                        promocionService.desactivarPromocionesPorProducto(producto.getId());
                         break;
                     }
                 }
             }
+
+
         }
     }
 
@@ -217,6 +223,11 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
 
         producto.setActivo(activar);
         productoRepository.save(producto);
+
+        if (!activar) {
+            promocionService.desactivarPromocionesPorProducto(producto.getId());
+        }
+
     }
 
 }

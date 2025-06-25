@@ -98,7 +98,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         pedido.setCodigo(generateCodigo());
 
         // Acá se descuentan los insumos antes de guardar el pedido
-        for (DetallePedido detallePedido : pedido.getDetallePedidos()) {
+        /*for (DetallePedido detallePedido : pedido.getDetallePedidos()) {
             if (detallePedido.getProducto() != null) {
                 Producto producto = detallePedido.getProducto();
                 List<DetalleProducto> detallesProducto = producto.getDetalleProductos();
@@ -112,7 +112,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
                 double cantidadADescontar = detallePedido.getCantidad();
                 insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
             }
-        }
+        }*/
 
         pedidoRepository.save(pedido);
         return pedidoMapper.toResponseDTO(pedido);
@@ -143,6 +143,24 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
             }
 
+            if (nuevoEstado == Estado.SOLICITADO ){
+                for (DetallePedido detallePedido : pedido.getDetallePedidos()) {
+                    if (detallePedido.getProducto() != null) {
+                        Producto producto = detallePedido.getProducto();
+                        List<DetalleProducto> detallesProducto = producto.getDetalleProductos();
+                        for (DetalleProducto detalleProducto : detallesProducto) {
+                            Insumo insumo = detalleProducto.getInsumo();
+                            double cantidaADescontar = detalleProducto.getCantidad() * detallePedido.getCantidad();
+                            insumoService.actualizarStock(insumo.getId(), -cantidaADescontar);
+                        }
+                    } else if (detallePedido.getInsumo() != null) {
+                        Insumo insumo = detallePedido.getInsumo();
+                        double cantidadADescontar = detallePedido.getCantidad();
+                        insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
+                    }
+                }
+            }
+
             try {
                 if (nuevoEstado == Estado.TERMINADO && pedido.getTipoEnvio() == TipoEnvio.RETIRO_LOCAL) {
                     enviarMailConFactura(pedido, "¡Tu pedido está listo para retirar!",
@@ -155,6 +173,9 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
+
+
+
         }
 
         pedidoRepository.save(pedido);
