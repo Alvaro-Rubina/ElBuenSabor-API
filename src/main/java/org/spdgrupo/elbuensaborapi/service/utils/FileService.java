@@ -27,7 +27,7 @@ public class FileService {
         document.add(logo);
 
         // Datos de la empresa en el encabezado
-        Paragraph datosEmpresa = new Paragraph("El Buen Sabor\nDirección: Calle Principal 123, Ciudad\nTeléfono: +54 123 456 7890\nCorreo: info@elbuenavor.com\n",
+        Paragraph datosEmpresa = new Paragraph("El Buen Sabor\nDirección: Calle Principal 123, Ciudad\nTeléfono: +54 123 456 7890\nCorreo: info@elbuensabor.com\n",
                 FontFactory.getFont(FontFactory.HELVETICA, 10));
         datosEmpresa.setAlignment(Element.ALIGN_RIGHT);
         document.add(datosEmpresa);
@@ -76,9 +76,16 @@ public class FileService {
 
         // Contenido de la tabla
         for (DetalleFacturaResponseDTO detalle : factura.getDetalleFacturas()) {
-            String descripcion = (detalle.getProducto() != null) ? detalle.getProducto().getDenominacion() :
-                    (detalle.getInsumo() != null) ? detalle.getInsumo().getDenominacion() :
-                            (detalle.getPromocion() != null) ? detalle.getPromocion().getDenominacion() : "";
+            String descripcion;
+            if (detalle.getProducto() != null) {
+                descripcion = detalle.getProducto().getDenominacion();
+            } else if (detalle.getInsumo() != null) {
+                descripcion = detalle.getInsumo().getDenominacion();
+            } else if (detalle.getPromocion() != null) {
+                descripcion = "Promoción: " + detalle.getPromocion().getDenominacion();
+            } else {
+                descripcion = "";
+            }
 
             table.addCell(descripcion);
             table.addCell(String.valueOf(detalle.getCantidad()));
