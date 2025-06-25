@@ -64,9 +64,13 @@ public class DetalleFacturaService extends GenericoServiceImpl<DetalleFactura, D
     }
 
     private void validarDetalleFactura(DetalleFacturaDTO detalleFacturaDTO) {
-        if ((detalleFacturaDTO.getProductoId() == null && detalleFacturaDTO.getInsumoId() == null) ||
-                (detalleFacturaDTO.getProductoId() != null && detalleFacturaDTO.getInsumoId() != null)) {
-            throw new IllegalArgumentException("Debe haber un producto o un insumo en el DetalleFactura, no pueden ser ambos nulos ni tampoco pueden estar ambos");
+        int count = 0;
+        if (detalleFacturaDTO.getProductoId() != null) count++;
+        if (detalleFacturaDTO.getInsumoId() != null) count++;
+        if (detalleFacturaDTO.getPromocionId() != null) count++;
+
+        if (count != 1) {
+            throw new IllegalArgumentException("Debe especificar exactamente uno de los siguientes campos en el DetalleFactura: productoId, insumoId o promocionId.");
         }
     }
 
