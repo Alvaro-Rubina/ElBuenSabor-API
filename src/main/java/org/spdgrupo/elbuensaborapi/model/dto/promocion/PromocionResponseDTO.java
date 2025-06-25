@@ -22,4 +22,5 @@ public class PromocionResponseDTO {
     private LocalDate fechaHasta;
     private Double descuento;
     private List<DetallePromocionResponseDTO> detallePromociones;
+    private boolean activo;
 }
