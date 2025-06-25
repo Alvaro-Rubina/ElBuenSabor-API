@@ -7,7 +7,7 @@ import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaRespon
 import org.spdgrupo.elbuensaborapi.model.entity.DetalleFactura;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 
-@Mapper(componentModel = "spring", uses = {ProductoMapper.class, InsumoMapper.class})
+@Mapper(componentModel = "spring", uses = {ProductoMapper.class, InsumoMapper.class, PromocionMapper.class})
 public interface DetalleFacturaMapper extends GenericoMapper<DetalleFactura, DetalleFacturaDTO, DetalleFacturaResponseDTO> {
 
     @Mapping(target = "id", ignore = true)
@@ -20,6 +20,6 @@ public interface DetalleFacturaMapper extends GenericoMapper<DetalleFactura, Det
 
     @Mapping(source = "producto", target = "producto")
     @Mapping(source = "insumo", target = "insumo")
-    @Mapping(target = "promocion", ignore = true)
+    @Mapping(source = "promocion", target = "promocion")
     DetalleFacturaResponseDTO toResponseDTO(DetalleFactura detalleFactura);
 }
