@@ -11,6 +11,9 @@ import org.spdgrupo.elbuensaborapi.model.dto.rol.RolDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rol.RolResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Rol;
 import org.spdgrupo.elbuensaborapi.repository.RolRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,7 @@ public class RolService {
     private final RolMapper rolMapper;
     private final ManagementAPI managementAPI;
 
+    @CacheEvict(value = "roles", allEntries = true)
     @Transactional
     public void save(RolDTO rolDTO) throws Auth0Exception {
         Rol rol = rolMapper.toEntity(rolDTO);
@@ -45,31 +49,35 @@ public class RolService {
         }
     }
 
+    @Cacheable(value = "roles", key = "'findById_' + #id")
     public RolResponseDTO findById(Long id) {
         Rol rol = rolRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Rol con el id " + id + " no encontrado"));
         return rolMapper.toResponseDTO(rol);
     }
 
+    @Cacheable(value = "roles")
     public List<RolResponseDTO> findAll() {
         return rolRepository.findAll().stream()
                 .map(rolMapper::toResponseDTO)
                 .toList();
     }
 
+    @Cacheable(value = "roles", key = "'findByAuth0RolId_' + #id")
     public RolResponseDTO findByAuth0RolId(String id) {
         Rol rol = rolRepository.findByAuth0RolId(id)
                 .orElseThrow(() -> new NotFoundException("Rol con el id " + id + " no encontrado"));
         return rolMapper.toResponseDTO(rol);
     }
 
-
+    @Cacheable(value = "roles", key = "'findByNombre_' + #nombre")
     public RolResponseDTO findByNombre(String nombre){
         Rol rol = rolRepository.findByNombre(nombre)
                 .orElseThrow(() -> new NotFoundException("Rol con el nombre " + nombre + " no encontrado"));
         return rolMapper.toResponseDTO(rol);
     }
 
+    @CachePut(value = "roles", key = "'update_' + #auth0RolId")
     @Transactional
     public void update(String auth0RolId, RolDTO rolDTO) throws Auth0Exception {
         Rol rol = rolRepository.findByAuth0RolId(auth0RolId)
@@ -133,6 +141,7 @@ public class RolService {
         rolRepository.delete(rol);
     }
 
+    @CachePut(value = "roles", key = "'toggleActivo_' + #id")
     public void toggleActivo(Long id) {
         Rol rol = rolRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Rol con el id " + id + " no encontrado"));
@@ -157,6 +166,7 @@ public class RolService {
         }
     }
 
+    @Cacheable(value = "roles", key = "'existsByAuth0RolId_' + #auth0RolId")
     public boolean existsByAuth0RolId(String auth0RolId) {
         return rolRepository.existsByAuth0RolId(auth0RolId);
     }
