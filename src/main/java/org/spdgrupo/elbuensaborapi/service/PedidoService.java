@@ -213,8 +213,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
     }
 
-    @Cacheable(value = "pedidos", key = "'calcularIngresosEgresos_'+T(String).valueOf(#fechaDesde) + '-' + T(String).valueOf(#fechaHasta)")
-    @Transactional(readOnly = true)
+     @Transactional(readOnly = true)
     public List<IngresosEgresosDTO> calcularIngresosEgresos(LocalDate fechaDesde, LocalDate fechaHasta) {
 
         List<Pedido> pedidos = pedidoRepository.findPedidosEntregados(fechaDesde, fechaHasta);
