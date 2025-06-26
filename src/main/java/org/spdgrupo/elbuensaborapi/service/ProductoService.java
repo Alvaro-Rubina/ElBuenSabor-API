@@ -3,6 +3,9 @@ package org.spdgrupo.elbuensaborapi.service;
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoVentasDTO;
 import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +53,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
     }
 
     @Override
+    @CacheEvict(value = "productos", allEntries = true)
     @Transactional
     public ProductoResponseDTO save(ProductoDTO productoDTO) {
         Producto producto = productoMapper.toEntity(productoDTO);
@@ -70,6 +74,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         return productoMapper.toResponseDTO(producto);
     }
 
+    @Cacheable(value = "productos", key = "'findByDenominacion:' + #denominacion")
     public ProductoResponseDTO findByDenominacion(String denominacion) {
         Producto producto = productoRepository.findByDenominacion(denominacion)
                 .orElseThrow(() -> new NotFoundException("Producto con la denominacion " + denominacion + " no encontrado"));
@@ -77,6 +82,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
     }
 
     // Acá busca por denominacion parcial. Ej para "Pizza Margarita" busca Pizza o margarita, etc
+    @Cacheable(value = "productos", key = "'findByDenominacionContaining:' + #denominacion")
     public List<ProductoResponseDTO> findByDenominacionContaining(String denominacion) {
         return productoRepository.findByDenominacionContainingIgnoreCase(denominacion).stream()
                 .map(productoMapper::toResponseDTO)
@@ -89,6 +95,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
                 .toList();
     }
 
+    @CachePut(value = "productos", key = "'cambiarActivoProducto_'+#id")
     @Transactional
     public void cambiarActivoProducto(long id){
         List<ProductoResponseDTO> productos = getProductosByInsumoid(id);
@@ -112,6 +119,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
     }
 
     @Override
+    @CachePut(value = "productos", key = "'id_' +#id")
     @Transactional
     public void update(Long id, ProductoDTO productoDTO) {
         Producto producto = productoRepository.findById(id)
@@ -171,6 +179,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         productoRepository.save(producto);
     }
 
+    @Cacheable(value = "productos", key = "'obtenerProductosMasVendidos_' +T(String).valueOf(#fechaDesde) + '-' + T(String).valueOf(#fechaHasta) + '-' + #limite")
     @Transactional(readOnly = true)
     public List<ProductoVentasDTO> obtenerProductosMasVendidos(LocalDate fechaDesde, LocalDate fechaHasta, int limite) {
         // Validación de fechas
@@ -182,6 +191,43 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         return productoRepository.findProductosMasVendidos(fechaDesde, fechaHasta, PageRequest.of(0, limite));
     }
 
+    @Override
+    @CachePut(value = "productos", key = "'toggleActivo_' +#id")
+    @Transactional
+    public void toggleActivo(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Producto con el id " + id + " no encontrado"));
+
+        boolean activar = !producto.getActivo();
+
+        if (activar) {
+            boolean todosInsumosActivos = producto.getDetalleProductos().stream()
+                    .allMatch(detalle -> detalle.getInsumo().getActivo());
+            if (!todosInsumosActivos) {
+                throw new RuntimeException("No se puede activar el producto porque tiene insumos desactivados.");
+            }
+        }
+
+        producto.setActivo(activar);
+        productoRepository.save(producto);
+
+        if (!activar) {
+            promocionService.desactivarPromocionesPorProducto(producto.getId());
+        }
+
+    }
+
+    @Override
+    @Cacheable("productos")
+    public List<ProductoResponseDTO> findAll() {
+        return super.findAll();
+    }
+
+    @Override
+    @Cacheable(value = "productos", key = "'findById_' +#id")
+    public ProductoResponseDTO findById(Long id) {
+        return super.findById(id);
+    }
 
     // Metodos auxiliares
     private Double getPrecioCosto(List<DetalleProducto> detalleProductos) {
@@ -205,29 +251,5 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         return precioCosto * (1 + margen);
     }
 
-    @Override
-    @Transactional
-    public void toggleActivo(Long id) {
-        Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Producto con el id " + id + " no encontrado"));
-
-        boolean activar = !producto.getActivo();
-
-        if (activar) {
-            boolean todosInsumosActivos = producto.getDetalleProductos().stream()
-                .allMatch(detalle -> detalle.getInsumo().getActivo());
-            if (!todosInsumosActivos) {
-                throw new RuntimeException("No se puede activar el producto porque tiene insumos desactivados.");
-            }
-        }
-
-        producto.setActivo(activar);
-        productoRepository.save(producto);
-
-        if (!activar) {
-            promocionService.desactivarPromocionesPorProducto(producto.getId());
-        }
-
-    }
 
 }
