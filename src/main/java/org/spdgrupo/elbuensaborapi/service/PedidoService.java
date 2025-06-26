@@ -17,6 +17,9 @@ import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
 import org.spdgrupo.elbuensaborapi.repository.PedidoRepository;
 import org.spdgrupo.elbuensaborapi.service.utils.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +56,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
     }
 
     @Override
+    @CacheEvict(value = "pedidos", allEntries = true)
     @Transactional
     public PedidoResponseDTO save(PedidoDTO pedidoDTO) {
         Pedido pedido = pedidoMapper.toEntity(pedidoDTO);
@@ -118,12 +122,14 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         return pedidoMapper.toResponseDTO(pedido);
     }
 
+    @Cacheable(value = "pedidos", key = "'getPedidoByCodigo_'+#codigo")
     public PedidoResponseDTO getPedidoByCodigo(String codigo) {
         Pedido pedido = pedidoRepository.findByCodigo(codigo)
                 .orElseThrow(() -> new NotFoundException("Pedido con el código de orden " + codigo + " no encontrado"));
         return pedidoMapper.toResponseDTO(pedido);
     }
 
+    @CachePut(value = "pedidos", key = "'actualizarEstadoDelPedido_'+#pedidoId")
     @Transactional
     public PedidoResponseDTO actualizarEstadoDelPedido(Long pedidoId, Estado nuevoEstado) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
@@ -183,7 +189,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
     }
 
     // TODO: Agragar metodo para EMITIR UNA FACTURA
-
+    @CachePut(value = "pedidos", key = "'agregarTiempoAlPedido_'+#pedidoId")
     public PedidoResponseDTO agregarTiempoAlPedido(Long pedidoId, Long minutos) {
         if (minutos == null || minutos < 0) {
             throw new IllegalArgumentException("El tiempo adicional debe ser un valor positivo.");
@@ -197,6 +203,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         return pedidoMapper.toResponseDTO(pedido);
     }
 
+    @Cacheable(value = "pedidos", key = "'getPedidosByEstado_'+#estado")
     public List<PedidoResponseDTO> getPedidosByEstado(Estado estado) {
         List<Pedido> pedidos = pedidoRepository.findAllByEstado(estado);
 
@@ -206,6 +213,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
     }
 
+    @Cacheable(value = "pedidos", key = "'calcularIngresosEgresos_'+T(String).valueOf(#fechaDesde) + '-' + T(String).valueOf(#fechaHasta)")
     @Transactional(readOnly = true)
     public List<IngresosEgresosDTO> calcularIngresosEgresos(LocalDate fechaDesde, LocalDate fechaHasta) {
 
@@ -257,6 +265,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
                 .build());
     }
 
+    @Cacheable(value = "pedidos", key = "'getPedidosByClienteId_'+#clienteId")
     @Transactional(readOnly = true)
     public List<PedidoResponseDTO> getPedidosByClienteId(Long clienteId, Estado estado) {
         List<Pedido> pedidos = pedidoRepository.findPedidosByClienteIdAndEstado(clienteId, estado);
@@ -264,6 +273,18 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         return pedidos.stream()
                 .map(pedidoMapper::toResponseDTO)
                 .toList();
+    }
+
+    @Override
+    @Cacheable("pedidos")
+    public List<PedidoResponseDTO> findAll() {
+        return super.findAll();
+    }
+
+    @Override
+    @Cacheable(value = "pedidos", key = "'findById_'+#id")
+    public PedidoResponseDTO findById(Long id) {
+        return super.findById(id);
     }
 
     // Metodos adicionales
