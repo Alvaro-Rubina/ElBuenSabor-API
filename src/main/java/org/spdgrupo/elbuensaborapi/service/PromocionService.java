@@ -12,6 +12,9 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.PromocionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -34,6 +37,7 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
     }
 
     @Override
+    @CacheEvict(value = "promociones", allEntries = true)
     @Transactional
     public PromocionResponseDTO save(PromocionDTO promocionDTO) {
         validarFechas(promocionDTO.getFechaDesde(), promocionDTO.getFechaHasta());
@@ -59,6 +63,7 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
     }
 
     @Override
+    @CachePut(value = "promociones", key = "'update_' +#id")
     @Transactional
     public void update(Long id, PromocionDTO promocionDTO) {
         Promocion promocion = promocionRepository.findById(id)
@@ -112,6 +117,7 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
         return totalCosto;
     }
 
+    @CachePut(value = "promociones", key = "'desactivarPromocionesPorProducto_' +#productoId")
     @Transactional
     public void desactivarPromocionesPorProducto(Long productoId) {
         List<Promocion> promociones = promocionRepository.findAllByDetallePromocionesProductoIdAndActivoTrue(productoId);
@@ -119,6 +125,18 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
             promocion.setActivo(false);
             promocionRepository.save(promocion);
         }
+    }
+
+    @Override
+    @Cacheable("promociones")
+    public List<PromocionResponseDTO> findAll() {
+        return super.findAll();
+    }
+
+    @Override
+    @Cacheable(value = "promociones", key = "'findById_' +#id")
+    public PromocionResponseDTO findById(Long id) {
+        return super.findById(id);
     }
 
 }
