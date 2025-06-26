@@ -13,6 +13,9 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -43,6 +46,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     }
 
     @Override
+    @CacheEvict(value = "insumos", allEntries = true)
     @Transactional
     public InsumoResponseDTO save(InsumoDTO insumoDTO) {
         Insumo insumo = insumoMapper.toEntity(insumoDTO);
@@ -52,6 +56,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         return insumoMapper.toResponseDTO(insumo);
     }
 
+    @Cacheable(value = "insumos", key = "'getInsumosByDenominacion_'+#denominacion")
     public List<InsumoResponseDTO> getInsumosByDenominacion(String denominacion) {
         return insumoRepository.findByDenominacionContainingIgnoreCase(denominacion).stream()
                 .map(insumoMapper::toResponseDTO)
@@ -59,6 +64,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     }
 
     @Override
+    @CachePut(value = "insumos", key = "'update_'+#id")
     @Transactional
     public void update(Long id, InsumoDTO insumoDTO) {
         Insumo insumo = insumoRepository.findById(id)
@@ -146,6 +152,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     }
 
     @Override
+    @CachePut(value = "insumos", key = "'toggleActivo_'+#id")
     @Transactional
     public void toggleActivo(Long id) {
         Insumo insumo = insumoRepository.findById(id)
@@ -159,6 +166,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         }
     }
 
+    @Cacheable(value = "insumos", key = "'obtenerInsumosMasVendidos_'+T(String).valueOf(#fechaDesde) + '-' + T(String).valueOf(#fechaHasta) + '-' + #limite")
     @Transactional(readOnly = true)
     public List<InsumoVentasDTO> obtenerInsumosMasVendidos(LocalDate fechaDesde, LocalDate fechaHasta, int limite) {
         // Validación de fechas opcional
@@ -180,6 +188,18 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         return insumoRepository.findByActivoTrue().stream()
                 .map(insumoMapper::toResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Cacheable("insumos")
+    public List<InsumoResponseDTO> findAll() {
+        return super.findAll();
+    }
+
+    @Override
+    @Cacheable(value = "insumos", key = "'findById_'+#id")
+    public InsumoResponseDTO findById(Long id) {
+        return super.findById(id);
     }
 
 }
