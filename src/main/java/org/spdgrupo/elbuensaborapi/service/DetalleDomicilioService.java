@@ -10,6 +10,8 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.spdgrupo.elbuensaborapi.repository.DetalleDomicilioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,7 @@ public class DetalleDomicilioService extends GenericoServiceImpl<DetalleDomicili
     }
 
     @Override
+    @CacheEvict(value = "detallesDomicilio", allEntries = true)
     @Transactional
     public DetalleDomicilioResponseDTO save(DetalleDomicilioDTO detalleDomicilioDTO) {
         DetalleDomicilio detalleDomicilio = detalleDomicilioMapper.toEntity(detalleDomicilioDTO);
@@ -42,10 +45,23 @@ public class DetalleDomicilioService extends GenericoServiceImpl<DetalleDomicili
     }
 
     // TODO: Ver si este metodo se queda o hacer uno que cumpla la misma funcion en ClienteService
+    @Cacheable(value = "detallesDomicilio", key = "'getDetallesDomicilioByClienteId_'+#clienteId")
     public List<DetalleDomicilioResponseDTO> getDetallesDomicilioByClienteId(Long clienteId) {
         return detalleDomicilioRepository.findByClienteId(clienteId).stream()
                 .map(detalleDomicilioMapper::toResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Cacheable("detallesDomicilio")
+    public List<DetalleDomicilioResponseDTO> findAll() {
+        return super.findAll();
+    }
+
+    @Override
+    @Cacheable(value = "detallesDomicilio", key = "'findById_'+#id")
+    public DetalleDomicilioResponseDTO findById(Long id) {
+        return super.findById(id);
     }
 
 }
