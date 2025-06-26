@@ -9,6 +9,9 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +29,7 @@ public class RubroProductoService extends GenericoServiceImpl<RubroProducto, Rub
     }
 
     @Override
+    @CachePut(value = "rubroProductos", key = "'update_'+#id")
     @Transactional
     public void update(Long id, RubroProductoDTO rubroProductoDTO) {
         RubroProducto rubroProducto = rubroProductoRepository.findById(id)
@@ -45,4 +49,24 @@ public class RubroProductoService extends GenericoServiceImpl<RubroProducto, Rub
         rubroProducto.setActivo(false);
         rubroProductoRepository.save(rubroProducto);
     }
+
+    @Override
+    @CacheEvict(value = "rubroProductos", allEntries = true)
+    @Transactional
+    public RubroProductoResponseDTO save(RubroProductoDTO rubroProductoDTO) {
+        return super.save(rubroProductoDTO);
+    }
+
+    @Override
+    @Cacheable("rubroProductos")
+    public java.util.List<RubroProductoResponseDTO> findAll() {
+        return super.findAll();
+    }
+
+    @Override
+    @Cacheable(value = "rubroProductos", key = "'findById_'+#id")
+    public RubroProductoResponseDTO findById(Long id) {
+        return super.findById(id);
+    }
+
 }
