@@ -11,6 +11,9 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.DetalleDomicilioRepository;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +33,7 @@ public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDT
         super(genericoRepository, genericoMapper);
     }
 
+    @Cacheable(value = "domicilios", key = "'getDomiciliosByClienteId_'+#id")
     public List<DomicilioResponseDTO> getDomiciliosByClienteId(Long clienteId){
         List<DetalleDomicilio> detalleDomicilios = detalleDomicilioRepository.findByClienteId(clienteId);
         return detalleDomicilios.stream()
@@ -47,6 +51,7 @@ public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDT
     }
 
     @Override
+    @CachePut(value = "domicilios", key = "'update_'+#id")
     @Transactional
     public void update(Long id, DomicilioDTO domicilioDTO) {
         Domicilio domicilio = domicilioRepository.findById(id)
@@ -60,5 +65,31 @@ public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDT
         domicilio.setActivo(true);
 
         domicilioRepository.save(domicilio);
+    }
+
+    @Override
+    @Cacheable("domicilios")
+    public List<DomicilioResponseDTO> findAll() {
+        return super.findAll();
+    }
+
+    @Override
+    @Cacheable(value = "domicilios", key = "'findById_'+#id")
+    public DomicilioResponseDTO findById(Long id) {
+        return super.findById(id);
+    }
+
+    @Override
+    @CacheEvict(value = "domicilios", allEntries = true)
+    @Transactional
+    public DomicilioResponseDTO save(DomicilioDTO dto) {
+        return super.save(dto);
+    }
+
+    @Override
+    @CacheEvict(value = "domicilios", key = "'toggleActivo_'+#id")
+    @Transactional
+    public void toggleActivo(Long id) {
+        super.toggleActivo(id);
     }
 }
