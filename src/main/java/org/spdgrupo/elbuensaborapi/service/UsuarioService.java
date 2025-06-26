@@ -12,6 +12,9 @@ import org.spdgrupo.elbuensaborapi.model.entity.Rol;
 import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.repository.RolRepository;
 import org.spdgrupo.elbuensaborapi.repository.UsuarioRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +33,7 @@ public class UsuarioService{
     private final ManagementAPI managementAPI;
     private final RolRepository rolRepository;
 
+    @CacheEvict(value = "usuarios", allEntries = true)
     @Transactional
     public Usuario save (UsuarioDTO usuarioDTO) throws Auth0Exception {
         Set<Rol> roles = assignRoles(usuarioDTO.getRoles());
@@ -61,6 +65,7 @@ public class UsuarioService{
         return usuario;
     }
 
+
     @Transactional
     public Usuario saveExistingUser(UsuarioDTO usuarioDTO) throws Auth0Exception {
         User usuarioAuth0 = managementAPI.users().get(usuarioDTO.getAuth0Id(), null).execute();
@@ -89,31 +94,35 @@ public class UsuarioService{
         return usuario;
     }
 
+    @Cacheable(value = "usuarios", key = "'findById_'+#id")
     public UsuarioResponseDTO findById(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Usuario con el id " + id + " no encontrado"));
         return usuarioMapper.toResponseDTO(usuario);
     }
 
+    @Cacheable(value = "usuarios", key = "'findByAuth0Id_'+#auth0Id")
     public UsuarioResponseDTO findByAuth0Id (String auth0Id) {
         Usuario usuario = usuarioRepository.findByAuth0Id(auth0Id)
                 .orElseThrow(() -> new NotFoundException("Usuario con el auth0Id " + auth0Id + " no encontrado"));
         return usuarioMapper.toResponseDTO(usuario);
     }
 
+    @Cacheable(value = "usuarios", key = "'findByEmail_'+#email")
     public UsuarioResponseDTO findByEmail(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Usuario con el email " + email + " no encontrado"));
         return usuarioMapper.toResponseDTO(usuario);
     }
 
+    @Cacheable(value = "usuarios")
     public List<UsuarioResponseDTO> findAll() {
         return usuarioRepository.findAll().stream()
                 .map(usuarioMapper::toResponseDTO)
                 .toList();
     }
 
-
+    @CachePut(value = "usuarios", key = "'update_'+#auth0Id")
     @Transactional
     public void update(String auth0Id, UsuarioDTO usuarioDTO) throws Auth0Exception {
         Usuario usuario = usuarioRepository.findByAuth0Id(auth0Id)
@@ -176,6 +185,7 @@ public class UsuarioService{
         usuarioRepository.delete(usuario);
     }
 
+    @CachePut(value = "usuarios", key = "'toggleActivo_'+#id")
     @Transactional
     public void toggleActivo(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
