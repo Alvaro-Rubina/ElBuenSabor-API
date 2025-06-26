@@ -147,16 +147,22 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
 
     @Override
     @Transactional
-    public void toggleActivo(Long id) {
+    public String toggleActivo(Long id) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
-        boolean estabaActivo = insumo.getActivo();
-        insumo.setActivo(!estabaActivo);
+        Boolean valorAnterior = insumo.getActivo();
+        insumo.setActivo(!valorAnterior);
+        Boolean valorActualizado = insumo.getActivo();
+
         insumoRepository.save(insumo);
 
-        if (estabaActivo && !insumo.getActivo() && insumo.getEsParaElaborar()) {
+        if (valorAnterior && !insumo.getActivo() && insumo.getEsParaElaborar()) {
             productoService.cambiarActivoProducto(id);
         }
+
+        return "Estado 'activo' actualizado" +
+                "\n- Valor anterior: " + valorAnterior +
+                "\n- Valor actualizado: " + valorActualizado;
     }
 
     @Transactional(readOnly = true)
