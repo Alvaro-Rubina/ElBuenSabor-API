@@ -44,9 +44,11 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
                 .collect(Collectors.toList());
     }
 
+    // Este metodo no tiene implementación definida porque se sobreescribe y tiene implementación propia en cada service
     @Override
     @Transactional
-    public void update(ID id, D dto) {
+    public R update(ID id, D dto) {
+        return null;
     }
 
     @Override
