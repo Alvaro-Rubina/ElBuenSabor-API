@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.service;
 import org.spdgrupo.elbuensaborapi.config.exception.CyclicParentException;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.RubroInsumoMapper;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroInsumo;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroInsumoDTO, RubroInsumoResponseDTO, Long> {
 
@@ -21,6 +24,8 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
     private RubroInsumoRepository rubroInsumoRepository;
     @Autowired
     private RubroInsumoMapper rubroInsumoMapper;
+    @Autowired
+    private InsumoService insumoService;
 
     public RubroInsumoService(GenericoRepository<RubroInsumo,Long> rubroInsumoRepository, GenericoMapper<RubroInsumo,RubroInsumoDTO,RubroInsumoResponseDTO> rubroInsumoMapper) {
         super(rubroInsumoRepository, rubroInsumoMapper);
@@ -87,5 +92,28 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
         rubroInsumo.setActivo(false);
         rubroInsumoRepository.save(rubroInsumo);
+    }
+
+    @Override
+    @Transactional
+    public String toggleActivo(Long id) {
+        RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
+
+        Boolean valorAnterior = rubroInsumo.getActivo();
+        rubroInsumo.setActivo(!rubroInsumo.getActivo());
+        Boolean valorActualizado = rubroInsumo.getActivo();
+
+        if (valorActualizado.equals(false)) {
+            List<InsumoResponseDTO> insumos = insumoService.findInsumosByRubroId(rubroInsumo.getId());
+            for (InsumoResponseDTO insumo: insumos) {
+                insumoService.delete(insumo.getId());
+            }
+        }
+
+        genericoRepository.save(rubroInsumo);
+        return "Estado 'activo' actualizado" +
+                "\n- Valor anterior: " + valorAnterior +
+                "\n- Valor actualizado: " + valorActualizado;
     }
 }
