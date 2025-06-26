@@ -113,7 +113,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
 
     @Override
     @Transactional
-    public void update(Long id, ProductoDTO productoDTO) {
+    public ProductoResponseDTO update(Long id, ProductoDTO productoDTO) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Producto con el id " + id + " no encontrado"));
 
@@ -159,7 +159,7 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
             producto.setMargenGanancia(productoDTO.getMargenGanancia());
         }
 
-        productoRepository.save(producto);
+        return productoMapper.toResponseDTO(productoRepository.save(producto));
     }
 
     @Override

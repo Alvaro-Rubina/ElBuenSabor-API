@@ -27,14 +27,19 @@ public class RubroProductoService extends GenericoServiceImpl<RubroProducto, Rub
 
     @Override
     @Transactional
-    public void update(Long id, RubroProductoDTO rubroProductoDTO) {
+    public RubroProductoResponseDTO update(Long id, RubroProductoDTO rubroProductoDTO) {
         RubroProducto rubroProducto = rubroProductoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroProducto con el id " + id + " no encontrado"));
 
-        rubroProducto.setDenominacion(rubroProductoDTO.getDenominacion());
-        rubroProducto.setActivo(rubroProductoDTO.getActivo());
+        if (!rubroProducto.getDenominacion().equals(rubroProductoDTO.getDenominacion())) {
+            rubroProducto.setDenominacion(rubroProductoDTO.getDenominacion());
+        }
 
-        rubroProductoRepository.save(rubroProducto);
+        if (!rubroProducto.getActivo().equals(rubroProductoDTO.getActivo())) {
+            rubroProducto.setActivo(rubroProductoDTO.getActivo());
+        }
+
+        return rubroProductoMapper.toResponseDTO(rubroProductoRepository.save(rubroProducto));
     }
 
     @Override

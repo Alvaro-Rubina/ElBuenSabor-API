@@ -60,7 +60,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
 
     @Override
     @Transactional
-    public void update(Long id, InsumoDTO insumoDTO) {
+    public InsumoResponseDTO update(Long id, InsumoDTO insumoDTO) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
 
@@ -106,7 +106,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
                     .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + insumoDTO.getRubroId() + " no encontrado")));
         }
 
-        insumoRepository.save(insumo);
+        return insumoMapper.toResponseDTO(insumoRepository.save(insumo));
     }
 
     @Override

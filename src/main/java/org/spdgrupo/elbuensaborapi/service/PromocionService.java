@@ -60,17 +60,31 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
 
     @Override
     @Transactional
-    public void update(Long id, PromocionDTO promocionDTO) {
+    public PromocionResponseDTO update(Long id, PromocionDTO promocionDTO) {
         Promocion promocion = promocionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Promocion con el id " + id + " no encontrada"));
 
         validarFechas(promocionDTO.getFechaDesde(), promocionDTO.getFechaHasta());
 
-        promocion.setDenominacion(promocionDTO.getDenominacion());
-        promocion.setFechaDesde(promocionDTO.getFechaDesde());
-        promocion.setFechaHasta(promocionDTO.getFechaHasta());
-        promocion.setDescuento(promocionDTO.getDescuento());
-        promocion.setActivo(promocionDTO.getActivo());
+        if (!promocion.getDenominacion().equals(promocionDTO.getDenominacion())) {
+            promocion.setDenominacion(promocionDTO.getDenominacion());
+        }
+
+        if (!promocion.getFechaDesde().equals(promocionDTO.getFechaDesde())) {
+            promocion.setFechaDesde(promocionDTO.getFechaDesde());
+        }
+
+        if (!promocion.getFechaHasta().equals(promocionDTO.getFechaHasta())) {
+            promocion.setFechaHasta(promocionDTO.getFechaHasta());
+        }
+
+        if (!promocion.getDescuento().equals(promocionDTO.getDescuento())) {
+            promocion.setDescuento(promocionDTO.getDescuento());
+        }
+
+        if (!promocion.getActivo().equals(promocionDTO.getActivo())) {
+            promocion.setActivo(promocionDTO.getActivo());
+        }
 
         promocion.getDetallePromociones().clear();
         for (DetallePromocionDTO detalleDTO : promocionDTO.getDetallePromociones()) {
@@ -83,7 +97,7 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
         double totalConDescuento = precioVenta - (precioVenta * (promocion.getDescuento() / 100.0));
         promocion.setPrecioVenta(totalConDescuento);
 
-        promocionRepository.save(promocion);
+        return promocionMapper.toResponseDTO(promocionRepository.save(promocion));
     }
 
     private void validarFechas(LocalDate fechaDesde, LocalDate fechaHasta) {

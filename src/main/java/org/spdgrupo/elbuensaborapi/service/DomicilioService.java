@@ -48,7 +48,7 @@ public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDT
 
     @Override
     @Transactional
-    public void update(Long id, DomicilioDTO domicilioDTO) {
+    public DomicilioResponseDTO update(Long id, DomicilioDTO domicilioDTO) {
         Domicilio domicilio = domicilioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Domicilio no encontrado"));
 
@@ -59,6 +59,6 @@ public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDT
         domicilio.setCodigoPostal(domicilioDTO.getCodigoPostal());
         domicilio.setActivo(true);
 
-        domicilioRepository.save(domicilio);
+        return domicilioMapper.toResponseDTO(domicilioRepository.save(domicilio));
     }
 }

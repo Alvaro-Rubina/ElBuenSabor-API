@@ -26,6 +26,7 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
         super(rubroInsumoRepository, rubroInsumoMapper);
     }
 
+
     @Override
     @Transactional
     public RubroInsumoResponseDTO save(RubroInsumoDTO rubroInsumoDTO) {
@@ -43,13 +44,17 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
 
     @Override
     @Transactional
-    public void update(Long id, RubroInsumoDTO rubroInsumoDTO) {
+    public RubroInsumoResponseDTO update(Long id, RubroInsumoDTO rubroInsumoDTO) {
         RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
 
-        // Actualizamos todos los campos
-        rubroInsumo.setDenominacion(rubroInsumoDTO.getDenominacion());
-        rubroInsumo.setActivo(rubroInsumoDTO.getActivo());
+        if (!rubroInsumo.getDenominacion().equals(rubroInsumoDTO.getDenominacion())) {
+            rubroInsumo.setDenominacion(rubroInsumoDTO.getDenominacion());
+        }
+
+        if (!rubroInsumo.getActivo().equals(rubroInsumoDTO.getActivo())) {
+            rubroInsumo.setActivo(rubroInsumoDTO.getActivo());
+        }
 
         // Validación y actualización del rubro padre
         if (rubroInsumoDTO.getRubroPadreId() != null) {
@@ -71,7 +76,7 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
             rubroInsumo.setRubroPadre(null);
         }
 
-        rubroInsumoRepository.save(rubroInsumo);
+        return rubroInsumoMapper.toResponseDTO(rubroInsumoRepository.save(rubroInsumo));
     }
 
 
