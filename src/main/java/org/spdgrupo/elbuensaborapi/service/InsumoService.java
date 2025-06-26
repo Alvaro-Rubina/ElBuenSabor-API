@@ -124,7 +124,18 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
                     .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + insumoDTO.getRubroId() + " no encontrado")));
         }
 
-        return insumoMapper.toResponseDTO(insumoRepository.save(insumo));
+        if (insumo.getStockActual() < insumo.getStockMinimo()) {
+            LOGGER.warn("El stock actual del insumo " + insumo.getDenominacion() + " es menor al minimo recomendado");
+            insumo.setActivo(false);
+        }
+
+        InsumoResponseDTO dto = insumoMapper.toResponseDTO(insumoRepository.save(insumo));
+
+        if (!insumo.getActivo() && insumo.getEsParaElaborar()) {
+            productoService.cambiarActivoProducto(id);
+        }
+
+        return dto;
     }
 
     @Override
