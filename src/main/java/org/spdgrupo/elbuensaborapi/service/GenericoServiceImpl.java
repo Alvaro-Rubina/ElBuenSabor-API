@@ -62,11 +62,18 @@ public abstract class GenericoServiceImpl<E extends Base, D, R, ID extends Seria
 
     @Override
     @Transactional
-    public void toggleActivo(ID id) {
+    public String toggleActivo(ID id) {
         E entity = genericoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Entidad con el id " + id + " no encontrada"));
+
+        Boolean valorAnterior = entity.getActivo();
         entity.setActivo(!entity.getActivo());
+        Boolean valorActualizado = entity.getActivo();
+
         genericoRepository.save(entity);
+        return "Estado 'activo' actualizado" +
+                "\n- Valor anterior: " + valorAnterior +
+                "\n- Valor actualizado: " + valorActualizado;
     }
 
 }

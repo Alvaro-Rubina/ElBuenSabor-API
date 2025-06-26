@@ -14,5 +14,6 @@ public interface GenericoController <E extends Base, D, R, ID extends Serializab
     ResponseEntity<R> save(@RequestBody D entity);
     ResponseEntity<R> findById(@PathVariable ID id);
     ResponseEntity<List<R>> findAll();
+    ResponseEntity<String> toggleActivo(@PathVariable ID id);
 }
 
