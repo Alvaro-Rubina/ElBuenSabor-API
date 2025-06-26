@@ -11,6 +11,9 @@ import org.spdgrupo.elbuensaborapi.model.dto.empleado.EmpleadoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Empleado;
 import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.repository.EmpleadoRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +29,7 @@ public class EmpleadoService{
     private final EmpleadoMapper empleadoMapper;
     private final ManagementAPI managementAPI;
 
+    @CacheEvict(value = "empleados", allEntries = true)
     @Transactional
     public EmpleadoResponseDTO save(EmpleadoDTO empleadoDTO) throws Auth0Exception {
         empleadoDTO.getUsuario().setNombreCompleto(empleadoDTO.getNombreCompleto());
@@ -50,6 +54,7 @@ public class EmpleadoService{
         }
     }
 
+    @CachePut(value = "empleados", key = "'update_'+#id")
     @Transactional
     public EmpleadoResponseDTO update(Long id, EmpleadoDTO empleadoDTO) throws Auth0Exception {
         Empleado empleado = empleadoRepository.findById(id)
@@ -71,6 +76,7 @@ public class EmpleadoService{
         return empleadoMapper.toResponseDTO(empleadoRepository.save(empleado));
     }
 
+    @CachePut(value = "empleados", key = "'updateByAuth0Id_'+#auth0Id")
     @Transactional
     public EmpleadoResponseDTO updateByAuth0Id(String auth0Id, EmpleadoDTO empleadoDTO) throws Auth0Exception {
         Empleado empleado = empleadoRepository.findByUsuario_Auth0Id(auth0Id)
@@ -97,18 +103,21 @@ public class EmpleadoService{
         return empleadoMapper.toResponseDTO(empleadoRepository.save(empleado));
     }
 
+    @Cacheable(value = "empleados", key = "'findById_'+#id")
     public EmpleadoResponseDTO findById(Long id) {
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Empleado con el id " + id + " no encontrado"));
         return empleadoMapper.toResponseDTO(empleado);
     }
 
+    @Cacheable(value = "empleados", key = "'findByEmail_'+#email")
     public EmpleadoResponseDTO findByEmail(String email) {
         Empleado empleado = empleadoRepository.findByUsuarioEmail(email)
                 .orElseThrow(() -> new NotFoundException("Empleado con el email " + email + " no encontrado"));
         return empleadoMapper.toResponseDTO(empleado);
     }
 
+    @Cacheable(value = "empleados")
     public List<EmpleadoResponseDTO> findAll() {
         return empleadoRepository.findAll().stream()
                 .map(empleadoMapper::toResponseDTO)
@@ -131,6 +140,7 @@ public class EmpleadoService{
         empleadoRepository.delete(empleado);
     }
 
+    @CachePut(value = "empleados", key = "'toggleActivo_'+#id")
     @Transactional
     public void toggleActivo(Long id) {
         Empleado empleado = empleadoRepository.findById(id)
