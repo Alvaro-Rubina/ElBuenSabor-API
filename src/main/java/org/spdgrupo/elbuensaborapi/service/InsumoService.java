@@ -129,13 +129,13 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
             insumo.setActivo(false);
         }
 
-        InsumoResponseDTO dto = insumoMapper.toResponseDTO(insumoRepository.save(insumo));
+        insumoRepository.save(insumo);
 
         if (!insumo.getActivo() && insumo.getEsParaElaborar()) {
             productoService.cambiarActivoProducto(id);
         }
 
-        return dto;
+        return insumoMapper.toResponseDTO(insumo);
     }
 
     @Override
