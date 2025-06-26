@@ -166,7 +166,6 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         }
     }
 
-    @Cacheable(value = "insumos", key = "'obtenerInsumosMasVendidos_'+T(String).valueOf(#fechaDesde) + '-' + T(String).valueOf(#fechaHasta) + '-' + #limite")
     @Transactional(readOnly = true)
     public List<InsumoVentasDTO> obtenerInsumosMasVendidos(LocalDate fechaDesde, LocalDate fechaHasta, int limite) {
         // Validación de fechas opcional
