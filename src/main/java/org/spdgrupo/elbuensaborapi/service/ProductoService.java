@@ -179,7 +179,6 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         productoRepository.save(producto);
     }
 
-    @Cacheable(value = "productos", key = "'obtenerProductosMasVendidos_' +T(String).valueOf(#fechaDesde) + '-' + T(String).valueOf(#fechaHasta) + '-' + #limite")
     @Transactional(readOnly = true)
     public List<ProductoVentasDTO> obtenerProductosMasVendidos(LocalDate fechaDesde, LocalDate fechaHasta, int limite) {
         // Validación de fechas
