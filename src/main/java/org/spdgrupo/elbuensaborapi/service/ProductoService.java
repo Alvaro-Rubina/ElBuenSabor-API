@@ -83,15 +83,22 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
                 .toList();
     }
 
-    private List<ProductoResponseDTO> getProductosByInsumoid(Long InsumoId) {
+    public List<ProductoResponseDTO> findProductosByRubroId(Long rubroProductoId) {
+        return productoRepository.findByRubroId(rubroProductoId).stream()
+                .map(productoMapper::toResponseDTO)
+                .toList();
+    }
+
+    private List<ProductoResponseDTO> findProductosByInsumoid(Long InsumoId) {
         return productoRepository.findByDetalleProductosInsumoId(InsumoId).stream()
                 .map(productoMapper::toResponseDTO)
                 .toList();
     }
 
+
     @Transactional
     public void cambiarActivoProducto(long id){
-        List<ProductoResponseDTO> productos = getProductosByInsumoid(id);
+        List<ProductoResponseDTO> productos = findProductosByInsumoid(id);
 
         for (ProductoResponseDTO producto : productos) {
 
@@ -182,6 +189,42 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         return productoRepository.findProductosMasVendidos(fechaDesde, fechaHasta, PageRequest.of(0, limite));
     }
 
+    @Override
+    @Transactional
+    public String toggleActivo(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Producto con el id " + id + " no encontrado"));
+
+        Boolean valorAnterior = producto.getActivo();
+        Boolean activar = !producto.getActivo();
+
+        if (activar) {
+
+            if (!producto.getRubro().getActivo()) {
+                throw new RuntimeException("No es posible activar el producto porque su rubro (" + producto.getRubro().getDenominacion() + ") está inactivo");
+            }
+
+            boolean todosInsumosActivos = producto.getDetalleProductos().stream()
+                    .allMatch(detalle -> detalle.getInsumo().getActivo());
+            if (!todosInsumosActivos) {
+                throw new RuntimeException("No se puede activar el producto porque tiene insumos desactivados.");
+            }
+        }
+
+        producto.setActivo(activar);
+        productoRepository.save(producto);
+
+        if (!activar) {
+            promocionService.desactivarPromocionesPorProducto(producto.getId());
+        }
+
+        Boolean valorActualizado = producto.getActivo();
+        return "Estado 'activo' actualizado" +
+                "\n- Valor anterior: " + valorAnterior +
+                "\n- Valor actualizado: " + valorActualizado;
+
+    }
+
 
     // Metodos auxiliares
     private Double getPrecioCosto(List<DetalleProducto> detalleProductos) {
@@ -203,31 +246,6 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
     private Double getPrecioVenta(Double precioCosto, Double margenGanancia) {
         double margen = margenGanancia / 100.0;
         return precioCosto * (1 + margen);
-    }
-
-    @Override
-    @Transactional
-    public void toggleActivo(Long id) {
-        Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Producto con el id " + id + " no encontrado"));
-
-        boolean activar = !producto.getActivo();
-
-        if (activar) {
-            boolean todosInsumosActivos = producto.getDetalleProductos().stream()
-                .allMatch(detalle -> detalle.getInsumo().getActivo());
-            if (!todosInsumosActivos) {
-                throw new RuntimeException("No se puede activar el producto porque tiene insumos desactivados.");
-            }
-        }
-
-        producto.setActivo(activar);
-        productoRepository.save(producto);
-
-        if (!activar) {
-            promocionService.desactivarPromocionesPorProducto(producto.getId());
-        }
-
     }
 
 }
