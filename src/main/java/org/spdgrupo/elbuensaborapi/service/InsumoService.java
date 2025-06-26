@@ -58,6 +58,24 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
                 .toList();
     }
 
+    public List<InsumoResponseDTO> findInsumosByRubroId(Long rubroProductoId) {
+        return insumoRepository.findByRubroId(rubroProductoId).stream()
+                .map(insumoMapper::toResponseDTO)
+                .toList();
+    }
+
+    public List<InsumoResponseDTO> findAllVendibles() {
+        return insumoRepository.findByEsParaElaborarFalse().stream()
+                .map(insumoMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<InsumoResponseDTO> findAllActivos() {
+        return insumoRepository.findByActivoTrue().stream()
+                .map(insumoMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
     @Override
     @Transactional
     public InsumoResponseDTO update(Long id, InsumoDTO insumoDTO) {
@@ -150,9 +168,16 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     public String toggleActivo(Long id) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
+
         Boolean valorAnterior = insumo.getActivo();
         insumo.setActivo(!valorAnterior);
         Boolean valorActualizado = insumo.getActivo();
+
+        if (valorActualizado) {
+            if (!insumo.getRubro().getActivo()) {
+                throw new RuntimeException("No es posible activar el insumo porque su rubro (" + insumo.getRubro().getDenominacion() + ") está inactivo");
+            }
+        }
 
         insumoRepository.save(insumo);
 
@@ -174,18 +199,6 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
 
         Pageable pageable = PageRequest.of(0, limite); // Limitar la cantidad de resultados
         return insumoRepository.findInsumosMasVendidos(fechaDesde, fechaHasta, pageable);
-    }
-
-    public List<InsumoResponseDTO> findAllVendibles() {
-        return insumoRepository.findByEsParaElaborarFalse().stream()
-                .map(insumoMapper::toResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    public List<InsumoResponseDTO> findAllActivos() {
-        return insumoRepository.findByActivoTrue().stream()
-                .map(insumoMapper::toResponseDTO)
-                .collect(Collectors.toList());
     }
 
 }

@@ -18,6 +18,8 @@ public interface InsumoRepository extends GenericoRepository<Insumo, Long> {
 
     List<Insumo> findByEsParaElaborarFalse();
 
+    List<Insumo> findByRubroId(Long rubroId);
+
     List<Insumo> findByActivoTrue();
 
 
