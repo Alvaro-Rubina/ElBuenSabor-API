@@ -10,6 +10,9 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,7 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
     }
 
     @Override
+    @CacheEvict(value = "rubroInsumos", allEntries = true)
     @Transactional
     public RubroInsumoResponseDTO save(RubroInsumoDTO rubroInsumoDTO) {
         RubroInsumo rubroInsumo = rubroInsumoMapper.toEntity(rubroInsumoDTO);
@@ -42,6 +46,7 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
     }
 
     @Override
+    @CachePut(value = "rubroInsumos", key = " 'update_' + #id")
     @Transactional
     public void update(Long id, RubroInsumoDTO rubroInsumoDTO) {
         RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
@@ -74,7 +79,6 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
         rubroInsumoRepository.save(rubroInsumo);
     }
 
-
     @Override
     @Transactional
     public void delete(Long id) {
@@ -82,5 +86,17 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
         rubroInsumo.setActivo(false);
         rubroInsumoRepository.save(rubroInsumo);
+    }
+
+    @Override
+    @Cacheable("rubroInsumos")
+    public java.util.List<RubroInsumoResponseDTO> findAll() {
+        return super.findAll();
+    }
+
+    @Override
+    @Cacheable(value = "rubroInsumos", key = "'findById_'+ #id")
+    public RubroInsumoResponseDTO findById(Long id) {
+        return super.findById(id);
     }
 }
