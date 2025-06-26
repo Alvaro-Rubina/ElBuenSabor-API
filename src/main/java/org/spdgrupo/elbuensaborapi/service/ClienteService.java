@@ -54,7 +54,7 @@ public class ClienteService {
         }
     }
 
-    @Cacheable(value = "clientes", key = "#id")
+    @Cacheable(value = "clientes", key = "'findById_'+#id")
     @Transactional
     public ClienteResponseDTO findById(Long id) {
         Cliente cliente = clienteRepository.findById(id)
@@ -62,14 +62,14 @@ public class ClienteService {
         return clienteMapper.toResponseDTO(cliente);
     }
 
-    @Cacheable(value = "clientes", key = "#email")
+    @Cacheable(value = "clientes", key = "'findByEmail_'+#email")
     public ClienteResponseDTO findByEmail(String email) {
         Cliente cliente = clienteRepository.findByUsuarioEmail(email)
                 .orElseThrow(() -> new NotFoundException("Cliente con el email " + email + " no encontrado"));
         return clienteMapper.toResponseDTO(cliente);
     }
 
-    @Cacheable(value = "clientes", key = "#auth0Id")
+    @Cacheable(value = "clientes", key = "'findByAuth0Id_'+#auth0Id")
     public ClienteResponseDTO findByAuth0Id(String auth0Id) {
         Cliente cliente = clienteRepository.findByUsuario_Auth0Id(auth0Id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el auth0Id " + auth0Id + " no encontrado"));
@@ -83,7 +83,7 @@ public class ClienteService {
                 .toList();
     }
 
-    @CachePut(value = "clientes", key = "#id")
+    @CachePut(value = "clientes", key = "'update_'+#id")
     @Transactional
     public ClienteResponseDTO update(Long id, ClienteDTO clienteDTO) throws Auth0Exception {
         Cliente cliente = clienteRepository.findById(id)
@@ -102,7 +102,7 @@ public class ClienteService {
         return clienteMapper.toResponseDTO(clienteRepository.save(cliente));
     }
 
-    @CachePut(value = "clientes", key = "#auth0Id")
+    @CachePut(value = "clientes", key = "'updateByAuth0Id_'+#auth0Id")
     @Transactional
     public ClienteResponseDTO updateByAuth0Id(String auth0Id, ClienteDTO clienteDTO) throws Auth0Exception {
         Cliente cliente = clienteRepository.findByUsuario_Auth0Id(auth0Id)
@@ -146,7 +146,7 @@ public class ClienteService {
     }
 
     @Transactional
-    @CacheEvict(value = "clientes", key = "#id")
+    @CacheEvict(value = "clientes", key = "'toggleActivo_'+#id")
     public void toggleActivo(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
