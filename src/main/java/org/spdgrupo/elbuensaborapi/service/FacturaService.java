@@ -7,11 +7,12 @@ import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaRespon
 import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
 import org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio;
 import org.spdgrupo.elbuensaborapi.service.utils.FileService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
+import java.util.List;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
 import jakarta.transaction.Transactional;
 import org.spdgrupo.elbuensaborapi.config.mappers.FacturaMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaDTO;
@@ -40,6 +41,7 @@ public class FacturaService extends GenericoServiceImpl<Factura, FacturaDTO, Fac
         super(facturaRepository, genericoMapper);
     }
 
+    @CacheEvict(value = "facturas", allEntries = true)
     @Transactional
     public Factura createFacturaFromPedido(Pedido pedido) {
         Factura factura = Factura.builder()
@@ -72,6 +74,7 @@ public class FacturaService extends GenericoServiceImpl<Factura, FacturaDTO, Fac
         return facturaRepository.save(factura);
     }
 
+    @Cacheable(value = "facturas", key = "'findByPedidoId_'+#pedidoId")
     public FacturaResponseDTO findByPedidoId(Long pedidoId) {
         Factura factura = facturaRepository.findByPedido_Id(pedidoId)
                 .orElseThrow(() -> new NotFoundException("Factura para el pedido con el id " + pedidoId + " no encontrada"));
@@ -81,6 +84,18 @@ public class FacturaService extends GenericoServiceImpl<Factura, FacturaDTO, Fac
     public byte[] exportarFacturaPdf(Long idPedido) throws DocumentException, IOException {
         FacturaResponseDTO factura = findByPedidoId(idPedido);
         return FileService.getFacturaPdf(factura);
+    }
+
+    @Override
+    @Cacheable("facturas")
+    public List<FacturaResponseDTO> findAll() {
+        return super.findAll();
+    }
+
+    @Override
+    @Cacheable(value = "facturas", key = "'findById_'+#id")
+    public FacturaResponseDTO findById(Long id) {
+        return super.findById(id);
     }
 
 }
