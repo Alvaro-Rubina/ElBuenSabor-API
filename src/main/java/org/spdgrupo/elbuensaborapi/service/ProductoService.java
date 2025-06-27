@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoVentasDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -175,6 +176,14 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Producto con el id " + id + " no encontrado"));
         producto.setActivo(false);
+        productoRepository.save(producto);
+    }
+
+    @Transactional
+    public void activate(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
+        producto.setActivo(true);
         productoRepository.save(producto);
     }
 
