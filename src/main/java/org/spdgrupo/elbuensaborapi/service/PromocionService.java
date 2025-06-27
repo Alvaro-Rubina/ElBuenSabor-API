@@ -70,6 +70,10 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
             promocion.setDenominacion(promocionDTO.getDenominacion());
         }
 
+        if (!promocion.getDescripcion().equals(promocionDTO.getDescripcion())) {
+            promocion.setDescripcion(promocionDTO.getDescripcion());
+        }
+
         if (!promocion.getFechaDesde().equals(promocionDTO.getFechaDesde())) {
             promocion.setFechaDesde(promocionDTO.getFechaDesde());
         }

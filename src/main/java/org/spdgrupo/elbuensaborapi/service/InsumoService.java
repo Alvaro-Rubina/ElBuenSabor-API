@@ -89,6 +89,10 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
             insumo.setDenominacion(insumoDTO.getDenominacion());
         }
 
+        if (!insumo.getDescripcion().equals(insumoDTO.getDescripcion())) {
+            insumo.setDescripcion(insumoDTO.getDescripcion());
+        }
+
         if (!insumo.getUrlImagen().equals(insumoDTO.getUrlImagen())) {
             insumo.setUrlImagen(insumoDTO.getUrlImagen());
         }
