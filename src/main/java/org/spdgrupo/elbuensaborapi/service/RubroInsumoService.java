@@ -104,6 +104,12 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
         rubroInsumo.setActivo(!rubroInsumo.getActivo());
         Boolean valorActualizado = rubroInsumo.getActivo();
 
+        if (valorAnterior.equals(false) &&
+                (rubroInsumo.getRubroPadre() != null && rubroInsumo.getRubroPadre().getActivo().equals(false))) {
+            rubroInsumo.setActivo(valorAnterior);
+            throw new CyclicParentException("No se puede activar un rubro cuyo padre está inactivo");
+        }
+
         List<InsumoResponseDTO> insumos = insumoService.findInsumosByRubroId(rubroInsumo.getId());
         if (valorActualizado.equals(false)) {
             for (InsumoResponseDTO insumo: insumos) {
