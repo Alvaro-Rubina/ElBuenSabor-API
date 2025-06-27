@@ -104,10 +104,16 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
         rubroInsumo.setActivo(!rubroInsumo.getActivo());
         Boolean valorActualizado = rubroInsumo.getActivo();
 
+        List<InsumoResponseDTO> insumos = insumoService.findInsumosByRubroId(rubroInsumo.getId());
         if (valorActualizado.equals(false)) {
-            List<InsumoResponseDTO> insumos = insumoService.findInsumosByRubroId(rubroInsumo.getId());
             for (InsumoResponseDTO insumo: insumos) {
                 insumoService.delete(insumo.getId());
+            }
+        } else {
+            for (InsumoResponseDTO insumo: insumos) {
+                if (insumo.getStockActual() >= insumo.getStockMinimo()) {
+                    insumoService.activate(insumo.getId());
+                }
             }
         }
 
