@@ -94,6 +94,7 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
         rubroInsumoRepository.save(rubroInsumo);
     }
 
+    // src/main/java/org/spdgrupo/elbuensaborapi/service/RubroInsumoService.java
     @Override
     @Transactional
     public String toggleActivo(Long id) {
@@ -101,16 +102,32 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
 
         Boolean valorAnterior = rubroInsumo.getActivo();
-        rubroInsumo.setActivo(!rubroInsumo.getActivo());
-        Boolean valorActualizado = rubroInsumo.getActivo();
+        Boolean valorActualizado = !valorAnterior;
 
         if (valorAnterior.equals(false) &&
                 (rubroInsumo.getRubroPadre() != null && rubroInsumo.getRubroPadre().getActivo().equals(false))) {
-            rubroInsumo.setActivo(valorAnterior);
             throw new CyclicParentException("No se puede activar un rubro cuyo padre está inactivo");
         }
 
-        List<InsumoResponseDTO> insumos = insumoService.findInsumosByRubroId(rubroInsumo.getId());
+        propagarActivoRecursivo(rubroInsumo, valorActualizado);
+
+        return "Estado 'activo' actualizado" +
+                "\n- Valor anterior: " + valorAnterior +
+                "\n- Valor actualizado: " + valorActualizado;
+    }
+
+    private void propagarActivoRecursivo(RubroInsumo rubro, Boolean valorActualizado) {
+        rubro.setActivo(valorActualizado);
+        List<InsumoResponseDTO> insumos = insumoService.findInsumosByRubroId(rubro.getId());
+        toggleInsumosByRubro(insumos, valorActualizado);
+        rubroInsumoRepository.save(rubro);
+
+        for (RubroInsumo subRubro : rubro.getSubRubros()) {
+            propagarActivoRecursivo(subRubro, valorActualizado);
+        }
+    }
+
+    private void toggleInsumosByRubro(List<InsumoResponseDTO> insumos, Boolean valorActualizado) {
         if (valorActualizado.equals(false)) {
             for (InsumoResponseDTO insumo: insumos) {
                 insumoService.delete(insumo.getId());
@@ -122,10 +139,5 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
                 }
             }
         }
-
-        genericoRepository.save(rubroInsumo);
-        return "Estado 'activo' actualizado" +
-                "\n- Valor anterior: " + valorAnterior +
-                "\n- Valor actualizado: " + valorActualizado;
     }
 }
