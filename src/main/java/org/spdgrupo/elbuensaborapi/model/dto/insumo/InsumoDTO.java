@@ -18,7 +18,7 @@ public class InsumoDTO {
     private String denominacion;
 
     /*@NotBlank(message = "El campo descripcion no puede estar vacio")*/
-    private String descripcion;
+    private String descripcion = " ";
 
     @NotBlank(message = "El campo urlImagen no puede estar vacio")
     private String urlImagen;
