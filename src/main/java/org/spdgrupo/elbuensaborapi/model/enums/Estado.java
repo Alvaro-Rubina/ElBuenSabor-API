@@ -18,6 +18,7 @@ public enum Estado {
             case SOLICITADO -> EnumSet.of(EN_PREPARACION);
             case EN_PREPARACION -> EnumSet.of(TERMINADO);
             case TERMINADO -> EnumSet.of(EN_CAMINO, ENTREGADO);
+            case EN_CAMINO -> EnumSet.of(ENTREGADO);
             default -> EnumSet.noneOf(Estado.class); // No se puede avanzar desde otros
         };
     }
