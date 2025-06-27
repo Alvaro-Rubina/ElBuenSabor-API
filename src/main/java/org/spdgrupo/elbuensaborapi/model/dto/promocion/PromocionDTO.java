@@ -18,7 +18,7 @@ public class PromocionDTO {
     @NotBlank(message = "El campo denominacion no puede estar vacio")
     private String denominacion;
 
-    @NotBlank(message = "El campo descripcion no puede estar vacio")
+    /*@NotBlank(message = "El campo descripcion no puede estar vacio")*/
     private String descripcion;
 
     @NotBlank(message = "El campo urlImagen no puede estar vacio")
