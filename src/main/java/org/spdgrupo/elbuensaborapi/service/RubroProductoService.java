@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.RubroProductoMapper;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroproducto.RubroProductoResponseDTO;
@@ -68,16 +69,24 @@ public class RubroProductoService extends GenericoServiceImpl<RubroProducto, Rub
         rubroProducto.setActivo(!rubroProducto.getActivo());
         Boolean valorActualizado = rubroProducto.getActivo();
 
-        if (valorActualizado.equals(false)) {
-            List<ProductoResponseDTO> productos = productoService.findProductosByRubroId(rubroProducto.getId());
-            for (ProductoResponseDTO producto: productos) {
-                productoService.delete(producto.getId());
-            }
-        }
+        List<ProductoResponseDTO> productos = productoService.findProductosByRubroId(rubroProducto.getId());
+        toggleProductosByRubro(productos, valorActualizado);
 
         genericoRepository.save(rubroProducto);
         return "Estado 'activo' actualizado" +
                 "\n- Valor anterior: " + valorAnterior +
                 "\n- Valor actualizado: " + valorActualizado;
+    }
+
+    private void toggleProductosByRubro(List<ProductoResponseDTO> productos, Boolean valorActualizado) {
+        if (valorActualizado.equals(false)) {
+            for (ProductoResponseDTO insumo: productos) {
+                productoService.delete(insumo.getId());
+            }
+        } else {
+            for (ProductoResponseDTO producto: productos) {
+                productoService.activate(producto.getId());
+            }
+        }
     }
 }
