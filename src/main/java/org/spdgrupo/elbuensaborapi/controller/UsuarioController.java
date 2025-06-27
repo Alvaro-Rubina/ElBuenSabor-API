@@ -2,7 +2,6 @@ package org.spdgrupo.elbuensaborapi.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.model.dto.usuario.UsuarioResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.entity.Usuario;
 import org.spdgrupo.elbuensaborapi.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
