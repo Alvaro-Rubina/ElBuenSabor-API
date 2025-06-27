@@ -37,6 +37,8 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     private InsumoMapper insumoMapper;
     @Autowired
     private ProductoService productoService;
+    @Autowired
+    private PromocionService promocionService;
 
     public InsumoService(GenericoRepository<Insumo, Long> genericoRepository, GenericoMapper<Insumo, InsumoDTO, InsumoResponseDTO> genericoMapper) {
         super(genericoRepository, genericoMapper);
@@ -134,6 +136,9 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         if (!insumo.getActivo() && insumo.getEsParaElaborar()) {
             productoService.cambiarActivoProducto(id);
         }
+        if (!insumo.getActivo() && !insumo.getEsParaElaborar()) {
+            promocionService.desactivarPromocionesPorInsumo(id);
+        }
 
         return insumoMapper.toResponseDTO(insumo);
     }
@@ -172,6 +177,10 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         if (!insumo.getActivo() && insumo.getEsParaElaborar()) {
             productoService.cambiarActivoProducto(id);
         }
+        if (!insumo.getActivo() && !insumo.getEsParaElaborar()) {
+            promocionService.desactivarPromocionesPorInsumo(id);
+        }
+
     }
 
     @Override
