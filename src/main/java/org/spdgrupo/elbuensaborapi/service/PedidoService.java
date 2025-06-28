@@ -111,14 +111,37 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
                 List<DetalleProducto> detallesProducto = producto.getDetalleProductos();
                 for (DetalleProducto detalleProducto : detallesProducto) {
                     Insumo insumo = detalleProducto.getInsumo();
-                    double cantidaADescontar = detalleProducto.getCantidad() * detallePedido.getCantidad();
-                    insumoService.actualizarStock(insumo.getId(), -cantidaADescontar);
+                    double cantidadADescontar = detalleProducto.getCantidad() * detallePedido.getCantidad();
+                    insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
                 }
-
             } else if (detallePedido.getInsumo() != null) {
                 Insumo insumo = detallePedido.getInsumo();
                 double cantidadADescontar = detallePedido.getCantidad();
                 insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
+            }
+            // NUEVO: Descontar insumos de las promociones
+            else if (detallePedido.getPromocion() != null) {
+                Promocion promocion = detallePedido.getPromocion();
+                List<DetallePromocion> detallesPromocion = promocion.getDetallePromociones();
+                for (DetallePromocion detallePromo : detallesPromocion) {
+                    // Si el detalle de la promoción es un producto
+                    if (detallePromo.getProducto() != null) {
+                        Producto productoPromo = detallePromo.getProducto();
+                        List<DetalleProducto> detallesProducto = productoPromo.getDetalleProductos();
+                        for (DetalleProducto detalleProducto : detallesProducto) {
+                            Insumo insumo = detalleProducto.getInsumo();
+                            // OJO: multiplicar por la cantidad de la promo vendida y la cantidad del producto dentro de la promo
+                            double cantidadADescontar = detalleProducto.getCantidad() * detallePromo.getCantidad() * detallePedido.getCantidad();
+                            insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
+                        }
+                    }
+                    // Si el detalle de la promoción es un insumo directo
+                    else if (detallePromo.getInsumo() != null) {
+                        Insumo insumo = detallePromo.getInsumo();
+                        double cantidadADescontar = detallePromo.getCantidad() * detallePedido.getCantidad();
+                        insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
+                    }
+                }
             }
         }
 
