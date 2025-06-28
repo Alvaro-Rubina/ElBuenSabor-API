@@ -34,8 +34,10 @@ public class ClienteService {
 
         if (clienteDTO.getUsuario().getAuth0Id() == null) {
             usuario = usuarioService.save(clienteDTO.getUsuario());
+            System.out.println("SE EJECUTÓ EL METODO SAVE NORMAL");
         } else {
             usuario = usuarioService.saveExistingUser(clienteDTO.getUsuario());
+            System.out.println("SE EJECUTÓ EL METODO SAVEEXISTINGUSER");
         }
 
         Cliente cliente = clienteMapper.toEntity(clienteDTO);
