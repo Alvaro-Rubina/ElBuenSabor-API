@@ -122,9 +122,18 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
     }
 
     // Metodos adicionales
-
     private void cambiarEstadoPromociones(List<Promocion> promociones, boolean activo) {
+
         for (Promocion promocion : promociones) {
+            LocalDate now = LocalDate.now();
+
+            boolean estadoActivo = now.isAfter(promocion.getFechaDesde().minusDays(1))
+                    && now.isBefore(promocion.getFechaHasta().plusDays(1));
+
+            if (!estadoActivo) {
+                continue;
+            }
+
             boolean todosActivos = promocion.getDetallePromociones().stream().allMatch(detalle ->
                     (detalle.getProducto() == null || Boolean.TRUE.equals(detalle.getProducto().getActivo())) &&
                     (detalle.getInsumo() == null || Boolean.TRUE.equals(detalle.getInsumo().getActivo()))
