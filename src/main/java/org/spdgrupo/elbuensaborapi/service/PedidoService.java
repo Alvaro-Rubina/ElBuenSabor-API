@@ -14,6 +14,7 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.ClienteRepository;
 import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
+import org.spdgrupo.elbuensaborapi.repository.PedidoCodigoSequenceRepository;
 import org.spdgrupo.elbuensaborapi.repository.PedidoRepository;
 import org.spdgrupo.elbuensaborapi.service.utils.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,8 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
     private InsumoService insumoService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private PedidoCodigoSequenceRepository pedidoCodigoSequenceRepository;
 
     public PedidoService(GenericoRepository<Pedido, Long> genericoRepository, GenericoMapper<Pedido, PedidoDTO, PedidoResponseDTO> genericoMapper) {
         super(genericoRepository, genericoMapper);
@@ -313,7 +316,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         return pedido.getHora().plusMinutes(tiempoAdicional);
     }
 
-    private String generateCodigo() {
+    /*private String generateCodigo() {
         LocalDate hoy = LocalDate.now();
         int anio = hoy.getYear();
         int mes = hoy.getMonthValue();
@@ -326,6 +329,24 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         String numeroStr = String.format("%05d", nuevoNumero);
 
         return "PED-" + anioStr + mesStr + "-" + numeroStr;
+    }*/
+    @Transactional
+    protected String generateCodigo() {
+        LocalDate hoy = LocalDate.now();
+        String anioMes = String.valueOf(hoy.getYear()).substring(2) + String.format("%02d", hoy.getMonthValue());
+
+        PedidoCodigoSequence seq = pedidoCodigoSequenceRepository.findByAnioMes(anioMes)
+                .orElseGet(() -> {
+                    PedidoCodigoSequence nuevo = new PedidoCodigoSequence();
+                    nuevo.setAnioMes(anioMes);
+                    nuevo.setSecuencia(0);
+                    return nuevo;
+                });
+        seq.setSecuencia(seq.getSecuencia() + 1);
+        pedidoCodigoSequenceRepository.save(seq);
+
+        String numeroStr = String.format("%05d", seq.getSecuencia());
+        return "PED-" + anioMes + "-" + numeroStr;
     }
 
     private void enviarMailConFactura(Pedido pedido, String asunto, String cuerpo) throws Exception {
