@@ -15,7 +15,7 @@ public enum Estado {
     public Set<Estado> getEstadosPermitidos() {
         return switch (this) {
             case PENDIENTE_FACTURACION -> EnumSet.of(SOLICITADO, CANCELADO);
-            case SOLICITADO -> EnumSet.of(EN_PREPARACION);
+            case SOLICITADO -> EnumSet.of(EN_PREPARACION, CANCELADO);
             case EN_PREPARACION -> EnumSet.of(TERMINADO);
             case TERMINADO -> EnumSet.of(EN_CAMINO, ENTREGADO);
             case EN_CAMINO -> EnumSet.of(ENTREGADO);
