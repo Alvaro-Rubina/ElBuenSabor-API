@@ -145,28 +145,14 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
             }
 
             pedido.setEstado(nuevoEstado);
+            
+            if (nuevoEstado == Estado.CANCELADO) {
+                cancelacionPedido(pedidoId);
+            }
 
             if (nuevoEstado == Estado.TERMINADO) {
                 pedido.setFactura(facturaService.createFacturaFromPedido(pedido));
 
-            }
-
-            if (nuevoEstado == Estado.SOLICITADO ){
-                for (DetallePedido detallePedido : pedido.getDetallePedidos()) {
-                    if (detallePedido.getProducto() != null) {
-                        Producto producto = detallePedido.getProducto();
-                        List<DetalleProducto> detallesProducto = producto.getDetalleProductos();
-                        for (DetalleProducto detalleProducto : detallesProducto) {
-                            Insumo insumo = detalleProducto.getInsumo();
-                            double cantidaADescontar = detalleProducto.getCantidad() * detallePedido.getCantidad();
-                            insumoService.actualizarStock(insumo.getId(), -cantidaADescontar);
-                        }
-                    } else if (detallePedido.getInsumo() != null) {
-                        Insumo insumo = detallePedido.getInsumo();
-                        double cantidadADescontar = detallePedido.getCantidad();
-                        insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
-                    }
-                }
             }
 
             try {
@@ -348,5 +334,27 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         String email = pedido.getCliente().getUsuario().getEmail();
         byte[] facturaPdf = facturaService.exportarFacturaPdf(pedido.getId());
         emailService.enviarMailConAdjunto(email, asunto, cuerpo, facturaPdf, "factura-" + pedido.getCodigo() + ".pdf");
+    }
+
+    private void cancelacionPedido(Long pedidoid) {
+        Pedido pedido = pedidoRepository.findById(pedidoid)
+                .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoid + " no encontrado"));
+
+        // Acá se devuelven los insumos al stock
+        for (DetallePedido detallePedido : pedido.getDetallePedidos()) {
+            if (detallePedido.getProducto() != null) {
+                Producto producto = detallePedido.getProducto();
+                List<DetalleProducto> detallesProducto = producto.getDetalleProductos();
+                for (DetalleProducto detalleProducto : detallesProducto) {
+                    Insumo insumo = detalleProducto.getInsumo();
+                    double cantidadADevolver = detalleProducto.getCantidad() * detallePedido.getCantidad();
+                    insumoService.actualizarStock(insumo.getId(), cantidadADevolver); // suma stock
+                }
+            } else if (detallePedido.getInsumo() != null) {
+                Insumo insumo = detallePedido.getInsumo();
+                double cantidadADevolver = detallePedido.getCantidad();
+                insumoService.actualizarStock(insumo.getId(), cantidadADevolver); // suma stock
+            }
+        }
     }
 }
