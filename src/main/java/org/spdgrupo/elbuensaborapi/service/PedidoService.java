@@ -1,9 +1,11 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import com.itextpdf.text.DocumentException;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.PedidoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.IngresosEgresosDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.factura.FacturaResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.*;
@@ -17,10 +19,12 @@ import org.spdgrupo.elbuensaborapi.repository.DomicilioRepository;
 import org.spdgrupo.elbuensaborapi.repository.PedidoCodigoSequenceRepository;
 import org.spdgrupo.elbuensaborapi.repository.PedidoRepository;
 import org.spdgrupo.elbuensaborapi.service.utils.EmailService;
+import org.spdgrupo.elbuensaborapi.service.utils.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -270,6 +274,11 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
                 .toList();
     }
 
+    public byte[] exportarPedidoPdf(Long idPedido) throws DocumentException, IOException {
+        PedidoResponseDTO pedido = findById(idPedido);
+        return FileService.getPedidoPdf(pedido);
+    }
+
     // Metodos adicionales
     private Double getTotalVenta(List<DetallePedido> detallePedidos) {
         Double totalVenta = 0.0;
@@ -316,20 +325,6 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         return pedido.getHora().plusMinutes(tiempoAdicional);
     }
 
-    /*private String generateCodigo() {
-        LocalDate hoy = LocalDate.now();
-        int anio = hoy.getYear();
-        int mes = hoy.getMonthValue();
-
-        int pedidosEsteMes = pedidoRepository.countByYearAndMonth(anio, mes);
-        int nuevoNumero = pedidosEsteMes + 1;
-
-        String anioStr = String.valueOf(anio).substring(2);
-        String mesStr = String.format("%02d", mes);
-        String numeroStr = String.format("%05d", nuevoNumero);
-
-        return "PED-" + anioStr + mesStr + "-" + numeroStr;
-    }*/
     @Transactional
     protected String generateCodigo() {
         LocalDate hoy = LocalDate.now();

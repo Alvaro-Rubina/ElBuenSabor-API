@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import com.itextpdf.text.DocumentException;
 import jakarta.validation.Valid;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
@@ -7,9 +8,13 @@ import org.spdgrupo.elbuensaborapi.model.entity.Pedido;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
 import org.spdgrupo.elbuensaborapi.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -79,6 +84,15 @@ public class PedidoController extends GenericoControllerImpl<
     public ResponseEntity<List<PedidoResponseDTO>> getPedidosByEstado(@RequestParam Estado estado) {
         List<PedidoResponseDTO> pedidos = pedidoService.getPedidosByEstado(estado);
         return ResponseEntity.ok(pedidos);
+    }
+
+    @GetMapping("/pdf/{pedidoId}")
+    ResponseEntity<byte[]> exportarFacturaPdf(@PathVariable Long pedidoId) throws DocumentException, IOException {
+        byte[] pdfBytes = pedidoService.exportarPedidoPdf(pedidoId);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"pedido.pdf\"")
+                .body(pdfBytes);
     }
 
 }

@@ -5,7 +5,9 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.factura.FacturaResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
 import org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio;
 
@@ -27,7 +29,7 @@ public class FileService {
         document.add(logo);
 
         // Datos de la empresa en el encabezado
-        Paragraph datosEmpresa = new Paragraph("El Buen Sabor\nDirección: Calle Principal 123, Ciudad\nTeléfono: +54 123 456 7890\nCorreo: info@elbuensabor.com\n",
+        Paragraph datosEmpresa = new Paragraph("El Buen Sabor\nDirección: Av. San Martin 123, Mendoza\nTeléfono: +54 123 456 7890\nCorreo: info@elbuensabor.com\n",
                 FontFactory.getFont(FontFactory.HELVETICA, 10));
         datosEmpresa.setAlignment(Element.ALIGN_RIGHT);
         document.add(datosEmpresa);
@@ -112,6 +114,134 @@ public class FileService {
                 FontFactory.getFont(FontFactory.HELVETICA, 10));
         pie.setAlignment(Element.ALIGN_CENTER);
         document.add(pie);
+
+        document.close();
+        return baos.toByteArray();
+    }
+
+    public static byte[] getPedidoPdf(PedidoResponseDTO pedido) throws DocumentException, IOException {
+        Document document = new Document();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter.getInstance(document, baos);
+        document.open();
+
+        // Logo e información de la empresa
+        Image logo = Image.getInstance("src/main/resources/img/logo.png");
+        logo.scaleToFit(80, 80);
+        logo.setAlignment(Element.ALIGN_LEFT);
+        document.add(logo);
+
+        Paragraph datosEmpresa = new Paragraph("El Buen Sabor\nDirección: Av. San Martin 123, Mendoza\nTeléfono: +54 123 456 7890\nCorreo: info@elbuensabor.com\n",
+                FontFactory.getFont(FontFactory.HELVETICA, 10));
+        datosEmpresa.setAlignment(Element.ALIGN_RIGHT);
+        document.add(datosEmpresa);
+
+        // Título
+        Paragraph titulo = new Paragraph("Resumen de Pedido", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18));
+        titulo.setAlignment(Element.ALIGN_CENTER);
+        document.add(titulo);
+
+        document.add(new Paragraph(" "));
+
+        // Información del pedido
+        Paragraph infoPedido = new Paragraph("Datos del Pedido:\n" +
+                "Fecha: " + pedido.getFecha() + "\n" +
+                "Hora: " + pedido.getHora() + "\n" +
+                "Código: " + pedido.getCodigo() + "\n" +
+                "Tipo de Envío: " + (pedido.getTipoEnvio() == org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio.RETIRO_LOCAL ? "Retiro en Local" : "Delivery") + "\n" +
+                "Estado: " + pedido.getEstado() + "\n" +
+                "Comentario: " + (pedido.getComentario() != null ? pedido.getComentario() : "-") + "\n",
+                FontFactory.getFont(FontFactory.HELVETICA, 12));
+        infoPedido.setAlignment(Element.ALIGN_LEFT);
+        document.add(infoPedido);
+
+        document.add(new Paragraph(" "));
+
+        // Datos del cliente
+        Paragraph datosCliente = new Paragraph("Cliente:\n" +
+                "Nombre: " + pedido.getCliente().getNombreCompleto() + "\n" +
+                "Teléfono: " + pedido.getCliente().getTelefono() + "\n" +
+                "Correo electrónico: " + pedido.getCliente().getUsuario().getEmail(),
+                FontFactory.getFont(FontFactory.HELVETICA, 12));
+        datosCliente.setAlignment(Element.ALIGN_LEFT);
+        document.add(datosCliente);
+
+        if (pedido.getTipoEnvio() == org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio.DELIVERY && pedido.getDomicilio() != null) {
+            document.add(new Paragraph("Dirección de entrega: " + pedido.getDomicilio() + "\n",
+                    FontFactory.getFont(FontFactory.HELVETICA, 12)));
+        }
+
+        document.add(new Paragraph(" "));
+
+        // Tabla de productos/insumos/promociones
+        PdfPTable table = new PdfPTable(6);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+        table.setWidths(new float[]{2.5f, 1f, 1f, 1f, 1f, 1f});
+
+        addTableHeader(table, "Descripción", "Cantidad", "Precio Costo", "Precio Unitario", "Subtotal Costo", "Subtotal");
+
+        for (DetallePedidoResponseDTO detalle : pedido.getDetallePedidos()) {
+            String descripcion;
+            double precioUnitario = 0.0;
+            double precioCosto = 0.0;
+
+            if (detalle.getProducto() != null) {
+                descripcion = detalle.getProducto().getDenominacion();
+                precioUnitario = detalle.getProducto().getPrecioVenta();
+                precioCosto = detalle.getProducto().getPrecioCosto();
+
+            } else if (detalle.getInsumo() != null) {
+                descripcion = detalle.getInsumo().getDenominacion();
+                precioUnitario = detalle.getInsumo().getPrecioVenta();
+                precioCosto = detalle.getInsumo().getPrecioCosto();
+
+            } else if (detalle.getPromocion() != null) {
+                descripcion = "Promoción: " + detalle.getPromocion().getDenominacion();
+                if (detalle.getPromocion().getDescripcion() != null && !detalle.getPromocion().getDescripcion().isEmpty()) {
+                    descripcion += " - (" + detalle.getPromocion().getDescripcion() + ")";
+                }
+                precioUnitario = detalle.getPromocion().getPrecioVenta();
+                precioCosto = detalle.getPromocion().getPrecioCosto();
+
+            } else {
+                descripcion = "";
+            }
+
+            table.addCell(descripcion);
+            table.addCell(String.valueOf(detalle.getCantidad()));
+            table.addCell(String.format("$ %.2f", precioCosto));
+            table.addCell(String.format("$ %.2f", precioUnitario));
+            table.addCell(String.format("$ %.2f", precioCosto * detalle.getCantidad()));
+            table.addCell(String.format("$ %.2f", detalle.getSubTotal()));
+        }
+        document.add(table);
+
+        // Tabla de totales
+        PdfPTable totalesTable = new PdfPTable(2);
+        totalesTable.setWidthPercentage(100);
+        totalesTable.setSpacingBefore(10f);
+        totalesTable.setWidths(new float[]{2f, 1f});
+
+        addTableHeader(totalesTable, "Concepto", "Monto");
+
+        totalesTable.addCell("Costo Total");
+        totalesTable.addCell(String.format("$ %.2f", pedido.getTotalCosto()));
+
+        totalesTable.addCell("Subtotal");
+        totalesTable.addCell(String.format("$ %.2f", pedido.getTotalVenta() - pedido.getCostoEnvio()));
+
+        totalesTable.addCell("Costo de Envío");
+        totalesTable.addCell(String.format("$ %.2f", pedido.getCostoEnvio()));
+
+        PdfPCell totalCell = new PdfPCell(new Phrase("Total", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12)));
+        totalesTable.addCell(totalCell);
+
+        PdfPCell totalMontoCell = new PdfPCell(new Phrase(String.format("$ %.2f", pedido.getTotalVenta()), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12)));
+        totalesTable.addCell(totalMontoCell);
+
+        document.add(totalesTable);
 
         document.close();
         return baos.toByteArray();

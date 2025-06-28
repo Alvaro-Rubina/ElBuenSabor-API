@@ -1,15 +1,10 @@
 package org.spdgrupo.elbuensaborapi.service;
 
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.*;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
-import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
-import org.spdgrupo.elbuensaborapi.model.enums.TipoEnvio;
 import org.spdgrupo.elbuensaborapi.service.utils.FileService;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import jakarta.transaction.Transactional;
