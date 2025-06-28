@@ -138,10 +138,11 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         insumoRepository.save(insumo);
 
         if (!insumo.getActivo() && insumo.getEsParaElaborar()) {
-            productoService.cambiarActivoProducto(id);
+            LOGGER.warn("El insumo " + insumo.getDenominacion() + " no tiene stock, se desactiva el producto asociado");
+            productoService.cambiarActivoProducto(id, false);
         }
         if (!insumo.getActivo() && !insumo.getEsParaElaborar()) {
-            promocionService.desactivarPromocionesPorInsumo(id);
+            promocionService.cambiarEstadoPromocionesPorInsumo(id,false);
         }
 
         return insumoMapper.toResponseDTO(insumo);
@@ -170,6 +171,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
 
         double nuevoStock = insumo.getStockActual() + cantidad;
+        boolean activoAnterior = insumo.getActivo();
 
         if (nuevoStock < 0) {
             throw new RuntimeException("No hay suficiente stock para realizar la operación.");
@@ -186,11 +188,17 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
 
         insumoRepository.save(insumo);
 
-        if (!insumo.getActivo() && insumo.getEsParaElaborar()) {
-            productoService.cambiarActivoProducto(id);
-        }
-        if (!insumo.getActivo() && !insumo.getEsParaElaborar()) {
-            promocionService.desactivarPromocionesPorInsumo(id);
+        if (activoAnterior != insumo.getActivo() ) {
+            if (!insumo.getActivo() && insumo.getEsParaElaborar()) {
+                productoService.cambiarActivoProducto(id, false);
+            } else {
+                productoService.cambiarActivoProducto(id, true);
+            }
+            if (!insumo.getActivo() && !insumo.getEsParaElaborar()) {
+                promocionService.cambiarEstadoPromocionesPorInsumo(id, false);
+            } else {
+                promocionService.cambiarEstadoPromocionesPorInsumo(id, true);
+            }
         }
 
     }
@@ -214,7 +222,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         insumoRepository.save(insumo);
 
         if (valorAnterior && !insumo.getActivo() && insumo.getEsParaElaborar()) {
-            productoService.cambiarActivoProducto(id);
+            productoService.cambiarActivoProducto(id, false);
         }
 
         return "Estado 'activo' actualizado" +

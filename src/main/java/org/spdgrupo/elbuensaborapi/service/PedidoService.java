@@ -145,7 +145,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
             }
 
             pedido.setEstado(nuevoEstado);
-            
+
             if (nuevoEstado == Estado.CANCELADO) {
                 cancelacionPedido(pedidoId);
             }

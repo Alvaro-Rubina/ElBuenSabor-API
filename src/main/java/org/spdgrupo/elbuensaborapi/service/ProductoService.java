@@ -90,32 +90,26 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
                 .toList();
     }
 
-    private List<ProductoResponseDTO> findProductosByInsumoid(Long InsumoId) {
-        return productoRepository.findByDetalleProductosInsumoId(InsumoId).stream()
-                .map(productoMapper::toResponseDTO)
-                .toList();
-    }
-
-
     @Transactional
-    public void cambiarActivoProducto(long id){
+    public void cambiarActivoProducto(long id, boolean activo) {
         List<ProductoResponseDTO> productos = findProductosByInsumoid(id);
 
         for (ProductoResponseDTO producto : productos) {
-
-            if(producto.isActivo()){
-                List<DetalleProductoResponseDTO> detalleProductoResponseDTO = producto.getDetalleProductos();
-
-                for (DetalleProductoResponseDTO detalle : detalleProductoResponseDTO) {
-                    if (!detalle.getInsumo().isActivo()) {
-                        delete(producto.getId());
-                        promocionService.desactivarPromocionesPorProducto(producto.getId());
-                        break;
+            if (producto.isActivo() != activo) {
+                if (activo) {
+                    // Solo activa si todos los insumos están activos
+                    boolean todosInsumosActivos = producto.getDetalleProductos().stream()
+                            .allMatch(detalle -> detalle.getInsumo().isActivo());
+                    if (todosInsumosActivos) {
+                        activate(producto.getId());
+                        promocionService.cambiarEstadoPromocionesPorProducto(producto.getId(), true);
                     }
+                } else {
+                    // Desactiva el producto y sus promociones
+                    delete(producto.getId());
+                    promocionService.cambiarEstadoPromocionesPorProducto(producto.getId(), false);
                 }
             }
-
-
         }
     }
 
@@ -224,7 +218,9 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         productoRepository.save(producto);
 
         if (!activar) {
-            promocionService.desactivarPromocionesPorProducto(producto.getId());
+            promocionService.cambiarEstadoPromocionesPorProducto(producto.getId(),false);
+        }else{
+            promocionService.cambiarEstadoPromocionesPorProducto(producto.getId(),true);
         }
 
         Boolean valorActualizado = producto.getActivo();
@@ -250,6 +246,12 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
             precioCosto += cantidad * detalleProducto.getInsumo().getPrecioCosto();
         }
         return precioCosto;
+    }
+
+    private List<ProductoResponseDTO> findProductosByInsumoid(Long InsumoId) {
+        return productoRepository.findByDetalleProductosInsumoId(InsumoId).stream()
+                .map(productoMapper::toResponseDTO)
+                .toList();
     }
 
     private Double getPrecioVenta(Double precioCosto, Double margenGanancia) {

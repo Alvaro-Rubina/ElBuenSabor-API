@@ -111,19 +111,19 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
     }
 
     @Transactional
-    public void desactivarPromocionesPorProducto(Long productoId) {
+    public void cambiarEstadoPromocionesPorProducto(Long productoId, boolean activo) {
         List<Promocion> promociones = promocionRepository.findAllByDetallePromocionesProductoIdAndActivoTrue(productoId);
         for (Promocion promocion : promociones) {
-            promocion.setActivo(false);
+            promocion.setActivo(activo);
             promocionRepository.save(promocion);
         }
     }
 
     @Transactional
-    public void desactivarPromocionesPorInsumo(Long insumoId) {
+    public void cambiarEstadoPromocionesPorInsumo(Long insumoId, boolean activo) {
         List<Promocion> promociones = promocionRepository.findAllByDetallePromocionesInsumoIdAndActivoTrue(insumoId);
         for (Promocion promocion : promociones) {
-            promocion.setActivo(false);
+            promocion.setActivo(activo);
             promocionRepository.save(promocion);
         }
     }
