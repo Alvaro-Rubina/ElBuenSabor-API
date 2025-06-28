@@ -109,26 +109,41 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
             throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de finalización");
         }
     }
-
     @Transactional
     public void cambiarEstadoPromocionesPorProducto(Long productoId, boolean activo) {
-        List<Promocion> promociones = promocionRepository.findAllByDetallePromocionesProductoIdAndActivoTrue(productoId);
-        for (Promocion promocion : promociones) {
-            promocion.setActivo(activo);
-            promocionRepository.save(promocion);
-        }
+        List<Promocion> promociones = promocionRepository.findAllByDetallePromocionesProductoId(productoId);
+        cambiarEstadoPromociones(promociones, activo);
     }
 
     @Transactional
     public void cambiarEstadoPromocionesPorInsumo(Long insumoId, boolean activo) {
-        List<Promocion> promociones = promocionRepository.findAllByDetallePromocionesInsumoIdAndActivoTrue(insumoId);
-        for (Promocion promocion : promociones) {
-            promocion.setActivo(activo);
-            promocionRepository.save(promocion);
-        }
+        List<Promocion> promociones = promocionRepository.findAllByDetallePromocionesInsumoId(insumoId);
+        cambiarEstadoPromociones(promociones, activo);
     }
 
     // Metodos adicionales
+
+    private void cambiarEstadoPromociones(List<Promocion> promociones, boolean activo) {
+        for (Promocion promocion : promociones) {
+            boolean todosActivos = promocion.getDetallePromociones().stream().allMatch(detalle ->
+                    (detalle.getProducto() == null || Boolean.TRUE.equals(detalle.getProducto().getActivo())) &&
+                    (detalle.getInsumo() == null || Boolean.TRUE.equals(detalle.getInsumo().getActivo()))
+            );
+
+            boolean estadoAnterior = promocion.getActivo();
+
+            if (activo && !todosActivos) {
+                promocion.setActivo(false);
+            } else {
+                promocion.setActivo(activo);
+            }
+
+            if (estadoAnterior != promocion.getActivo()) {
+                promocionRepository.save(promocion);
+            }
+        }
+    }
+
     private Double getTotalVenta(List<DetallePromocion> detallePromociones) {
         Double totalVenta = 0.0;
 

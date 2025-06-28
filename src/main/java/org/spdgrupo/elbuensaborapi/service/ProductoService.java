@@ -92,14 +92,14 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
 
     @Transactional
     public void cambiarActivoProducto(long id, boolean activo) {
-        List<ProductoResponseDTO> productos = findProductosByInsumoid(id);
+        List<Producto> productos = productoRepository.findByDetalleProductosInsumoId(id);
 
-        for (ProductoResponseDTO producto : productos) {
-            if (producto.isActivo() != activo) {
+        for (Producto producto : productos) {
+            if (producto.getActivo() != activo) {
                 if (activo) {
                     // Solo activa si todos los insumos están activos
                     boolean todosInsumosActivos = producto.getDetalleProductos().stream()
-                            .allMatch(detalle -> detalle.getInsumo().isActivo());
+                            .allMatch(detalle -> detalle.getInsumo().getActivo());
                     if (todosInsumosActivos) {
                         activate(producto.getId());
                         promocionService.cambiarEstadoPromocionesPorProducto(producto.getId(), true);
@@ -246,12 +246,6 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
             precioCosto += cantidad * detalleProducto.getInsumo().getPrecioCosto();
         }
         return precioCosto;
-    }
-
-    private List<ProductoResponseDTO> findProductosByInsumoid(Long InsumoId) {
-        return productoRepository.findByDetalleProductosInsumoId(InsumoId).stream()
-                .map(productoMapper::toResponseDTO)
-                .toList();
     }
 
     private Double getPrecioVenta(Double precioCosto, Double margenGanancia) {

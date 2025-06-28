@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface PromocionRepository extends GenericoRepository<Promocion, Long> {
 
-    List<Promocion> findAllByDetallePromocionesInsumoIdAndActivoTrue(Long insumoId);
-    List<Promocion> findAllByDetallePromocionesProductoIdAndActivoTrue(Long productoId);
+    List<Promocion> findAllByDetallePromocionesInsumoId(Long insumoId);
+    List<Promocion> findAllByDetallePromocionesProductoId(Long productoId);
 }
