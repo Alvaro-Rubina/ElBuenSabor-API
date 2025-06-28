@@ -50,7 +50,7 @@ public class DetallePedidoService extends GenericoServiceImpl<DetallePedido, Det
             /*detallePedido.setPromocion(null);*/
         } else if (detallePedidoDTO.getPromocionId() != null) {
             detallePedido.setPromocion(promocionRepository.findById(detallePedidoDTO.getPromocionId())
-                    .orElseThrow(() -> new NotFoundException("Promoción con el id " + detallePedidoDTO.getInsumoId() + " no encontrada")));
+                    .orElseThrow(() -> new NotFoundException("Promoción con el id " + detallePedidoDTO.getPromocionId() + " no encontrada")));
             /*detallePedido.setProducto(null);*/
             /*detallePedido.setInsumo(null);*/
         }
@@ -77,13 +77,23 @@ public class DetallePedidoService extends GenericoServiceImpl<DetallePedido, Det
     }
 
     private void calcularSubtotales(DetallePedido detallePedido) {
-        Double precioVenta = detallePedido.getProducto() != null ?
-                detallePedido.getProducto().getPrecioVenta() :
-                detallePedido.getInsumo().getPrecioVenta();
+        Double precioVenta = null;
+        Double precioCosto = null;
 
-        Double precioCosto = detallePedido.getProducto() != null ?
-                detallePedido.getProducto().getPrecioCosto() :
-                detallePedido.getInsumo().getPrecioCosto();
+        if (detallePedido.getProducto() != null) {
+            precioVenta = detallePedido.getProducto().getPrecioVenta();
+            precioCosto = detallePedido.getProducto().getPrecioCosto();
+        } else if (detallePedido.getInsumo() != null) {
+            precioVenta = detallePedido.getInsumo().getPrecioVenta();
+            precioCosto = detallePedido.getInsumo().getPrecioCosto();
+        } else if (detallePedido.getPromocion() != null) {
+            precioVenta = detallePedido.getPromocion().getPrecioVenta();
+            precioCosto = detallePedido.getPromocion().getPrecioCosto();
+        }
+
+        if (precioVenta == null || precioCosto == null) {
+            throw new IllegalStateException("No se pudo determinar el precio de venta o costo para el detalle del pedido.");
+        }
 
         detallePedido.setSubTotal(precioVenta * detallePedido.getCantidad());
         detallePedido.setSubTotalCosto(precioCosto * detallePedido.getCantidad());

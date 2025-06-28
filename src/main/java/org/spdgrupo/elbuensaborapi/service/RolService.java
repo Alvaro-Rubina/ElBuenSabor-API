@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.service;
 import com.auth0.client.mgmt.ManagementAPI;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.mgmt.Role;
+import com.auth0.json.mgmt.RolesPage;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.RolMapper;
@@ -137,6 +138,23 @@ public class RolService {
                 .orElseThrow(() -> new NotFoundException("Rol con el id " + id + " no encontrado"));
         rol.setActivo(!rol.getActivo());
         rolRepository.save(rol);
+    }
+
+    @Transactional
+    public void sincronizarRolesDesdeAuth0() throws Auth0Exception {
+        RolesPage rolesPage = managementAPI.roles().list(null).execute();
+        List<Role> rolesAuth0 = rolesPage.getItems();
+
+        for (Role roleAuth0 : rolesAuth0) {
+            if (!rolRepository.existsByAuth0RolId(roleAuth0.getId())) {
+                Rol rol = new Rol();
+                rol.setNombre(roleAuth0.getName());
+                rol.setDescripcion(roleAuth0.getDescription());
+                rol.setAuth0RolId(roleAuth0.getId());
+                rol.setActivo(true);
+                rolRepository.save(rol);
+            }
+        }
     }
 
     public boolean existsByAuth0RolId(String auth0RolId) {

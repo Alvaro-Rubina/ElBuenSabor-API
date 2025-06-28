@@ -6,17 +6,22 @@ import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.InsumoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoVentasDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
 import org.spdgrupo.elbuensaborapi.repository.RubroInsumoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, InsumoResponseDTO, Long> {
@@ -32,6 +37,8 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
     private InsumoMapper insumoMapper;
     @Autowired
     private ProductoService productoService;
+    @Autowired
+    private PromocionService promocionService;
 
     public InsumoService(GenericoRepository<Insumo, Long> genericoRepository, GenericoMapper<Insumo, InsumoDTO, InsumoResponseDTO> genericoMapper) {
         super(genericoRepository, genericoMapper);
@@ -53,15 +60,37 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
                 .toList();
     }
 
+    public List<InsumoResponseDTO> findInsumosByRubroId(Long rubroProductoId) {
+        return insumoRepository.findByRubroId(rubroProductoId).stream()
+                .map(insumoMapper::toResponseDTO)
+                .toList();
+    }
+
+    public List<InsumoResponseDTO> findAllVendibles() {
+        return insumoRepository.findByEsParaElaborarFalse().stream()
+                .map(insumoMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<InsumoResponseDTO> findAllActivos() {
+        return insumoRepository.findByActivoTrue().stream()
+                .map(insumoMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
     @Override
     @Transactional
-    public void update(Long id, InsumoDTO insumoDTO) {
+    public InsumoResponseDTO update(Long id, InsumoDTO insumoDTO) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
 
 
         if (!insumo.getDenominacion().equals(insumoDTO.getDenominacion())) {
             insumo.setDenominacion(insumoDTO.getDenominacion());
+        }
+
+        if (!insumo.getDescripcion().equals(insumoDTO.getDescripcion())) {
+            insumo.setDescripcion(insumoDTO.getDescripcion());
         }
 
         if (!insumo.getUrlImagen().equals(insumoDTO.getUrlImagen())) {
@@ -101,7 +130,21 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
                     .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + insumoDTO.getRubroId() + " no encontrado")));
         }
 
+        if (insumo.getStockActual() < insumo.getStockMinimo()) {
+            LOGGER.warn("El stock actual del insumo " + insumo.getDenominacion() + " es menor al minimo recomendado");
+            insumo.setActivo(false);
+        }
+
         insumoRepository.save(insumo);
+
+        if (!insumo.getActivo() && insumo.getEsParaElaborar()) {
+            productoService.cambiarActivoProducto(id);
+        }
+        if (!insumo.getActivo() && !insumo.getEsParaElaborar()) {
+            promocionService.desactivarPromocionesPorInsumo(id);
+        }
+
+        return insumoMapper.toResponseDTO(insumo);
     }
 
     @Override
@@ -110,6 +153,14 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
         insumo.setActivo(false);
+        insumoRepository.save(insumo);
+    }
+
+    @Transactional
+    public void activate(Long id) {
+        Insumo insumo = insumoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
+        insumo.setActivo(true);
         insumoRepository.save(insumo);
     }
 
@@ -136,24 +187,50 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         insumoRepository.save(insumo);
 
         if (!insumo.getActivo() && insumo.getEsParaElaborar()) {
-
             productoService.cambiarActivoProducto(id);
-
         }
+        if (!insumo.getActivo() && !insumo.getEsParaElaborar()) {
+            promocionService.desactivarPromocionesPorInsumo(id);
+        }
+
     }
 
     @Override
     @Transactional
-    public void toggleActivo(Long id) {
+    public String toggleActivo(Long id) {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
-        boolean estabaActivo = insumo.getActivo();
-        insumo.setActivo(!estabaActivo);
+
+        Boolean valorAnterior = insumo.getActivo();
+        insumo.setActivo(!valorAnterior);
+        Boolean valorActualizado = insumo.getActivo();
+
+        if (valorActualizado) {
+            if (!insumo.getRubro().getActivo()) {
+                throw new RuntimeException("No es posible activar el insumo porque su rubro (" + insumo.getRubro().getDenominacion() + ") está inactivo");
+            }
+        }
+
         insumoRepository.save(insumo);
 
-        if (estabaActivo && !insumo.getActivo() && insumo.getEsParaElaborar()) {
+        if (valorAnterior && !insumo.getActivo() && insumo.getEsParaElaborar()) {
             productoService.cambiarActivoProducto(id);
         }
+
+        return "Estado 'activo' actualizado" +
+                "\n- Valor anterior: " + valorAnterior +
+                "\n- Valor actualizado: " + valorActualizado;
+    }
+
+    @Transactional(readOnly = true)
+    public List<InsumoVentasDTO> obtenerInsumosMasVendidos(LocalDate fechaDesde, LocalDate fechaHasta, int limite) {
+        // Validación de fechas opcional
+        if (fechaDesde != null && fechaHasta != null && fechaDesde.isAfter(fechaHasta)) {
+            throw new IllegalArgumentException("La fechaDesde no puede ser posterior a la fechaHasta.");
+        }
+
+        Pageable pageable = PageRequest.of(0, limite); // Limitar la cantidad de resultados
+        return insumoRepository.findInsumosMasVendidos(fechaDesde, fechaHasta, pageable);
     }
 
 }

@@ -2,6 +2,7 @@ package org.spdgrupo.elbuensaborapi.service;
 
 import com.auth0.client.mgmt.ManagementAPI;
 import com.auth0.exception.Auth0Exception;
+import com.auth0.json.mgmt.users.User;
 import lombok.RequiredArgsConstructor;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.ClienteMapper;
@@ -33,8 +34,10 @@ public class ClienteService {
 
         if (clienteDTO.getUsuario().getAuth0Id() == null) {
             usuario = usuarioService.save(clienteDTO.getUsuario());
+            System.out.println("SE EJECUTÓ EL METODO SAVE NORMAL");
         } else {
             usuario = usuarioService.saveExistingUser(clienteDTO.getUsuario());
+            System.out.println("SE EJECUTÓ EL METODO SAVEEXISTINGUSER");
         }
 
         Cliente cliente = clienteMapper.toEntity(clienteDTO);
@@ -81,6 +84,7 @@ public class ClienteService {
 
         if ((!cliente.getNombreCompleto().equals(clienteDTO.getNombreCompleto())) && (!clienteDTO.getNombreCompleto().trim().isEmpty())) {
             cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
+            clienteDTO.getUsuario().setNombreCompleto(cliente.getNombreCompleto());
         }
 
         if ((!cliente.getTelefono().equals(clienteDTO.getTelefono())) && (!clienteDTO.getTelefono().trim().isEmpty())) {
@@ -88,7 +92,7 @@ public class ClienteService {
         }
 
         usuarioService.update(cliente.getUsuario().getAuth0Id(), clienteDTO.getUsuario());
-       return clienteMapper.toResponseDTO(clienteRepository.save(cliente));
+        return clienteMapper.toResponseDTO(clienteRepository.save(cliente));
     }
 
     @Transactional
@@ -96,15 +100,24 @@ public class ClienteService {
         Cliente cliente = clienteRepository.findByUsuario_Auth0Id(auth0Id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el auth0Id " + auth0Id + " no encontrado"));
 
-        if ((!cliente.getNombreCompleto().equals(clienteDTO.getNombreCompleto())) && (!clienteDTO.getNombreCompleto().trim().isEmpty())) {
+        User usuarioAuth0 = managementAPI.users().get(auth0Id, null).execute();
+        boolean isSocial = usuarioAuth0.getIdentities() != null &&
+                usuarioAuth0.getIdentities().stream()
+                        .anyMatch(identity -> !identity.getConnection().equals("Username-Password-Authentication"));
+
+        if ((!cliente.getNombreCompleto().equals(clienteDTO.getNombreCompleto()))
+                && (!clienteDTO.getNombreCompleto().trim().isEmpty()) && !isSocial) {
             cliente.setNombreCompleto(clienteDTO.getNombreCompleto());
+            cliente.getUsuario().setNombreCompleto(clienteDTO.getNombreCompleto());
         }
 
         if ((!cliente.getTelefono().equals(clienteDTO.getTelefono())) && (!clienteDTO.getTelefono().trim().isEmpty())) {
             cliente.setTelefono(clienteDTO.getTelefono());
         }
 
-        usuarioService.update(cliente.getUsuario().getAuth0Id(), clienteDTO.getUsuario());
+        if (!isSocial) {
+            usuarioService.update(cliente.getUsuario().getAuth0Id(), clienteDTO.getUsuario());
+        }
         return clienteMapper.toResponseDTO(clienteRepository.save(cliente));
     }
 

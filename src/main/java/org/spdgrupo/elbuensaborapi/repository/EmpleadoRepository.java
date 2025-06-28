@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface EmpleadoRepository extends GenericoRepository<Empleado, Long> {
     Optional<Empleado> findByUsuarioEmail(String usuarioEmail);
+    Optional<Empleado> findByUsuario_Auth0Id(String auth0Id);
 }

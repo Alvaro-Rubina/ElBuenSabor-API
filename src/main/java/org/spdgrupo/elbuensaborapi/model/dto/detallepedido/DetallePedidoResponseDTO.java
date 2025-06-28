@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.model.dto.detallepedido;
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionResponseDTO;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,4 +18,5 @@ public class DetallePedidoResponseDTO {
     private Double subTotalCosto;
     private ProductoResponseDTO producto;
     private InsumoResponseDTO insumo;
+    private PromocionResponseDTO promocion;
 }

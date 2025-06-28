@@ -30,7 +30,7 @@ public class Factura extends Base {
     @Enumerated(EnumType.STRING)
     private FormaPago formaPago;
 
-    private String totalVenta;
+    private Double totalVenta;
 
     private Double montoDescuento;
 

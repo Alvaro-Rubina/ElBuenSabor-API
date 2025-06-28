@@ -15,6 +15,7 @@ public class PromocionResponseDTO {
 
     private Long id;
     private String denominacion;
+    private String descripcion;
     private String urlImagen;
     private Double precioVenta;
     private Double precioCosto;
@@ -22,4 +23,5 @@ public class PromocionResponseDTO {
     private LocalDate fechaHasta;
     private Double descuento;
     private List<DetallePromocionResponseDTO> detallePromociones;
+    private boolean activo;
 }

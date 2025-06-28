@@ -15,4 +15,7 @@ public class DomicilioResponseDTO {
     private String localidad;
     private Integer codigoPostal;
     private Boolean activo;
+    private Double latitud;
+    private Double longitud;
+
 }

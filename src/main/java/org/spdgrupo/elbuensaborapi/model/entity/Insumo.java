@@ -15,6 +15,8 @@ public class Insumo extends Base {
 
     private String denominacion;
 
+    private String descripcion;
+
     @Column(length = 500)
     private String urlImagen;
 

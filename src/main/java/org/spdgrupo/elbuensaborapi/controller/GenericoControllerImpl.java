@@ -21,9 +21,9 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
 
     @Override
     @PostMapping("/save")
-    public ResponseEntity<String> save(@Valid @RequestBody D dto) {
-        servicio.save(dto);
-        return ResponseEntity.ok("Registro exitoso");
+    public ResponseEntity<R> save(@Valid @RequestBody D dto) {
+        R response = servicio.save(dto);
+        return ResponseEntity.ok(response);
     }
 
     @Override
@@ -41,8 +41,8 @@ public abstract class GenericoControllerImpl<E extends Base, D, R, ID extends Se
 
     @PutMapping("/toggle-activo/{id}")
     public ResponseEntity<String> toggleActivo(@PathVariable ID id) {
-        servicio.toggleActivo(id);
-        return ResponseEntity.ok("Entidad actualizada exitosamente");
+        String response = servicio.toggleActivo(id);
+        return ResponseEntity.ok(response);
     }
 
 }

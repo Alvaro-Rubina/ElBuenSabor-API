@@ -13,6 +13,7 @@ public class InsumoResponseDTO {
 
     private Long id;
     private String denominacion;
+    private String descripcion;
     private String urlImagen;
     private Double precioCosto;
     private Double precioVenta;

@@ -79,13 +79,14 @@ public class UsuarioService{
 
         try {
             usuarioRepository.save(usuario);
+            // Asigno roles en Auth0
+            managementAPI.users().addRoles(usuario.getAuth0Id(), usuarioDTO.getRoles()).execute();
         } catch (Exception e) {
             // Si falla en la BD, elimino el usuario en Auth0
             managementAPI.users().delete(usuarioAuth0.getId()).execute();
             throw e;
         }
         return usuario;
-
     }
 
     public UsuarioResponseDTO findById(Long id) {
@@ -121,13 +122,7 @@ public class UsuarioService{
         User usuarioAuth0 = new User();
         boolean changed = false;
 
-        if ((!usuario.getEmail().equals(usuarioDTO.getEmail())) && (!usuarioDTO.getEmail().trim().isEmpty())) {
-            usuario.setEmail(usuarioDTO.getEmail());
-            usuarioAuth0.setEmail(usuarioDTO.getEmail());
-            changed = true;
-        }
-
-        if ((!usuario.getNombreCompleto().equals(usuarioDTO.getNombreCompleto())) && (!usuarioDTO.getNombreCompleto().trim().isEmpty())) {
+        if (usuarioDTO.getNombreCompleto() != null && !usuarioDTO.getNombreCompleto().trim().isEmpty()) {
             usuario.setNombreCompleto(usuarioDTO.getNombreCompleto());
             usuarioAuth0.setName(usuarioDTO.getNombreCompleto());
             changed = true;

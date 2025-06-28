@@ -4,12 +4,15 @@ import jakarta.validation.Valid;
 
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoVentasDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.service.InsumoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -27,6 +30,18 @@ public class InsumoController extends GenericoControllerImpl<
     public InsumoController(InsumoService insumoService) {
         super(insumoService);
         this.insumoService = insumoService;
+    }
+
+    @GetMapping("/vendibles")
+    public ResponseEntity<List<InsumoResponseDTO>> findAllVendibles() {
+        List<InsumoResponseDTO> insumos = insumoService.findAllVendibles();
+        return ResponseEntity.ok(insumos);
+    }
+
+    @GetMapping("/activos")
+    public ResponseEntity<List<InsumoResponseDTO>> findAllActivos() {
+        List<InsumoResponseDTO> insumos = insumoService.findAllActivos();
+        return ResponseEntity.ok(insumos);
     }
 
 
@@ -48,5 +63,5 @@ public class InsumoController extends GenericoControllerImpl<
         insumoService.delete(id);
         return ResponseEntity.ok("Insumo eliminado exitosamente");
     }
-    
+
 }

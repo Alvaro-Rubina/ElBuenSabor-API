@@ -18,6 +18,9 @@ public class PromocionDTO {
     @NotBlank(message = "El campo denominacion no puede estar vacio")
     private String denominacion;
 
+    /*@NotBlank(message = "El campo descripcion no puede estar vacio")*/
+    private String descripcion = " ";
+
     @NotBlank(message = "El campo urlImagen no puede estar vacio")
     private String urlImagen;
 
@@ -36,5 +39,5 @@ public class PromocionDTO {
     @Size(min = 1, message = "El campo detallePromociones debe contener por lo menos 1 elemento")
     private List<DetallePromocionDTO> detallePromociones = new ArrayList<>();
 
-    private Boolean activo;
+    private Boolean activo = false;
 }

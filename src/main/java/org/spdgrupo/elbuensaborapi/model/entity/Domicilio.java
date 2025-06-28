@@ -20,4 +20,9 @@ public class Domicilio extends Base {
 
     private Integer codigoPostal;
 
+    private Double latitud;
+
+    private Double longitud;
+
+
 }

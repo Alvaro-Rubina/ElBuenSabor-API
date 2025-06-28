@@ -23,9 +23,14 @@ public class ProductoDTO {
     @Min(value = 1, message = "El campo tiempoEstimadoPreparacion no puede ser menor a 1")
     private Long tiempoEstimadoPreparacion;
 
-    @NotNull(message = "El campo precioCosto no puede ser nulo")
-    @DecimalMin(value = "0.01", message = "el campo precioCosto no puede ser menor a 0.01")
-    private Double precioVenta;
+    /*@NotNull(message = "El campo precioVenta no puede ser nulo")
+    @DecimalMin(value = "0.01", message = "el campo precioVenta no puede ser menor a 0.01")
+    private Double precioVenta;*/
+
+    @NotNull(message = "El campo porcentajeGanancia no puede ser nulo")
+    @DecimalMin(value = "0.01", message = "el campo porcentajeGanancia no puede ser menor a 0.00")
+    @DecimalMax(value = "100.00", message = "el campo porcentajeGanancia no puede ser mayor a 100.00")
+    private Double margenGanancia;
 
     @NotBlank(message = "El campo urlImagen no puede estar vacio")
     private String urlImagen;

@@ -18,6 +18,8 @@ public class Promocion extends Base {
 
     private String denominacion;
 
+    private String descripcion;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaDesde;
 

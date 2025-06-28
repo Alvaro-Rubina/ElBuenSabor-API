@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.service;
 import org.spdgrupo.elbuensaborapi.config.exception.CyclicParentException;
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.RubroInsumoMapper;
+import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.rubroinsumo.RubroInsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.RubroInsumo;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroInsumoDTO, RubroInsumoResponseDTO, Long> {
 
@@ -21,10 +24,13 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
     private RubroInsumoRepository rubroInsumoRepository;
     @Autowired
     private RubroInsumoMapper rubroInsumoMapper;
+    @Autowired
+    private InsumoService insumoService;
 
     public RubroInsumoService(GenericoRepository<RubroInsumo,Long> rubroInsumoRepository, GenericoMapper<RubroInsumo,RubroInsumoDTO,RubroInsumoResponseDTO> rubroInsumoMapper) {
         super(rubroInsumoRepository, rubroInsumoMapper);
     }
+
 
     @Override
     @Transactional
@@ -43,13 +49,17 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
 
     @Override
     @Transactional
-    public void update(Long id, RubroInsumoDTO rubroInsumoDTO) {
+    public RubroInsumoResponseDTO update(Long id, RubroInsumoDTO rubroInsumoDTO) {
         RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
 
-        // Actualizamos todos los campos
-        rubroInsumo.setDenominacion(rubroInsumoDTO.getDenominacion());
-        rubroInsumo.setActivo(rubroInsumoDTO.getActivo());
+        if (!rubroInsumo.getDenominacion().equals(rubroInsumoDTO.getDenominacion())) {
+            rubroInsumo.setDenominacion(rubroInsumoDTO.getDenominacion());
+        }
+
+        if (!rubroInsumo.getActivo().equals(rubroInsumoDTO.getActivo())) {
+            rubroInsumo.setActivo(rubroInsumoDTO.getActivo());
+        }
 
         // Validación y actualización del rubro padre
         if (rubroInsumoDTO.getRubroPadreId() != null) {
@@ -71,7 +81,7 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
             rubroInsumo.setRubroPadre(null);
         }
 
-        rubroInsumoRepository.save(rubroInsumo);
+        return rubroInsumoMapper.toResponseDTO(rubroInsumoRepository.save(rubroInsumo));
     }
 
 
@@ -82,5 +92,52 @@ public class RubroInsumoService extends GenericoServiceImpl<RubroInsumo, RubroIn
                 .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
         rubroInsumo.setActivo(false);
         rubroInsumoRepository.save(rubroInsumo);
+    }
+
+    // src/main/java/org/spdgrupo/elbuensaborapi/service/RubroInsumoService.java
+    @Override
+    @Transactional
+    public String toggleActivo(Long id) {
+        RubroInsumo rubroInsumo = rubroInsumoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("RubroInsumo con el id " + id + " no encontrado"));
+
+        Boolean valorAnterior = rubroInsumo.getActivo();
+        Boolean valorActualizado = !valorAnterior;
+
+        if (valorAnterior.equals(false) &&
+                (rubroInsumo.getRubroPadre() != null && rubroInsumo.getRubroPadre().getActivo().equals(false))) {
+            throw new CyclicParentException("No se puede activar un rubro cuyo padre está inactivo");
+        }
+
+        propagarActivoRecursivo(rubroInsumo, valorActualizado);
+
+        return "Estado 'activo' actualizado" +
+                "\n- Valor anterior: " + valorAnterior +
+                "\n- Valor actualizado: " + valorActualizado;
+    }
+
+    private void propagarActivoRecursivo(RubroInsumo rubro, Boolean valorActualizado) {
+        rubro.setActivo(valorActualizado);
+        List<InsumoResponseDTO> insumos = insumoService.findInsumosByRubroId(rubro.getId());
+        toggleInsumosByRubro(insumos, valorActualizado);
+        rubroInsumoRepository.save(rubro);
+
+        for (RubroInsumo subRubro : rubro.getSubRubros()) {
+            propagarActivoRecursivo(subRubro, valorActualizado);
+        }
+    }
+
+    private void toggleInsumosByRubro(List<InsumoResponseDTO> insumos, Boolean valorActualizado) {
+        if (valorActualizado.equals(false)) {
+            for (InsumoResponseDTO insumo: insumos) {
+                insumoService.delete(insumo.getId());
+            }
+        } else {
+            for (InsumoResponseDTO insumo: insumos) {
+                if (insumo.getStockActual() >= insumo.getStockMinimo()) {
+                    insumoService.activate(insumo.getId());
+                }
+            }
+        }
     }
 }

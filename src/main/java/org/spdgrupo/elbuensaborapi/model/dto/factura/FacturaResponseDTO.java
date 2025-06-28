@@ -4,6 +4,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
 import org.spdgrupo.elbuensaborapi.model.dto.cliente.ClienteResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.enums.FormaPago;
@@ -25,10 +26,10 @@ public class FacturaResponseDTO {
     private String numeroComprobante;
     @Enumerated(EnumType.STRING)
     private FormaPago formaPago;
-    private String totalVenta;
+    private Double totalVenta;
     private Double montoDescuento;
     private Double costoEnvio;
     private PedidoResponseDTO pedido;
     private ClienteResponseDTO cliente;
-    private List<DetallePedidoResponseDTO> detalleFacturas;
+    private List<DetalleFacturaResponseDTO> detalleFacturas;
 }

@@ -1,5 +1,12 @@
 package org.spdgrupo.elbuensaborapi.service;
 
+import com.itextpdf.text.*;
+import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
+import org.spdgrupo.elbuensaborapi.service.utils.FileService;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+
 import jakarta.transaction.Transactional;
 import org.spdgrupo.elbuensaborapi.config.mappers.FacturaMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallefactura.DetalleFacturaDTO;
@@ -12,8 +19,6 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.FacturaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 
 @Service
@@ -37,9 +42,9 @@ public class FacturaService extends GenericoServiceImpl<Factura, FacturaDTO, Fac
                 .horaFacturacion(java.time.LocalTime.now())
                 .codigoComprobante(pedido.getCodigo())
                 .formaPago(pedido.getFormaPago())
-                .totalVenta(pedido.getTotalVenta().toString())
-                .montoDescuento(0.0)
-                .costoEnvio(0.0)
+                .totalVenta(pedido.getTotalVenta())
+                .montoDescuento(0.0) // TODO: Esto podria ser util si en algun momentos hay promos o cosas asi
+                .costoEnvio(pedido.getCostoEnvio())
                 .pedido(pedido)
                 .cliente(pedido.getCliente())
                 .detalleFacturas(new ArrayList<>())
@@ -51,6 +56,7 @@ public class FacturaService extends GenericoServiceImpl<Factura, FacturaDTO, Fac
                     .cantidad(detallePedido.getCantidad())
                     .productoId(detallePedido.getProducto() != null ? detallePedido.getProducto().getId() : null)
                     .insumoId(detallePedido.getInsumo() != null ? detallePedido.getInsumo().getId() : null)
+                    .promocionId(detallePedido.getPromocion() != null ? detallePedido.getPromocion().getId() : null)
                     .build();
 
             DetalleFactura detalleFactura = detalleFacturaService.createDetalleFactura(detalleFacturaDTO);
@@ -60,4 +66,16 @@ public class FacturaService extends GenericoServiceImpl<Factura, FacturaDTO, Fac
 
         return facturaRepository.save(factura);
     }
+
+    public FacturaResponseDTO findByPedidoId(Long pedidoId) {
+        Factura factura = facturaRepository.findByPedido_Id(pedidoId)
+                .orElseThrow(() -> new NotFoundException("Factura para el pedido con el id " + pedidoId + " no encontrada"));
+        return facturaMapper.toResponseDTO(factura);
+    }
+
+    public byte[] exportarFacturaPdf(Long idPedido) throws DocumentException, IOException {
+        FacturaResponseDTO factura = findByPedidoId(idPedido);
+        return FileService.getFacturaPdf(factura);
+    }
+
 }

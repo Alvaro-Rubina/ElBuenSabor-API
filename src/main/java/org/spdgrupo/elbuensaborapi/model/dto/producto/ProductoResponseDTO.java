@@ -19,6 +19,7 @@ public class ProductoResponseDTO {
     private Long tiempoEstimadoPreparacion;
     private Double precioVenta;
     private Double precioCosto;
+    private Double margenGanancia;
     private String urlImagen;
     private boolean activo;
     private RubroProductoResponseDTO rubro;
