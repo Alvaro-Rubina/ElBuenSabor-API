@@ -253,4 +253,19 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         return precioCosto * (1 + margen);
     }
 
+    // ProductoService.java
+
+    public List<Producto> obtenerProductosPorInsumo(Long insumoId) {
+        return productoRepository.findByDetalleProductosInsumoId(insumoId);
+    }
+
+    @Transactional
+    public void actualizarPreciosProducto(Producto producto) {
+        Double nuevoPrecioCosto = getPrecioCosto(producto.getDetalleProductos());
+        Double nuevoPrecioVenta = getPrecioVenta(nuevoPrecioCosto, producto.getMargenGanancia());
+        producto.setPrecioCosto(nuevoPrecioCosto);
+        producto.setPrecioVenta(nuevoPrecioVenta);
+        productoRepository.save(producto);
+    }
+
 }

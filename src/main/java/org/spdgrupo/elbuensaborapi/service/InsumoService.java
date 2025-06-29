@@ -8,6 +8,7 @@ import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoVentasDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
+import org.spdgrupo.elbuensaborapi.model.entity.Producto;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
@@ -145,6 +146,8 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
             promocionService.cambiarEstadoPromocionesPorInsumo(id,false);
         }
 
+        boolean activoAnterior = insumo.getActivo();
+
         return insumoMapper.toResponseDTO(insumo);
     }
 
@@ -188,16 +191,16 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
 
         insumoRepository.save(insumo);
 
-        if (activoAnterior != insumo.getActivo() ) {
-            if (!insumo.getActivo() && insumo.getEsParaElaborar()) {
-                productoService.cambiarActivoProducto(id, false);
-            } else {
-                productoService.cambiarActivoProducto(id, true);
-            }
-            if (!insumo.getActivo() && !insumo.getEsParaElaborar()) {
-                promocionService.cambiarEstadoPromocionesPorInsumo(id, false);
-            } else {
-                promocionService.cambiarEstadoPromocionesPorInsumo(id, true);
+        if (activoAnterior != insumo.getActivo()) {
+            productoService.cambiarActivoProducto(id, insumo.getActivo() || !insumo.getEsParaElaborar());
+            promocionService.cambiarEstadoPromocionesPorInsumo(id, insumo.getActivo() || insumo.getEsParaElaborar());
+        }
+
+        // Al final del método update en InsumoService
+        if (insumo.getEsParaElaborar()) {
+            List<Producto> productos = productoService.obtenerProductosPorInsumo(insumo.getId());
+            for (Producto producto : productos) {
+                productoService.actualizarPreciosProducto(producto);
             }
         }
 
