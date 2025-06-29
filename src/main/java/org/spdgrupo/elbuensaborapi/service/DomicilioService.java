@@ -57,6 +57,8 @@ public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDT
         domicilio.setLocalidad(domicilioDTO.getLocalidad());
         domicilio.setNumero(domicilioDTO.getNumero());
         domicilio.setCodigoPostal(domicilioDTO.getCodigoPostal());
+        domicilio.setLatitud(domicilioDTO.getLatitud());
+        domicilio.setLongitud(domicilioDTO.getLongitud());
         domicilio.setActivo(true);
 
         return domicilioMapper.toResponseDTO(domicilioRepository.save(domicilio));
