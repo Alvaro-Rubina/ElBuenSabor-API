@@ -11,6 +11,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 @SuperBuilder
 public class Base implements Serializable {
 
