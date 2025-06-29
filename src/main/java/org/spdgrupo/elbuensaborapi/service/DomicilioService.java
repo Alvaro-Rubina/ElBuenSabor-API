@@ -53,13 +53,33 @@ public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDT
                 .orElseThrow(() -> new NotFoundException("Domicilio no encontrado"));
 
         // Actualizamos todos los campos
-        domicilio.setCalle(domicilioDTO.getCalle());
-        domicilio.setLocalidad(domicilioDTO.getLocalidad());
-        domicilio.setNumero(domicilioDTO.getNumero());
-        domicilio.setCodigoPostal(domicilioDTO.getCodigoPostal());
-        domicilio.setLatitud(domicilioDTO.getLatitud());
-        domicilio.setLongitud(domicilioDTO.getLongitud());
-        domicilio.setActivo(true);
+        if (!domicilio.getCalle().equals(domicilioDTO.getCalle())) {
+            domicilio.setCalle(domicilioDTO.getCalle());
+        }
+
+        if (!domicilio.getLocalidad().equals(domicilioDTO.getLocalidad())) {
+            domicilio.setLocalidad(domicilioDTO.getLocalidad());
+        }
+
+        if (!domicilio.getNumero().equals(domicilioDTO.getNumero())) {
+            domicilio.setNumero(domicilioDTO.getNumero());
+        }
+
+        if (!domicilio.getCodigoPostal().equals(domicilioDTO.getCodigoPostal())) {
+            domicilio.setCodigoPostal(domicilioDTO.getCodigoPostal());
+        }
+
+        if (!domicilio.getLatitud().equals(domicilioDTO.getLatitud())) {
+            domicilio.setLatitud(domicilioDTO.getLatitud());
+        }
+
+        if (!domicilio.getLongitud().equals(domicilioDTO.getLongitud())) {
+            domicilio.setLongitud(domicilioDTO.getLongitud());
+        }
+
+        if (!domicilio.getActivo().equals(domicilioDTO.getActivo())) {
+            domicilio.setActivo(true);
+        }
 
         return domicilioMapper.toResponseDTO(domicilioRepository.save(domicilio));
     }

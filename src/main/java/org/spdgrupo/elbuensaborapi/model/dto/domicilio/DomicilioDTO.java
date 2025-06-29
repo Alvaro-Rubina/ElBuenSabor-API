@@ -29,5 +29,6 @@ public class DomicilioDTO {
     @NotNull(message = "El campo longitud no puede ser nulo")
     private Double longitud;
 
+    private Boolean activo;
 
 }
