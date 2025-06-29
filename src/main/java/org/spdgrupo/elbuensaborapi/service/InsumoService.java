@@ -146,7 +146,12 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
             promocionService.cambiarEstadoPromocionesPorInsumo(id,false);
         }
 
-        boolean activoAnterior = insumo.getActivo();
+        if (insumo.getEsParaElaborar()) {
+            List<Producto> productos = productoService.obtenerProductosPorInsumo(insumo.getId());
+            for (Producto producto : productos) {
+                productoService.actualizarPreciosProducto(producto);
+            }
+        }
 
         return insumoMapper.toResponseDTO(insumo);
     }
@@ -194,14 +199,6 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         if (activoAnterior != insumo.getActivo()) {
             productoService.cambiarActivoProducto(id, insumo.getActivo() || !insumo.getEsParaElaborar());
             promocionService.cambiarEstadoPromocionesPorInsumo(id, insumo.getActivo() || insumo.getEsParaElaborar());
-        }
-
-        // Al final del método update en InsumoService
-        if (insumo.getEsParaElaborar()) {
-            List<Producto> productos = productoService.obtenerProductosPorInsumo(insumo.getId());
-            for (Producto producto : productos) {
-                productoService.actualizarPreciosProducto(producto);
-            }
         }
 
     }
