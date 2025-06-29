@@ -1,8 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import org.spdgrupo.elbuensaborapi.model.dto.detalleproducto.DetalleProductoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoVentasDTO;
-import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -230,6 +228,18 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
 
     }
 
+    public List<Producto> findProductosByInsumoId(Long insumoId) {
+        return productoRepository.findByDetalleProductosInsumoId(insumoId);
+    }
+
+    @Transactional
+    public void actualizarPreciosProducto(Producto producto) {
+        Double nuevoPrecioCosto = getPrecioCosto(producto.getDetalleProductos());
+        Double nuevoPrecioVenta = getPrecioVenta(nuevoPrecioCosto, producto.getMargenGanancia());
+        producto.setPrecioCosto(nuevoPrecioCosto);
+        producto.setPrecioVenta(nuevoPrecioVenta);
+        productoRepository.save(producto);
+    }
 
     // Metodos auxiliares
     private Double getPrecioCosto(List<DetalleProducto> detalleProductos) {
@@ -251,21 +261,6 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
     private Double getPrecioVenta(Double precioCosto, Double margenGanancia) {
         double margen = margenGanancia / 100.0;
         return precioCosto * (1 + margen);
-    }
-
-    // ProductoService.java
-
-    public List<Producto> obtenerProductosPorInsumo(Long insumoId) {
-        return productoRepository.findByDetalleProductosInsumoId(insumoId);
-    }
-
-    @Transactional
-    public void actualizarPreciosProducto(Producto producto) {
-        Double nuevoPrecioCosto = getPrecioCosto(producto.getDetalleProductos());
-        Double nuevoPrecioVenta = getPrecioVenta(nuevoPrecioCosto, producto.getMargenGanancia());
-        producto.setPrecioCosto(nuevoPrecioCosto);
-        producto.setPrecioVenta(nuevoPrecioVenta);
-        productoRepository.save(producto);
     }
 
 }

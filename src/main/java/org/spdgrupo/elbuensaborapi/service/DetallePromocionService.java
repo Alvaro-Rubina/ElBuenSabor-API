@@ -64,7 +64,7 @@ public class DetallePromocionService extends GenericoServiceImpl<DetallePromocio
         }
     }
 
-    private void calcularTotales(DetallePromocion detallePromocion) {
+    public void calcularTotales(DetallePromocion detallePromocion) {
         Double precioVenta = detallePromocion.getProducto() != null ?
                 detallePromocion.getProducto().getPrecioVenta() :
                 detallePromocion.getInsumo().getPrecioVenta();

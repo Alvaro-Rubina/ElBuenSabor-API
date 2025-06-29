@@ -9,6 +9,7 @@ import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoVentasDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.model.entity.Producto;
+import org.spdgrupo.elbuensaborapi.model.entity.Promocion;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoMapper;
 import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.InsumoRepository;
@@ -85,7 +86,6 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Insumo con el id " + id + " no encontrado"));
 
-
         if (!insumo.getDenominacion().equals(insumoDTO.getDenominacion())) {
             insumo.setDenominacion(insumoDTO.getDenominacion());
         }
@@ -98,12 +98,38 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
             insumo.setUrlImagen(insumoDTO.getUrlImagen());
         }
 
+        boolean precioCostoActualizado = false;
         if (!insumo.getPrecioCosto().equals(insumoDTO.getPrecioCosto())) {
             insumo.setPrecioCosto(insumoDTO.getPrecioCosto());
+            precioCostoActualizado = true;
         }
 
-        if (!Objects.equals(insumo.getPrecioVenta(), (insumoDTO.getPrecioVenta()))) {
+        boolean precioVentaActualizado = false;
+        if (!Objects.equals(insumo.getPrecioVenta(), insumoDTO.getPrecioVenta())) {
             insumo.setPrecioVenta(insumoDTO.getPrecioVenta());
+            precioVentaActualizado = true;
+        }
+
+        if (precioCostoActualizado || precioVentaActualizado) {
+            if (insumo.getEsParaElaborar()) {
+                // Actualizo productos que contienen este insumo y promociones que contienen esos productos
+                List<Producto> productos = productoService.findProductosByInsumoId(insumo.getId());
+                for (Producto producto : productos) {
+                    productoService.actualizarPreciosProducto(producto);
+
+                    // Actualizo promociones que contienen este producto
+                    List<Promocion> promociones = promocionService.findPromocionesByProductoId(producto.getId());
+                    for (Promocion promocion : promociones) {
+                        promocionService.actualizarPreciosPromocion(promocion);
+                    }
+                }
+            } else {
+                // Actualizo promociones que contienen directamente el insumo vendible
+                List<Promocion> promociones = promocionService.findPromocionesByInsumoId(insumo.getId());
+                for (Promocion promocion : promociones) {
+                    promocionService.actualizarPreciosPromocion(promocion);
+                }
+            }
         }
 
         if (!insumo.getStockActual().equals(insumoDTO.getStockActual())) {
@@ -118,7 +144,7 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
             insumo.setEsParaElaborar(insumoDTO.getEsParaElaborar());
         }
 
-        if (!Objects.equals(insumo.getActivo(), (insumoDTO.getActivo()))) {
+        if (!Objects.equals(insumo.getActivo(), insumoDTO.getActivo())) {
             insumo.setActivo(insumoDTO.getActivo());
         }
 
@@ -142,15 +168,9 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
             LOGGER.warn("El insumo " + insumo.getDenominacion() + " no tiene stock, se desactiva el producto asociado");
             productoService.cambiarActivoProducto(id, false);
         }
-        if (!insumo.getActivo() && !insumo.getEsParaElaborar()) {
-            promocionService.cambiarEstadoPromocionesPorInsumo(id,false);
-        }
 
-        if (insumo.getEsParaElaborar()) {
-            List<Producto> productos = productoService.obtenerProductosPorInsumo(insumo.getId());
-            for (Producto producto : productos) {
-                productoService.actualizarPreciosProducto(producto);
-            }
+        if (!insumo.getActivo() && !insumo.getEsParaElaborar()) {
+            promocionService.cambiarEstadoPromocionesPorInsumo(id, false);
         }
 
         return insumoMapper.toResponseDTO(insumo);

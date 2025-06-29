@@ -1,6 +1,6 @@
 package org.spdgrupo.elbuensaborapi.service;
 
-import jakarta.transaction.Transactional;
+
 import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.PromocionMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepromocion.DetallePromocionDTO;
@@ -13,6 +13,7 @@ import org.spdgrupo.elbuensaborapi.model.interfaces.GenericoRepository;
 import org.spdgrupo.elbuensaborapi.repository.PromocionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -104,11 +105,6 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
         return promocionMapper.toResponseDTO(promocionRepository.save(promocion));
     }
 
-    private void validarFechas(LocalDate fechaDesde, LocalDate fechaHasta) {
-        if (fechaDesde.isAfter(fechaHasta)) {
-            throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de finalización");
-        }
-    }
     @Transactional
     public void cambiarEstadoPromocionesPorProducto(Long productoId, boolean activo) {
         List<Promocion> promociones = promocionRepository.findAllByDetallePromocionesProductoId(productoId);
@@ -120,6 +116,31 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
         List<Promocion> promociones = promocionRepository.findAllByDetallePromocionesInsumoId(insumoId);
         cambiarEstadoPromociones(promociones, activo);
     }
+
+    @Transactional(readOnly = true)
+    public List<Promocion> findPromocionesByProductoId(Long productoId) {
+        return promocionRepository.findAllByDetallePromocionesProductoId(productoId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Promocion> findPromocionesByInsumoId(Long insumoId) {
+        return promocionRepository.findAllByDetallePromocionesInsumoId(insumoId);
+    }
+
+    @Transactional
+    public void actualizarPreciosPromocion(Promocion promocion) {
+        // Actualizo subtotales de los detalles
+        for (DetallePromocion detalle : promocion.getDetallePromociones()) {
+            detallePromocionService.calcularTotales(detalle);
+        }
+
+        double totalVenta = getTotalVenta(promocion.getDetallePromociones());
+        double totalConDescuento = totalVenta - (totalVenta * (promocion.getDescuento() / 100.0));
+        promocion.setPrecioVenta(totalConDescuento);
+        promocion.setPrecioCosto(getTotalCosto(promocion.getDetallePromociones()));
+        promocionRepository.save(promocion);
+    }
+
 
     // Metodos adicionales
     private void cambiarEstadoPromociones(List<Promocion> promociones, boolean activo) {
@@ -150,6 +171,12 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
             if (estadoAnterior != promocion.getActivo()) {
                 promocionRepository.save(promocion);
             }
+        }
+    }
+
+    private void validarFechas(LocalDate fechaDesde, LocalDate fechaHasta) {
+        if (fechaDesde.isAfter(fechaHasta)) {
+            throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de finalización");
         }
     }
 
