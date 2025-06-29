@@ -4,15 +4,13 @@ import jakarta.validation.Valid;
 
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoVentasDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.Insumo;
 import org.spdgrupo.elbuensaborapi.service.InsumoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -26,10 +24,20 @@ public class InsumoController extends GenericoControllerImpl<
 
     @Autowired
     private InsumoService insumoService;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     public InsumoController(InsumoService insumoService) {
         super(insumoService);
         this.insumoService = insumoService;
+    }
+
+    @Override
+    @PostMapping("/save")
+    public ResponseEntity<InsumoResponseDTO> save(@Valid @RequestBody InsumoDTO insumoDTO) {
+        InsumoResponseDTO insumo = insumoService.save(insumoDTO);
+        messagingTemplate.convertAndSend("/topic/insumos", insumo);
+        return ResponseEntity.ok(insumo);
     }
 
     @GetMapping("/vendibles")
@@ -52,16 +60,26 @@ public class InsumoController extends GenericoControllerImpl<
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateInsumo(@PathVariable Long id,
+    public ResponseEntity<InsumoResponseDTO> updateInsumo(@PathVariable Long id,
                                                @Valid @RequestBody InsumoDTO insumoDTO) {
-        insumoService.update(id, insumoDTO);
-        return ResponseEntity.ok("Insumo actualizado correctamente");
+        InsumoResponseDTO insumo = insumoService.update(id, insumoDTO);
+        messagingTemplate.convertAndSend("/topic/insumos", insumo);
+        return ResponseEntity.ok(insumo);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteInsumo(@PathVariable Long id) {
         insumoService.delete(id);
+        messagingTemplate.convertAndSend("/topic/insumos", id);
         return ResponseEntity.ok("Insumo eliminado exitosamente");
+    }
+
+    @Override
+    @PutMapping("/toggle-activo/{id}")
+    public ResponseEntity<String> toggleActivo(@PathVariable Long id) {
+        String response = insumoService.toggleActivo(id);
+        messagingTemplate.convertAndSend("/topic/insumos", response);
+        return ResponseEntity.ok(response);
     }
 
 }

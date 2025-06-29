@@ -20,6 +20,7 @@ public class FileService {
         Document document = new Document();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = PdfWriter.getInstance(document, baos);
+        writer.setPageEvent(new FooterEvent());
         document.open();
 
         // LOGO E INFORMACIÓN DE LA EMPRESA
@@ -107,14 +108,6 @@ public class FileService {
         totales.setAlignment(Element.ALIGN_RIGHT);
         document.add(totales);
 
-        // TÉRMINOS Y CONDICIONES
-        Paragraph pie = new Paragraph("\n\nGracias por su compra. Esperamos volver a verlo pronto.\n" +
-                "Esta factura es un comprobante válido de la transacción.\n" +
-                "Para consultas llame al +54 123 456 7890 o escriba a info@elbuensabor.com.\n",
-                FontFactory.getFont(FontFactory.HELVETICA, 10));
-        pie.setAlignment(Element.ALIGN_CENTER);
-        document.add(pie);
-
         document.close();
         return baos.toByteArray();
     }
@@ -122,7 +115,8 @@ public class FileService {
     public static byte[] getPedidoPdf(PedidoResponseDTO pedido) throws DocumentException, IOException {
         Document document = new Document();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter.getInstance(document, baos);
+        PdfWriter writer = PdfWriter.getInstance(document, baos);
+        writer.setPageEvent(new FooterEvent());
         document.open();
 
         // Logo e información de la empresa

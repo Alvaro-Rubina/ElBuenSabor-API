@@ -36,7 +36,7 @@ public class PedidoController extends GenericoControllerImpl<
     public ResponseEntity<PedidoResponseDTO> save(@Valid @RequestBody PedidoDTO pedidoDTO) {
         PedidoResponseDTO pedido = servicio.save(pedidoDTO);
         // TODO: Cambiar el pedidoDTO (PedidoDTO) a que sea un PedidoResponseDTO
-        messagingTemplate.convertAndSend("/topic/pedidos", pedidoDTO);
+        messagingTemplate.convertAndSend("/topic/pedidos", pedido);
         return ResponseEntity.ok(pedido);
     }
 
