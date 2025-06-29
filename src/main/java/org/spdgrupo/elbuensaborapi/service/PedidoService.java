@@ -5,7 +5,6 @@ import org.spdgrupo.elbuensaborapi.config.exception.NotFoundException;
 import org.spdgrupo.elbuensaborapi.config.mappers.PedidoMapper;
 import org.spdgrupo.elbuensaborapi.model.dto.IngresosEgresosDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.detallepedido.DetallePedidoDTO;
-import org.spdgrupo.elbuensaborapi.model.dto.factura.FacturaResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.entity.*;
@@ -85,7 +84,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
         // Costo de envio segun tipo de envio TODO: El valor por ahora es provisional, después ajustar
         if (pedidoDTO.getTipoEnvio() == TipoEnvio.DELIVERY) {
-            pedido.setCostoEnvio(2000.0);
+            pedido.setCostoEnvio(1500.0);
         } else {
             pedido.setCostoEnvio(0.0);
         }
@@ -107,41 +106,13 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         // Acá se descuentan los insumos antes de guardar el pedido
         for (DetallePedido detallePedido : pedido.getDetallePedidos()) {
             if (detallePedido.getProducto() != null) {
-                Producto producto = detallePedido.getProducto();
-                List<DetalleProducto> detallesProducto = producto.getDetalleProductos();
-                for (DetalleProducto detalleProducto : detallesProducto) {
-                    Insumo insumo = detalleProducto.getInsumo();
-                    double cantidadADescontar = detalleProducto.getCantidad() * detallePedido.getCantidad();
-                    insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
-                }
+                descontarInsumosDeProducto(detallePedido.getProducto(), detallePedido.getCantidad());
             } else if (detallePedido.getInsumo() != null) {
                 Insumo insumo = detallePedido.getInsumo();
                 double cantidadADescontar = detallePedido.getCantidad();
                 insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
-            }
-            // NUEVO: Descontar insumos de las promociones
-            else if (detallePedido.getPromocion() != null) {
-                Promocion promocion = detallePedido.getPromocion();
-                List<DetallePromocion> detallesPromocion = promocion.getDetallePromociones();
-                for (DetallePromocion detallePromo : detallesPromocion) {
-                    // Si el detalle de la promoción es un producto
-                    if (detallePromo.getProducto() != null) {
-                        Producto productoPromo = detallePromo.getProducto();
-                        List<DetalleProducto> detallesProducto = productoPromo.getDetalleProductos();
-                        for (DetalleProducto detalleProducto : detallesProducto) {
-                            Insumo insumo = detalleProducto.getInsumo();
-                            // OJO: multiplicar por la cantidad de la promo vendida y la cantidad del producto dentro de la promo
-                            double cantidadADescontar = detalleProducto.getCantidad() * detallePromo.getCantidad() * detallePedido.getCantidad();
-                            insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
-                        }
-                    }
-                    // Si el detalle de la promoción es un insumo directo
-                    else if (detallePromo.getInsumo() != null) {
-                        Insumo insumo = detallePromo.getInsumo();
-                        double cantidadADescontar = detallePromo.getCantidad() * detallePedido.getCantidad();
-                        insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
-                    }
-                }
+            } else if (detallePedido.getPromocion() != null) {
+                descontarInsumosDePromocion(detallePedido.getPromocion(), detallePedido.getCantidad());
             }
         }
 
@@ -170,7 +141,7 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
             pedido.setEstado(nuevoEstado);
 
             if (nuevoEstado == Estado.CANCELADO) {
-                cancelacionPedido(pedidoId);
+                cancelarPedido(pedidoId);
             }
 
             if (nuevoEstado == Estado.TERMINADO) {
@@ -359,24 +330,67 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         emailService.enviarMailConAdjunto(email, asunto, cuerpo, facturaPdf, "factura-" + pedido.getCodigo() + ".pdf");
     }
 
-    private void cancelacionPedido(Long pedidoid) {
+    // Descuenta insumos de un producto por cierta cantidad vendida
+    private void descontarInsumosDeProducto(Producto producto, int cantidadVendida) {
+        if (producto.getDetalleProductos() == null) return;
+        for (DetalleProducto detalleProducto : producto.getDetalleProductos()) {
+            Insumo insumo = detalleProducto.getInsumo();
+            double cantidadADescontar = detalleProducto.getCantidad() * cantidadVendida;
+            insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
+        }
+    }
+
+    // Descuenta insumos de una promoción por cierta cantidad vendida
+    private void descontarInsumosDePromocion(Promocion promocion, int cantidadPromocionVendida) {
+        if (promocion.getDetallePromociones() == null) return;
+        for (DetallePromocion detallePromo : promocion.getDetallePromociones()) {
+            if (detallePromo.getProducto() != null) {
+                descontarInsumosDeProducto(detallePromo.getProducto(), detallePromo.getCantidad() * cantidadPromocionVendida);
+            } else if (detallePromo.getInsumo() != null) {
+                Insumo insumo = detallePromo.getInsumo();
+                double cantidadADescontar = detallePromo.getCantidad() * cantidadPromocionVendida;
+                insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
+            }
+        }
+    }
+
+    private void cancelarPedido(Long pedidoid) {
         Pedido pedido = pedidoRepository.findById(pedidoid)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoid + " no encontrado"));
 
         // Acá se devuelven los insumos al stock
         for (DetallePedido detallePedido : pedido.getDetallePedidos()) {
             if (detallePedido.getProducto() != null) {
-                Producto producto = detallePedido.getProducto();
-                List<DetalleProducto> detallesProducto = producto.getDetalleProductos();
-                for (DetalleProducto detalleProducto : detallesProducto) {
-                    Insumo insumo = detalleProducto.getInsumo();
-                    double cantidadADevolver = detalleProducto.getCantidad() * detallePedido.getCantidad();
-                    insumoService.actualizarStock(insumo.getId(), cantidadADevolver); // suma stock
-                }
+                devolverInsumosDeProducto(detallePedido.getProducto(), detallePedido.getCantidad());
             } else if (detallePedido.getInsumo() != null) {
                 Insumo insumo = detallePedido.getInsumo();
                 double cantidadADevolver = detallePedido.getCantidad();
                 insumoService.actualizarStock(insumo.getId(), cantidadADevolver); // suma stock
+            } else if (detallePedido.getPromocion() != null) {
+                devolverInsumosDePromocion(detallePedido.getPromocion(), detallePedido.getCantidad());
+            }
+        }
+    }
+
+    private void devolverInsumosDeProducto(Producto producto, int cantidadDevuelta) {
+        if (producto.getDetalleProductos() == null) return;
+        for (DetalleProducto detalleProducto : producto.getDetalleProductos()) {
+            Insumo insumo = detalleProducto.getInsumo();
+            double cantidadADevolver = detalleProducto.getCantidad() * cantidadDevuelta;
+            insumoService.actualizarStock(insumo.getId(), cantidadADevolver);
+        }
+    }
+
+    // Devuelve insumos de una promoción por cierta cantidad cancelada
+    private void devolverInsumosDePromocion(Promocion promocion, int cantidadPromocionDevuelta) {
+        if (promocion.getDetallePromociones() == null) return;
+        for (DetallePromocion detallePromo : promocion.getDetallePromociones()) {
+            if (detallePromo.getProducto() != null) {
+                devolverInsumosDeProducto(detallePromo.getProducto(), detallePromo.getCantidad() * cantidadPromocionDevuelta);
+            } else if (detallePromo.getInsumo() != null) {
+                Insumo insumo = detallePromo.getInsumo();
+                double cantidadADevolver = detallePromo.getCantidad() * cantidadPromocionDevuelta;
+                insumoService.actualizarStock(insumo.getId(), cantidadADevolver);
             }
         }
     }

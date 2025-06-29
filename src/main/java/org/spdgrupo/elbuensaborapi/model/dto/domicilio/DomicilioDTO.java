@@ -22,6 +22,7 @@ public class DomicilioDTO {
 
     @NotNull(message = "El campo codigoPostal no puede ser nulo")
     private Integer codigoPostal;
+
     @NotNull(message = "El campo latitud no puede ser nulo")
     private Double latitud;
 
