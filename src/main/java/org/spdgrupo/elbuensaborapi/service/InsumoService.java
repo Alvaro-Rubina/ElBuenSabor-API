@@ -252,13 +252,18 @@ public class InsumoService extends GenericoServiceImpl<Insumo, InsumoDTO, Insumo
 
     @Transactional(readOnly = true)
     public List<InsumoVentasDTO> obtenerInsumosMasVendidos(LocalDate fechaDesde, LocalDate fechaHasta, int limite) {
-        // Validación de fechas opcional
         if (fechaDesde != null && fechaHasta != null && fechaDesde.isAfter(fechaHasta)) {
             throw new IllegalArgumentException("La fechaDesde no puede ser posterior a la fechaHasta.");
         }
 
-        Pageable pageable = PageRequest.of(0, limite); // Limitar la cantidad de resultados
-        return insumoRepository.findInsumosMasVendidos(fechaDesde, fechaHasta, pageable);
+        List<Object[]> resultados = insumoRepository.findInsumosMasVendidos(fechaDesde, fechaHasta, PageRequest.of(0, limite));
+        return resultados.stream()
+                .map(obj -> new InsumoVentasDTO(
+                        ((Number) obj[0]).longValue(),
+                        (String) obj[1],
+                        (long) ((Number) obj[2]).intValue()
+                ))
+                .collect(Collectors.toList());
     }
 
 }
