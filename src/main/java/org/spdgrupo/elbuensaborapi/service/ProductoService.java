@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, ProductoResponseDTO, Long> {
@@ -181,13 +182,18 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
 
     @Transactional(readOnly = true)
     public List<ProductoVentasDTO> obtenerProductosMasVendidos(LocalDate fechaDesde, LocalDate fechaHasta, int limite) {
-        // Validación de fechas
         if (fechaDesde != null && fechaHasta != null && fechaDesde.isAfter(fechaHasta)) {
             throw new IllegalArgumentException("La fechaDesde no puede ser posterior a la fechaHasta.");
         }
 
-        // Consulta al repositorio
-        return productoRepository.findProductosMasVendidos(fechaDesde, fechaHasta, PageRequest.of(0, limite));
+        List<Object[]> resultados = productoRepository.findProductosMasVendidos(fechaDesde, fechaHasta, PageRequest.of(0, limite));
+        return resultados.stream()
+                .map(obj -> new ProductoVentasDTO(
+                        ((Number) obj[0]).longValue(),
+                        (String) obj[1],
+                        (long) ((Number) obj[2]).intValue()
+                ))
+                .collect(Collectors.toList());
     }
 
     @Override
