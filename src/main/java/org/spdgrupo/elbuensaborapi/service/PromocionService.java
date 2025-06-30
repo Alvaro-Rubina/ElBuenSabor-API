@@ -55,6 +55,10 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
         promocion.setPrecioVenta(totalConDescuento);
         promocion.setPrecioCosto(getTotalCosto(promocion.getDetallePromociones()));
 
+        if (promocion.getFechaDesde().isEqual(LocalDate.now())) {
+            promocion.setActivo(true);
+        }
+
         promocionRepository.save(promocion);
         return promocionMapper.toResponseDTO(promocion);
     }
@@ -138,6 +142,7 @@ public class PromocionService extends GenericoServiceImpl<Promocion, PromocionDT
         double totalConDescuento = totalVenta - (totalVenta * (promocion.getDescuento() / 100.0));
         promocion.setPrecioVenta(totalConDescuento);
         promocion.setPrecioCosto(getTotalCosto(promocion.getDetallePromociones()));
+
         promocionRepository.save(promocion);
     }
 
