@@ -141,8 +141,18 @@ public class ClienteService {
     public void toggleActivo(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cliente con el id " + id + " no encontrado"));
+        boolean nuevoEstado = !cliente.getActivo();
         cliente.setActivo(!cliente.getActivo());
         usuarioService.toggleActivo(cliente.getUsuario().getId());
         clienteRepository.save(cliente);
+
+        // Actualiza el estado bloqueado en Auth0
+        try {
+            User userUpdate = new User();
+            userUpdate.setBlocked(!nuevoEstado); // Si está inactivo, bloquea; si está activo, desbloquea
+            managementAPI.users().update(cliente.getUsuario().getAuth0Id(), userUpdate).execute();
+        } catch (Auth0Exception e) {
+            throw new RuntimeException("Error al actualizar el estado en Auth0", e);
+        }
     }
 }
