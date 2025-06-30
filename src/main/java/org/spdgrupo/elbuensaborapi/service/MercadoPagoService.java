@@ -16,24 +16,25 @@ import org.spdgrupo.elbuensaborapi.model.dto.insumo.InsumoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.pedido.PedidoResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoResponseDTO;
+import org.spdgrupo.elbuensaborapi.model.dto.promocion.PromocionResponseDTO;
 import org.spdgrupo.elbuensaborapi.model.enums.Estado;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
-public class    MercadoPagoService {
+public class MercadoPagoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsumoService.class);
 
     private final ProductoService productoService;
     private final InsumoService insumoService;
     private final PedidoService pedidoService;
+    private final PromocionService promocionService;
 
     @Value("${mercadopago.access_token}")
     private String mpAccessToken;
@@ -50,16 +51,20 @@ public class    MercadoPagoService {
     @Value("${api.url}")
     private String publicUrl;
 
+    // Mapa temporal para guardar los PedidoDTO por ID temporal
+    private static final Map<String, PedidoDTO> pedidosTemporales = new ConcurrentHashMap<>();
+
     @PostConstruct
     public void initMPConfig() {
         MercadoPagoConfig.setAccessToken(mpAccessToken);
     }
 
-    // TODO: tendria que ver alguna forma de que la preferencia tenga algun tiempo de vida util (???)
     public Preference createPreference(PedidoDTO pedidoDTO) throws MPException, MPApiException {
 
-        PedidoResponseDTO pedidoResponseDTO = pedidoService.save(pedidoDTO);
-        String idPedidoString = pedidoResponseDTO.getId().toString();
+        // Generar un ID temporal único
+        String tempId = UUID.randomUUID().toString();
+        // Guardar el PedidoDTO temporalmente
+        pedidosTemporales.put(tempId, pedidoDTO);
 
         List<PreferenceItemRequest> items = new ArrayList<>();
         for (DetallePedidoDTO detallePedido: pedidoDTO.getDetallePedidos()) {
@@ -72,19 +77,19 @@ public class    MercadoPagoService {
                 .autoReturn("approved")
                 .payer(
                         PreferencePayerRequest.builder()
-                                .email(pedidoResponseDTO.getCliente().getUsuario().getEmail())
-                                .name(pedidoResponseDTO.getCliente().getNombreCompleto())
+                                .email("") // No se puede obtener el email sin el pedido creado, opcional
+                                .name("")  // Opcional
                                 .build()
                 )
                 .backUrls(
                         PreferenceBackUrlsRequest.builder()
-                                .success(mpSuccessBackUrl + "?codigoPedido=" + pedidoResponseDTO.getCodigo())
-                                .pending(mpPendingBackUrl  +"?codigoPedido=" + pedidoResponseDTO.getCodigo())
-                                .failure(mpFailureBackUrl  +"?codigoPedido=" + pedidoResponseDTO.getCodigo())
+                                .success(mpSuccessBackUrl)
+                                .pending(mpPendingBackUrl)
+                                .failure(mpFailureBackUrl)
                                 .build()
                 )
-                .externalReference(idPedidoString)
-                .notificationUrl(publicUrl +  "/mercado-pago/webhook/notification")
+                .externalReference(tempId)
+                .notificationUrl(publicUrl +  "/api/mercado-pago/webhook/notification")
                 .build();
 
         PreferenceClient client = new PreferenceClient();
@@ -92,8 +97,6 @@ public class    MercadoPagoService {
     }
 
     public boolean handlePayment(Map<String, Object> body) throws MPException, MPApiException {
-        
-        // validaciones de la notificacion
         String type = String.valueOf(body.get("type"));
         Map<String, Object> data = (Map<String, Object>) body.get("data");
         Long paymentId;
@@ -109,15 +112,20 @@ public class    MercadoPagoService {
         String estado = pago.getStatus();
         String externalReference = pago.getExternalReference();
 
-        PedidoResponseDTO pedido = pedidoService.findById(Long.parseLong(externalReference));
-
         if (estado.equals("approved")) {
+            // Recuperar el PedidoDTO temporal
+            PedidoDTO pedidoDTO = pedidosTemporales.remove(externalReference);
+            if (pedidoDTO == null) {
+                LOGGER.error("No se encontró el PedidoDTO temporal para externalReference: " + externalReference);
+                return false;
+            }
+            PedidoResponseDTO pedido = pedidoService.save(pedidoDTO);
             pedidoService.actualizarEstadoDelPedido(pedido.getId(), Estado.SOLICITADO);
             LOGGER.info("Pago correctamente realizado mediante Mercado Pago para pedido con id: " + pedido.getId());
-
         } else if (estado.equals("rejected")) {
-            pedidoService.actualizarEstadoDelPedido(pedido.getId(), Estado.CANCELADO);
-            LOGGER.warn("Pago rechazado por Mercado Pago para pedido con id: " + pedido.getId());
+            // Si el pago fue rechazado, simplemente eliminar el PedidoDTO temporal
+            pedidosTemporales.remove(externalReference);
+            LOGGER.warn("Pago rechazado por Mercado Pago para externalReference: " + externalReference);
         }
 
         return true;
@@ -125,10 +133,13 @@ public class    MercadoPagoService {
 
     // Adicionales - privados
     private PreferenceItemRequest getItemRequest(DetallePedidoDTO detallePedido) {
+        int count = 0;
+        if (detallePedido.getProductoId() != null) count++;
+        if (detallePedido.getInsumoId() != null) count++;
+        if (detallePedido.getPromocionId() != null) count++;
 
-        if ((detallePedido.getProductoId() == null && detallePedido.getInsumoId() == null) ||
-                (detallePedido.getProductoId() != null && detallePedido.getInsumoId() != null)) {
-            throw new IllegalArgumentException("Debe haber un producto o un insumo en el DetallePedido, no pueden ser ambos nulos ni tampoco pueden estar ambos");
+        if (count != 1) {
+            throw new IllegalArgumentException("Debe especificar exactamente uno de los siguientes campos en el DetallePedido: productoId, insumoId o promocionId.");
         }
 
         if (detallePedido.getProductoId() != null) {
@@ -144,7 +155,7 @@ public class    MercadoPagoService {
                     .unitPrice(BigDecimal.valueOf(producto.getPrecioVenta()))
                     .build();
 
-        } else {
+        } else if (detallePedido.getInsumoId() != null) {
             InsumoResponseDTO insumo = insumoService.findById(detallePedido.getInsumoId());
 
             return PreferenceItemRequest.builder()
@@ -155,9 +166,17 @@ public class    MercadoPagoService {
                     .currencyId("ARS")
                     .unitPrice(BigDecimal.valueOf(insumo.getPrecioVenta()))
                     .build();
+        } else {
+            PromocionResponseDTO promocion = promocionService.findById(detallePedido.getPromocionId());
+
+            return PreferenceItemRequest.builder()
+                    .id(String.valueOf(promocion.getId()))
+                    .title(promocion.getDescripcion())
+                    .pictureUrl(promocion.getUrlImagen())
+                    .quantity(detallePedido.getCantidad())
+                    .currencyId("ARS")
+                    .unitPrice(BigDecimal.valueOf(promocion.getPrecioVenta()))
+                    .build();
         }
     }
-
 }
-
-

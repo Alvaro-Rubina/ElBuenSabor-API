@@ -1,5 +1,6 @@
 package org.spdgrupo.elbuensaborapi.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.preference.Preference;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "api/mercado-pago")
+@RequestMapping("/api/mercado-pago")
 public class MercadoPagoController {
 
     @Autowired
@@ -25,7 +26,7 @@ public class MercadoPagoController {
     private PedidoService pedidoService;
 
     @PostMapping("/create-preference")
-    public ResponseEntity<Preference> createPreference(@RequestBody PedidoDTO pedidoDTO) throws MPException, MPApiException {
+    public ResponseEntity<Preference> createPreference(@RequestBody PedidoDTO pedidoDTO) throws MPException, MPApiException, JsonProcessingException {
         Preference preference = mercadoPagoService.createPreference(pedidoDTO);
         return ResponseEntity.ok(preference);
     }
