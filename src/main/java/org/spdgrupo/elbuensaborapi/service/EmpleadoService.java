@@ -24,6 +24,7 @@ public class EmpleadoService{
     private final EmpleadoRepository empleadoRepository;
     private final UsuarioService usuarioService;
     private final EmpleadoMapper empleadoMapper;
+    private final DomicilioService domicilioService;
     private final ManagementAPI managementAPI;
 
     @Transactional
@@ -64,10 +65,9 @@ public class EmpleadoService{
             empleado.setTelefono(empleadoDTO.getTelefono());
         }
 
-        // TODO: Ver si esto lo dejo acá
-        /*domicilioService.update(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());*/
-
+        domicilioService.update(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());
         usuarioService.update(empleado.getUsuario().getAuth0Id(), empleadoDTO.getUsuario());
+
         return empleadoMapper.toResponseDTO(empleadoRepository.save(empleado));
     }
 
@@ -90,6 +90,8 @@ public class EmpleadoService{
         if ((!empleado.getTelefono().equals(empleadoDTO.getTelefono())) && (!empleadoDTO.getTelefono().trim().isEmpty())) {
             empleado.setTelefono(empleadoDTO.getTelefono());
         }
+
+        domicilioService.update(empleado.getDomicilio().getId(), empleadoDTO.getDomicilio());
 
         if (!isSocial) {
             usuarioService.update(empleado.getUsuario().getAuth0Id(), empleadoDTO.getUsuario());
@@ -135,8 +137,18 @@ public class EmpleadoService{
     public void toggleActivo(Long id) {
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Empleado con el id " + id + " no encontrado"));
+        boolean nuevoEstado = !empleado.getActivo();
         empleado.setActivo(!empleado.getActivo());
         usuarioService.toggleActivo(empleado.getUsuario().getId());
         empleadoRepository.save(empleado);
+
+        // Actualiza el estado bloqueado en Auth0
+        try {
+            User userUpdate = new User();
+            userUpdate.setBlocked(!nuevoEstado); // Si está inactivo, bloquea; si está activo, desbloquea
+            managementAPI.users().update(empleado.getUsuario().getAuth0Id(), userUpdate).execute();
+        } catch (Auth0Exception e) {
+            throw new RuntimeException("Error al actualizar el estado en Auth0", e);
+        }
     }
 }
