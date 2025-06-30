@@ -358,8 +358,9 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         Pedido pedido = pedidoRepository.findById(pedidoid)
                 .orElseThrow(() -> new NotFoundException("Pedido con el id " + pedidoid + " no encontrado"));
 
-        // Acá se devuelven los insumos al stock
-        for (DetallePedido detallePedido : pedido.getDetallePedidos()) {
+        // Recorre una copia de la lista para evitar ConcurrentModificationException
+        List<DetallePedido> detallesCopia = new ArrayList<>(pedido.getDetallePedidos());
+        for (DetallePedido detallePedido : detallesCopia) {
             if (detallePedido.getProducto() != null) {
                 devolverInsumosDeProducto(detallePedido.getProducto(), detallePedido.getCantidad());
             } else if (detallePedido.getInsumo() != null) {
@@ -374,7 +375,8 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
 
     private void devolverInsumosDeProducto(Producto producto, int cantidadDevuelta) {
         if (producto.getDetalleProductos() == null) return;
-        for (DetalleProducto detalleProducto : producto.getDetalleProductos()) {
+        List<DetalleProducto> detallesCopia = new ArrayList<>(producto.getDetalleProductos());
+        for (DetalleProducto detalleProducto : detallesCopia) {
             Insumo insumo = detalleProducto.getInsumo();
             double cantidadADevolver = detalleProducto.getCantidad() * cantidadDevuelta;
             insumoService.actualizarStock(insumo.getId(), cantidadADevolver);
@@ -384,7 +386,8 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
     // Devuelve insumos de una promoción por cierta cantidad cancelada
     private void devolverInsumosDePromocion(Promocion promocion, int cantidadPromocionDevuelta) {
         if (promocion.getDetallePromociones() == null) return;
-        for (DetallePromocion detallePromo : promocion.getDetallePromociones()) {
+        List<DetallePromocion> detallesCopia = new ArrayList<>(promocion.getDetallePromociones());
+        for (DetallePromocion detallePromo : detallesCopia) {
             if (detallePromo.getProducto() != null) {
                 devolverInsumosDeProducto(detallePromo.getProducto(), detallePromo.getCantidad() * cantidadPromocionDevuelta);
             } else if (detallePromo.getInsumo() != null) {
