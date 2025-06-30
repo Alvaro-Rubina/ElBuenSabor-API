@@ -1,6 +1,7 @@
 package org.spdgrupo.elbuensaborapi.service;
 
 import org.spdgrupo.elbuensaborapi.model.dto.producto.ProductoVentasDTO;
+import org.spdgrupo.elbuensaborapi.model.entity.Promocion;
 import org.spdgrupo.elbuensaborapi.model.enums.UnidadMedida;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -158,6 +159,11 @@ public class ProductoService extends GenericoServiceImpl<Producto, ProductoDTO, 
         if (!producto.getPrecioVenta().equals(getPrecioVenta(producto.getPrecioCosto(), productoDTO.getMargenGanancia()))) {
             producto.setPrecioVenta(getPrecioVenta(producto.getPrecioCosto(), productoDTO.getMargenGanancia()));
             producto.setMargenGanancia(productoDTO.getMargenGanancia());
+            // Actualizar precios de promociones asociadas
+            List<Promocion> promociones = promocionService.findPromocionesByProductoId(producto.getId());
+            for (Promocion promocion : promociones) {
+                promocionService.actualizarPreciosPromocion(promocion);
+            }
         }
 
         return productoMapper.toResponseDTO(productoRepository.save(producto));
