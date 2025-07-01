@@ -3,6 +3,7 @@ package org.spdgrupo.elbuensaborapi.config.security;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -45,21 +46,58 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(withDefaults()) //por defecto spring va a buscar un bean con el nombre "corsConfigurationSource".
                 .authorizeHttpRequests(authorizeRequests ->
-                                authorizeRequests // TODO: Esto hay que ajustarlo
-                                        /*.requestMatchers("/api/public").permitAll()
-                                        .requestMatchers("/api/admin/users/getUserById").authenticated()
-                                        .requestMatchers("/api/admin/users/createUserClient").authenticated()
-                                        .requestMatchers("/api/admin/roles/getRoleByName").authenticated()
-                                        .requestMatchers("/api/client/**").hasAnyAuthority("Cliente","Administrador")
-                                        .requestMatchers("/api/kitchener/**").hasAnyAuthority("Cocinero","Administrador")
-                                        .requestMatchers("/api/admin/**").hasAuthority("Administrador")
+                        authorizeRequests
+                                // Endpoints públicos
+                                .requestMatchers("/api/clientes/email/**").permitAll()
+                                .requestMatchers("/api/empleados/email/**").permitAll()
+                                .requestMatchers("/api/mercado-pago/webhook/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/rubroinsumos/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/rubroproductos/**").permitAll()
 
-                                        .anyRequest().authenticated()
-*/
-                                        .anyRequest().permitAll()
+                                // Roles - GET para todos los empleados (Cajero, Delivery, Cocinero, Admin)
+                                .requestMatchers(HttpMethod.GET, "/api/admin/roles/**").hasAnyAuthority("Cajero", "Delivery", "Cocinero", "Admin")
 
+                                // Pedidos - GET y PUT para Cajero, Delivery, Cocinero, Admin
+                                .requestMatchers(HttpMethod.GET, "/api/pedidos/**").hasAnyAuthority("Cajero", "Delivery", "Cocinero", "Admin")
+                                .requestMatchers(HttpMethod.PUT, "/api/pedidos/**").hasAnyAuthority("Cajero", "Delivery", "Cocinero", "Admin")
+                                .requestMatchers(HttpMethod.POST, "/api/pedidos/**").hasAuthority("Admin")
+                                .requestMatchers(HttpMethod.DELETE, "/api/pedidos/**").hasAuthority("Admin")
 
-                        //.anyRequest().permitAll()
+                                // Empleados - GET y PUT para Cajero, Delivery, Cocinero, Admin (excepto email que ya es público)
+                                .requestMatchers(HttpMethod.GET, "/api/empleados/**").hasAnyAuthority("Cajero", "Delivery", "Cocinero", "Admin")
+                                .requestMatchers(HttpMethod.PUT, "/api/empleados/**").hasAnyAuthority("Cajero", "Delivery", "Cocinero", "Admin")
+                                .requestMatchers("/api/empleados/**").hasAuthority("Admin")
+
+                                // Productos - Cocinero y Admin
+                                .requestMatchers("/api/productos/**").hasAnyAuthority("Cocinero", "Admin")
+
+                                // Insumos - Cocinero y Admin
+                                .requestMatchers("/api/insumos/**").hasAnyAuthority("Cocinero", "Admin")
+
+                                // Promociones - Cocinero y Admin
+                                .requestMatchers("/api/promociones/**").hasAnyAuthority("Cocinero", "Admin")
+
+                                // Rubros - Resto de operaciones solo para Admin (GET ya es público)
+                                .requestMatchers("/api/rubroinsumos/**").hasAuthority("Admin")
+                                .requestMatchers("/api/rubroproductos/**").hasAuthority("Admin")
+
+                                // Estadísticas - Solo Admin
+                                .requestMatchers("/api/estadisticas/**").hasAuthority("Admin")
+
+                                // Clientes - Solo Admin (excepto email que ya es público)
+                                .requestMatchers("/api/clientes/**").hasAuthority("Admin")
+
+                                // Resto de endpoints - Solo Admin
+                                .requestMatchers("/api/domicilios/**").hasAuthority("Admin")
+                                .requestMatchers("/api/detalledomicilios/**").hasAuthority("Admin")
+                                .requestMatchers("/api/facturas/**").hasAuthority("Admin")
+                                .requestMatchers("/api/mercado-pago/**").hasAuthority("Admin")
+                                .requestMatchers("/api/admin/**").hasAuthority("Admin")
+
+                                // Usuario autenticado para endpoints de usuario
+                                .requestMatchers("/api/usuarios/**").authenticated()
+
+                                .anyRequest().denyAll()
                 )
                 .oauth2ResourceServer(oauth2ResourceServer ->
                         oauth2ResourceServer
@@ -102,7 +140,7 @@ public class SecurityConfig {
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
-        converter.setAuthoritiesClaimName(audience+"/roles");
+        converter.setAuthoritiesClaimName(audience + "/roles");
         converter.setAuthorityPrefix("");
 
         JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
