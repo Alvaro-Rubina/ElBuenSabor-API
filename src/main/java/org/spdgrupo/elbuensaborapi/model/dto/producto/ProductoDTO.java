@@ -29,7 +29,6 @@ public class ProductoDTO {
 
     @NotNull(message = "El campo porcentajeGanancia no puede ser nulo")
     @DecimalMin(value = "0.01", message = "el campo porcentajeGanancia no puede ser menor a 0.00")
-    @DecimalMax(value = "100.00", message = "el campo porcentajeGanancia no puede ser mayor a 100.00")
     private Double margenGanancia;
 
     @NotBlank(message = "El campo urlImagen no puede estar vacio")

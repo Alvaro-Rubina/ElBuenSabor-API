@@ -36,7 +36,7 @@ public class RolController {
         return ResponseEntity.ok(rol);
     }
 
-    @GetMapping("/nombre/{nombre}")
+    @GetMapping("/nombre/nombre/{nombre}")
     public ResponseEntity<RolResponseDTO> findByNombre(@PathVariable String nombre) {
         RolResponseDTO rol = rolService.findByNombre(nombre);
         return ResponseEntity.ok(rol);
@@ -49,8 +49,8 @@ public class RolController {
         return ResponseEntity.ok(roles);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<String> update(@RequestParam String auth0Id,
+    @PutMapping("/update/auth0/{auth0Id}")
+    public ResponseEntity<String> update(@PathVariable String auth0Id,
                                          @Valid @RequestBody RolDTO rolDTO) throws Auth0Exception {
         rolService.update(auth0Id, rolDTO);
         return ResponseEntity.ok("Rol actualizado correctamente");
