@@ -72,12 +72,12 @@ public class PedidoController extends GenericoControllerImpl<
     }
 
     @PutMapping("/actualizar-estado/{pedidoId}")
-    public ResponseEntity<String> actualizarEstadoPedido(@PathVariable Long pedidoId,
+    public ResponseEntity<PedidoResponseDTO> actualizarEstadoPedido(@PathVariable Long pedidoId,
                                                          @RequestParam Estado estado) {
 
         PedidoResponseDTO pedido = pedidoService.actualizarEstadoDelPedido(pedidoId, estado);
         messagingTemplate.convertAndSend("/topic/pedidos", pedido);
-        return ResponseEntity.ok("Estado del pedido actualizado correctamente");
+        return ResponseEntity.ok(pedido);
     }
 
     @GetMapping("/estado")
