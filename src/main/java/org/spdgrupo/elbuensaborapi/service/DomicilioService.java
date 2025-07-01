@@ -69,11 +69,14 @@ public class DomicilioService extends GenericoServiceImpl<Domicilio, DomicilioDT
             domicilio.setCodigoPostal(domicilioDTO.getCodigoPostal());
         }
 
-        if (!domicilio.getLatitud().equals(domicilioDTO.getLatitud())) {
+        // Para valores numéricos como latitud y longitud, usamos la comparación de objetos
+        if (domicilioDTO.getLatitud() != null &&
+                (domicilio.getLatitud() == null || !domicilio.getLatitud().equals(domicilioDTO.getLatitud()))) {
             domicilio.setLatitud(domicilioDTO.getLatitud());
         }
 
-        if (!domicilio.getLongitud().equals(domicilioDTO.getLongitud())) {
+        if (domicilioDTO.getLongitud() != null &&
+                (domicilio.getLongitud() == null || !domicilio.getLongitud().equals(domicilioDTO.getLongitud()))) {
             domicilio.setLongitud(domicilioDTO.getLongitud());
         }
 
