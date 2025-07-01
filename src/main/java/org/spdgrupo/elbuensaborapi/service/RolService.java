@@ -71,7 +71,7 @@ public class RolService {
     }
 
     @Transactional
-    public void update(String auth0RolId, RolDTO rolDTO) throws Auth0Exception {
+    public RolResponseDTO update(String auth0RolId, RolDTO rolDTO) throws Auth0Exception {
         Rol rol = rolRepository.findByAuth0RolId(auth0RolId)
                 .orElseThrow(() -> new NotFoundException("Rol con el auht0Id " + auth0RolId + " no encontrado"));
 
@@ -107,6 +107,7 @@ public class RolService {
                 throw e;
             }
         }
+        return rolMapper.toResponseDTO(rol);
     }
 
     @Transactional

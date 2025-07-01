@@ -50,10 +50,10 @@ public class RolController {
     }
 
     @PutMapping("/update/auth0/{auth0Id}")
-    public ResponseEntity<String> update(@PathVariable String auth0Id,
+    public ResponseEntity<RolResponseDTO> update(@PathVariable String auth0Id,
                                          @Valid @RequestBody RolDTO rolDTO) throws Auth0Exception {
-        rolService.update(auth0Id, rolDTO);
-        return ResponseEntity.ok("Rol actualizado correctamente");
+        RolResponseDTO rol = rolService.update(auth0Id, rolDTO);
+        return ResponseEntity.ok(rol);
     }
 
     @DeleteMapping("/delete/id/{id}")

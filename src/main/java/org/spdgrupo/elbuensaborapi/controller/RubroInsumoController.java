@@ -29,10 +29,10 @@ public class RubroInsumoController extends GenericoControllerImpl<
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateRubroInsumo(@PathVariable Long id,
+    public ResponseEntity<RubroInsumoResponseDTO> updateRubroInsumo(@PathVariable Long id,
                                                     @Valid @RequestBody RubroInsumoDTO rubroInsumoDTO) {
-        rubroInsumoService.update(id, rubroInsumoDTO);
-        return ResponseEntity.ok("RubroInsumo actualizado correctamente");
+        RubroInsumoResponseDTO rubroInsumo =  rubroInsumoService.update(id, rubroInsumoDTO);
+        return ResponseEntity.ok(rubroInsumo);
     }
 
     @DeleteMapping("/delete/{id}")
