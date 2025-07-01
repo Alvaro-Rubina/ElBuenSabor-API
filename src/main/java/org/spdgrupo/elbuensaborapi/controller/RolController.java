@@ -36,7 +36,7 @@ public class RolController {
         return ResponseEntity.ok(rol);
     }
 
-    @GetMapping("/nombre/nombre/{nombre}")
+    @GetMapping("/nombre/{nombre}")
     public ResponseEntity<RolResponseDTO> findByNombre(@PathVariable String nombre) {
         RolResponseDTO rol = rolService.findByNombre(nombre);
         return ResponseEntity.ok(rol);
