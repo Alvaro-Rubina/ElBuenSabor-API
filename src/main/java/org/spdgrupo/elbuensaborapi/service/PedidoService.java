@@ -104,7 +104,8 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         pedido.setCodigo(generateCodigo());
 
         // Acá se descuentan los insumos antes de guardar el pedido
-        for (DetallePedido detallePedido : pedido.getDetallePedidos()) {
+        List<DetallePedido> detallesCopia = new ArrayList<>(pedido.getDetallePedidos());
+        for (DetallePedido detallePedido : detallesCopia) {
             if (detallePedido.getProducto() != null) {
                 descontarInsumosDeProducto(detallePedido.getProducto(), detallePedido.getCantidad());
             } else if (detallePedido.getInsumo() != null) {
@@ -330,20 +331,21 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
         emailService.enviarMailConAdjunto(email, asunto, cuerpo, facturaPdf, "factura-" + pedido.getCodigo() + ".pdf");
     }
 
-    // Descuenta insumos de un producto por cierta cantidad vendida
     private void descontarInsumosDeProducto(Producto producto, int cantidadVendida) {
         if (producto.getDetalleProductos() == null) return;
-        for (DetalleProducto detalleProducto : producto.getDetalleProductos()) {
+        // Iterar sobre una copia para evitar ConcurrentModificationException
+        List<DetalleProducto> detallesCopia = new ArrayList<>(producto.getDetalleProductos());
+        for (DetalleProducto detalleProducto : detallesCopia) {
             Insumo insumo = detalleProducto.getInsumo();
             double cantidadADescontar = detalleProducto.getCantidad() * cantidadVendida;
             insumoService.actualizarStock(insumo.getId(), -cantidadADescontar);
         }
     }
-
     // Descuenta insumos de una promoción por cierta cantidad vendida
     private void descontarInsumosDePromocion(Promocion promocion, int cantidadPromocionVendida) {
         if (promocion.getDetallePromociones() == null) return;
-        for (DetallePromocion detallePromo : promocion.getDetallePromociones()) {
+        List<DetallePromocion> detallesCopia = new ArrayList<>(promocion.getDetallePromociones());
+        for (DetallePromocion detallePromo : detallesCopia) {
             if (detallePromo.getProducto() != null) {
                 descontarInsumosDeProducto(detallePromo.getProducto(), detallePromo.getCantidad() * cantidadPromocionVendida);
             } else if (detallePromo.getInsumo() != null) {
@@ -382,7 +384,6 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
             insumoService.actualizarStock(insumo.getId(), cantidadADevolver);
         }
     }
-
     // Devuelve insumos de una promoción por cierta cantidad cancelada
     private void devolverInsumosDePromocion(Promocion promocion, int cantidadPromocionDevuelta) {
         if (promocion.getDetallePromociones() == null) return;
