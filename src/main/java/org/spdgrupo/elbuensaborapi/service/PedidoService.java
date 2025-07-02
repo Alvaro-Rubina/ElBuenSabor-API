@@ -142,7 +142,14 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
             pedido.setEstado(nuevoEstado);
 
             if (nuevoEstado == Estado.CANCELADO) {
-                cancelarPedido(pedidoId);
+
+                if (estadoActual == Estado.TERMINADO || estadoActual == Estado.EN_CAMINO) {
+                    cancelarPedidoTerminadoOEnCamino(pedido.getDetallePedidos());
+                }
+
+                if (estadoActual == Estado.SOLICITADO) {
+                    cancelarPedido(pedidoId);
+                }
             }
 
             if (nuevoEstado == Estado.TERMINADO) {
@@ -395,6 +402,34 @@ public class PedidoService extends GenericoServiceImpl<Pedido, PedidoDTO, Pedido
                 Insumo insumo = detallePromo.getInsumo();
                 double cantidadADevolver = detallePromo.getCantidad() * cantidadPromocionDevuelta;
                 insumoService.actualizarStock(insumo.getId(), cantidadADevolver);
+            }
+        }
+    }
+
+    private void devolverInsumosDePromocionEstadoTerminado(Promocion promocion, int cantidadPromocionDevuelta) {
+        if (promocion.getDetallePromociones() == null) return;
+        List<DetallePromocion> detallesCopia = new ArrayList<>(promocion.getDetallePromociones());
+        for (DetallePromocion detallePromo : detallesCopia) {
+
+            if (detallePromo.getInsumo() != null) {
+                Insumo insumo = detallePromo.getInsumo();
+                double cantidadADevolver = detallePromo.getCantidad() * cantidadPromocionDevuelta;
+                insumoService.actualizarStock(insumo.getId(), cantidadADevolver);
+            }
+        }
+    }
+
+    private void cancelarPedidoTerminadoOEnCamino(List<DetallePedido> detalles) {
+
+        List<DetallePedido> detallesCopia = new ArrayList<>(detalles);
+        for (DetallePedido detallePedido : detallesCopia) {
+            if (detallePedido.getInsumo() != null) {
+                Insumo insumo = detallePedido.getInsumo();
+                double cantidadADevolver = detallePedido.getCantidad();
+                insumoService.actualizarStock(insumo.getId(), cantidadADevolver);
+
+            } else if (detallePedido.getPromocion() != null) {
+                devolverInsumosDePromocionEstadoTerminado(detallePedido.getPromocion(), detallePedido.getCantidad());
             }
         }
     }

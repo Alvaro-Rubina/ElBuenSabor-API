@@ -17,7 +17,7 @@ public enum Estado {
             case PENDIENTE_FACTURACION -> EnumSet.of(SOLICITADO, CANCELADO);
             case SOLICITADO -> EnumSet.of(EN_PREPARACION, CANCELADO);
             case EN_PREPARACION -> EnumSet.of(TERMINADO);
-            case TERMINADO -> EnumSet.of(EN_CAMINO, ENTREGADO);
+            case TERMINADO -> EnumSet.of(EN_CAMINO, ENTREGADO, CANCELADO);
             case EN_CAMINO -> EnumSet.of(ENTREGADO);
             default -> EnumSet.noneOf(Estado.class); // No se puede avanzar desde otros
         };
