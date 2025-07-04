@@ -73,9 +73,9 @@ mvn spring-boot:run
 - ✅ Integración Mercado Pago Checkout Pro
 - ✅ Autenticación con Auth0
 - ✅ Implementación de WebSockets
+- ✅ Dockerización del proyecto
 - ⏳ Cache con Redis
 - ⏳ Documentación con Swagger
-- ⏳ Dockerización del proyecto
 
 ---
 
